@@ -4,14 +4,14 @@ from django.urls import path
 from django.contrib import admin
 admin.autodiscover()
 
-import hello.views
+import cataloger.views
 
 # Examples:
-# url(r'^$', 'gettingstarted.views.home', name='home'),
+# url(r'^$', 'opendatapdx.views.home', name='home'),
 # url(r'^blog/', include('blog.urls')),
 
 urlpatterns = [
-    url(r'^$', hello.views.index, name='index'),
-    url(r'^db', hello.views.db, name='db'),
+    url(r'^$', cataloger.views.index, name='index'),
+    url(r'^db', cataloger.views.db, name='db'),
     path('admin/', admin.site.urls),
 ]
