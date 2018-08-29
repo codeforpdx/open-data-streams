@@ -12,6 +12,5 @@ import cataloger.views
 
 urlpatterns = [
     url(r'^$', cataloger.views.index, name='index'),
-    url(r'^db', cataloger.views.db, name='db'),
     path('admin/', admin.site.urls),
 ]

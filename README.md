@@ -1,44 +1,27 @@
-# Python: Getting Started
+# Getting started with local development (Linux):
+1. Install the Heroku command line interface:
 
-A barebones Django app, which can easily be deployed to Heroku.
+1. Install docker-compose:
 
-This application supports the [Getting Started with Python on Heroku](https://devcenter.heroku.com/articles/getting-started-with-python) article - check it out.
+`
+sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+`
 
-## Running Locally
+`
+sudo chmod +x /usr/local/bin/docker-compose
+`
 
-Make sure you have Python [installed properly](http://install.python-guide.org). Also, install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) and [Postgres](https://devcenter.heroku.com/articles/heroku-postgresql#local-setup).
+2. Build the images for the DB and the application:
 
-```sh
-$ git clone git@github.com:heroku/python-getting-started.git
-$ cd python-getting-started
+`
+docker-compose build
+`
 
-$ pipenv install
+3. Run the images (launches the application locally, go to http://0.0.0.0:8000/ to access).
+Note: after building the first time, you only need to run docker-compose up from now on to test the application.
 
-$ createdb python_getting_started
+`
+docker-compose up
+`
 
-$ python manage.py migrate
-$ python manage.py collectstatic
-
-$ heroku local
-```
-
-Your app should now be running on [localhost:5000](http://localhost:5000/).
-
-## Deploying to Heroku
-
-```sh
-$ heroku create
-$ git push heroku master
-
-$ heroku run python manage.py migrate
-$ heroku open
-```
-or
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
-
-## Documentation
-
-For more information about using Python on Heroku, see these Dev Center articles:
-
-- [Python on Heroku](https://devcenter.heroku.com/categories/python)
+## Deploying to Heroku:
