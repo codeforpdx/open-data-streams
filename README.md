@@ -1,7 +1,16 @@
 # OpenDataPDX
 
+## About
+This is the web application for our OpenDataPDX capstone project.
+
+## Technologies used:
++ Python 3.6
++ Django & Postgres
++ Heroku
++ Docker-compose
+
 ## Steps for local development (Linux):
-1. Install git
+1. Install git and brush up on how to use it if you're not familiar. A good intro is here: https://guides.github.com/introduction/git-handbook/#basic-git
 2. Clone this repository: git clone https://github.com/AustenHolmberg/opendatapdx.git
 3. Install docker-compose:
 
