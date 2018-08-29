@@ -1,19 +1,23 @@
-# opendatapdx
+# Steps for local development (Linux):
+1. Install docker-compose:
 
-## Once you have Python 3 installed:
-### Create a new virtual environment, and switch to it:
 `
-python3 -m venv <your-envs-dir>/opendatapdx
-source <your-envs-dir>/opendatapdx/bin/activate
+sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
 `
 
-### Install the dependencies for the project:
 `
-pip -r install requirements.txt
+sudo chmod +x /usr/local/bin/docker-compose
 `
 
-### Setup the database and start the application locally:
+2. Build the images for the DB and the application:
+
 `
-python manage.py migrate
-python manage.py runserver
+docker-compose build
+`
+
+3. Run the images using docker (launches the application locally, go to http://0.0.0.0:8000/ to access).
+Note: after building, you only need to run docker-compose up from now on to test the application.
+
+`
+docker-compose up
 `
