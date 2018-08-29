@@ -28,11 +28,15 @@ docker-compose up
 
 #### To push your changes to this repo (development):
 
+to master:
 `
-master: git push
-specify a brach: git push origin <branch-name>
+git push
 `
 
+specify a branch:
+`
+git push origin <branch-name>
+`
 
 ## To push your changes to the app on Heroku (production):
 
