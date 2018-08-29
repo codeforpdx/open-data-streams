@@ -1,27 +1,19 @@
-# Getting started with local development (Linux):
-1. Install the Heroku command line interface:
+# opendatapdx
 
-1. Install docker-compose:
-
+## Once you have Python 3 installed:
+### Create a new virtual environment, and switch to it:
 `
-sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-`
-
-`
-sudo chmod +x /usr/local/bin/docker-compose
+python3 -m venv <your-envs-dir>/opendatapdx
+source <your-envs-dir>/opendatapdx/bin/activate
 `
 
-2. Build the images for the DB and the application:
-
+### Install the dependencies for the project:
 `
-docker-compose build
-`
-
-3. Run the images (launches the application locally, go to http://0.0.0.0:8000/ to access).
-Note: after building the first time, you only need to run docker-compose up from now on to test the application.
-
-`
-docker-compose up
+pip -r install requirements.txt
 `
 
-## Deploying to Heroku:
+### Setup the database and start the application locally:
+`
+python manage.py migrate
+python manage.py runserver
+`
