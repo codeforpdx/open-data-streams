@@ -28,12 +28,12 @@ docker-compose up
 
 #### To push your changes to this repo (development):
 
-to master:
+To master:
 `
 git push
 `
 
-specify a branch:
+Or, specify a branch:
 `
 git push origin <branch-name>
 `
