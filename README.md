@@ -4,7 +4,6 @@
 This is the web application for our OpenDataPDX capstone project. 
 If you're not familiar with Django, a good introduction is here: https://docs.djangoproject.com/en/2.1/intro/overview/
 
-A bit about the structure of this Django app:
 A Django app is composed of various hierarchical sub-apps.
 For this app, opendatapdx/ is the root sub-app, which is the "core" of the app. It defines the overall settings, and requests are first sent here, and then the URL dispatcher decides where to send it (e.g., which sub-app, view etc). The views render a template (html file with variables), to the user's screen. Our app currently has one page (template at cataloger/templates/index.html), which is the home page.
 
