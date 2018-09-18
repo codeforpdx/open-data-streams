@@ -20,7 +20,8 @@ cataloger/ is the sub-app which will contain most of our work. urls.py will deci
 2. Clone this repository: `git clone https://github.com/AustenHolmberg/opendatapdx.git`
 3. Change to the directory: `cd opendatapdx`
 4. Add a remote url for the heroku app `git remote add heroku https://git.heroku.com/opendatapdx.git`
-5. Install docker-compose:
+5. Install docker community edition (for ubuntu, setups for other platforms are available): https://docs.docker.com/install/linux/docker-ce/ubuntu/
+6. Install docker-compose:
 
 `
 sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
@@ -30,13 +31,13 @@ sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-c
 sudo chmod +x /usr/local/bin/docker-compose
 `
 
-6. Build the images for the DB and the application:
+7. Build the images for the DB and the application:
 
 `
 docker-compose build
 `
 
-7. Run the images using docker (launches the application locally, go to http://0.0.0.0:8000/ to access).
+8. Run the images using docker (launches the application locally, go to http://0.0.0.0:8000/ to access).
 Note: after building, you only need to run docker-compose up from now on to test the application.
 
 `
