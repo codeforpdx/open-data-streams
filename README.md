@@ -15,7 +15,7 @@ cataloger/ is the sub-app which will contain most of our work. urls.py will deic
 + Heroku
 + Docker-compose
 
-## Steps for local development (for Linux; using other plaforms might require a different setup for Git or Docker-compose):
+## Steps for local development (for Linux; using other plaforms might require a different setup process for Git or Docker-compose):
 1. Install Git and brush up on how to use it if you're not familiar. A good intro is here: https://guides.github.com/introduction/git-handbook/#basic-git
 2. Clone this repository: `git clone https://github.com/AustenHolmberg/opendatapdx.git`
 3. Change to the directory: `cd opendatapdx`
