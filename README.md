@@ -7,7 +7,7 @@ If you're not familiar with Django, a good introduction is here: https://docs.dj
 A Django app is composed of various hierarchical sub-apps.
 For this app, opendatapdx/ is the root sub-app, which is the "core" of the app. It defines the overall settings, and requests are first sent here, and then the URL dispatcher decides where to send it (e.g., which sub-app, view etc). The views render a template (html file with variables), to the user's screen. Our app currently has one page (template at cataloger/templates/index.html), which is the home page.
 
-cataloger/ is the sub-app which will contain most of our work. urls.py will deicde which view in views.py to send a request to, and it only depends on what the url is. 
+cataloger/ is the sub-app which will contain most of our work. urls.py will decide which view in views.py to send a request to, and it only depends on what the url is. 
 
 ## Technologies used:
 + Python 3.6
