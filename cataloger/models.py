@@ -20,6 +20,9 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
+class Schema(models.Model):
+    data = JSONField()
+
 class Distribution(models.Model):
     mtype = models.TextField()
     accessURL = models.TextField()
@@ -81,5 +84,3 @@ class Dataset(models.Model):
     systemOfRecords = models.TextField(null=True)
     theme = models.TextField(null=True)
 
-class Schema(models.Model):
-    data = JSONField()
