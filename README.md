@@ -84,9 +84,9 @@ docker-compose run web pipenv run python3 manage.py shell --settings=opendatapdx
 `
 This will give you a Python shell with ORM access to the db.
 For example, to get all of the current users (their Profile objects):
-`python
+```python
 >>> from cataloger.models import *        
 >>> Profile.objects.all()                 
 <QuerySet [<Profile: Profile object (1)>]>
-`
+```
 
