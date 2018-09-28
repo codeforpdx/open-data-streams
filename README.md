@@ -63,3 +63,30 @@ git push heroku master
 `
 
 #### The app on Heroku is accessible at: https://opendatapdx.herokuapp.com/
+
+## Working with the models:
+You'll likely need to make changes to the DB models at some point.
+This involves: 
+1. Making your modifications (adding/removing a model, adding/removing fields to an existing model, etc) to the models at cataloger/models.py.
+2. Running makemigrations to create a new migration file (will be added to cataloger/migrations/):
+`
+docker-compose run web pipenv run python3 manage.py makemigrations --settings=opendatapdx.local_settings
+`
+3. Running migrate to have Django execute the migration:
+`
+docker-compose run web pipenv run python3 manage.py migrate --settings=opendatapdx.local_settings
+`
+
+#### Querying the database directly
+Run:
+`
+docker-compose run web pipenv run python3 manage.py shell --settings=opendatapdx.local_settings
+`
+This will give you a Python shell with ORM access to the db.
+For example, to get all of the current users (their Profile objects):
+`python
+>>> from cataloger.models import *        
+>>> Profile.objects.all()                 
+<QuerySet [<Profile: Profile object (1)>]>
+`
+
