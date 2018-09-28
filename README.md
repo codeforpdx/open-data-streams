@@ -76,6 +76,7 @@ docker-compose run web pipenv run python3 manage.py makemigrations --settings=op
 `
 docker-compose run web pipenv run python3 manage.py migrate --settings=opendatapdx.local_settings
 `
+In order for others to use your migration, you'll need to commit and push the new migration file.
 
 #### Querying the database directly
 Run:
