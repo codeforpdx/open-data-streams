@@ -2,23 +2,6 @@
 {% load staticfiles %}
 
 {% block content %}
-	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-	  <a class="navbar-brand" href="#">OpenDataPDX</a>
-	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	  </button>
-	  <div class="collapse navbar-collapse" id="navbarNav">
-		<ul class="navbar-nav">
-		  <li class="nav-item active">
-			<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-		  </li>
-		  <li class="nav-item">
-			<a class="nav-link" href="#">Dashboard</a>
-		  </li>
-		</ul>
-	  </div>
-	</nav>
-
     <header class="masthead text-center text-white" style="background-image: url('{% static "img/portland.jpg" %}')">
       <div class="masthead-content">
         <div class="container">
@@ -82,12 +65,4 @@
         </div>
       </div>
     </section>
-
-    <!-- Footer -->
-    <footer class="py-5 bg-black">
-      <div class="container">
-        <p class="m-0 text-center text-white small">Copyright &copy; Your Website 2018</p>
-      </div>
-      <!-- /.container -->
-    </footer>
   {% endblock %}

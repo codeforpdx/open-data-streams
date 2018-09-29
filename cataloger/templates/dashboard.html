@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+    {% for entry in datasets %}
+    <tr>
+        {% for header, cell in entry.items %}
+        <td> {{ cell }} </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
