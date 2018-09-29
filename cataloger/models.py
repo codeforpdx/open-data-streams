@@ -3,11 +3,11 @@ from django.contrib.postgres.fields import JSONField
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth.models import AbstractUser
 
 # Notice that first name, last name, and email are not columns here. That is
 # because Django includes them as columns in the User object, which Profile is related to.
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+class Profile(AbstractUser):
     department = models.TextField()
     office = models.TextField()
 

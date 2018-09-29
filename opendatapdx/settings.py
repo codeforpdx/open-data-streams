@@ -131,3 +131,6 @@ LOGIN_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# Use the app's Profile class as the AUTH_USER_MODEL default
+AUTH_USER_MODEL = 'cataloger.Profile'
+
