@@ -3,13 +3,35 @@ from django.contrib.postgres.fields import JSONField
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
+
+class ProfileManager(UserManager):
+    def create_user(self, username, email=None, password=None, department=None, office=None, **extra_fields):
+        """
+        Creates and saves a User with the given username, email, password, department, and office.
+        """
+        if not email:
+            raise ValueError('Users must have an email address')
+
+        user = self.model(
+            username = username,
+            email=self.normalize_email(email),
+            department = department,
+            office = office,
+        )
+
+        user.set_password(password)
+        user.save()
+        return user
 
 # Notice that first name, last name, and email are not columns here. That is
 # because Django includes them as columns in the User object, which Profile is related to.
 class Profile(AbstractUser):
     department = models.TextField()
     office = models.TextField()
+    
+    # Set the custom UserManager for this class (for custom create_user() function call handling)
+    objects = ProfileManager()
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

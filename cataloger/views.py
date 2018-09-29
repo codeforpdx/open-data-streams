@@ -1,8 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views import View
+from django.contrib.auth import authenticate, login
+import django.db
 
-from .models import Dataset, Distribution, Schema
+from .models import Dataset, Distribution, Schema, Profile
 from .forms import RegistrationForm
 
 def index(request):
@@ -21,7 +23,18 @@ def register(request):
         # this is a POST request
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            return HttpResponseRedirect('/registration/success/')
+            profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], request.POST['department'], request.POST['office'])
+            profile.save()
+            
+            user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
+            if user is not None:
+                login(request, user)
+            else:
+                # maybe we should redirect to invalid login page?
+                # this shouldn't happen, however
+                raise django.db.InternalError('Could not authenticate user')
+            # this should redirect to dashboard page once it exists
+            return HttpResponseRedirect('/')
     else:
         # this is a GET request
         form = RegistrationForm()
