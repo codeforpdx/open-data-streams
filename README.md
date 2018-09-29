@@ -83,11 +83,16 @@ Run:
 `
 docker-compose run web pipenv run python3 manage.py shell --settings=opendatapdx.local_settings
 `
-This will give you a Python shell with ORM access to the db.
+This will give you a Python shell with ORM access to your local DB, allowing you to read and write to the DB, test queries, etc.
 For example, to get all of the current users (their Profile objects):
 ```python
 >>> from cataloger.models import *        
 >>> Profile.objects.all()                 
 <QuerySet [<Profile: Profile object (1)>]>
 ```
-
+Getting the first user's email:
+```python
+>>> some_user = Profile.objets.first()
+>>> some_user.email
+>>> 'test@comcast.net'
+```
