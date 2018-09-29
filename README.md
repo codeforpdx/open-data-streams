@@ -92,7 +92,7 @@ For example, to get all of the current users (their Profile objects):
 ```
 Getting the first user's email:
 ```python
->>> some_user = Profile.objets.first()
+>>> some_user = Profile.objects.first()
 >>> some_user.email
 >>> 'test@comcast.net'
 ```
