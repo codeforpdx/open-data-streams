@@ -15,3 +15,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('dashboard/', cataloger.views.dashboard),
 ]
+
+#Add Django site authentication urls (for login, logout, password management)
+urlpatterns += [
+    path('accounts/', include('django.contrib.auth.urls')),
+]
