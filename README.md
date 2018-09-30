@@ -97,5 +97,5 @@ Getting the first user's email:
 >>> 'test@comcast.net'
 ```
 
-#### Resetting your database
+#### Resetting your database (nuke)
 Instructions here: http://docs.metasfresh.org/installation_collection/EN/How_do_I_reset_database_using_docker.html
