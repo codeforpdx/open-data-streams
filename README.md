@@ -64,7 +64,7 @@ git push heroku master
 
 #### The app on Heroku is accessible at: https://opendatapdx.herokuapp.com/
 
-## Working with the models:
+## Working with the database/models:
 You'll likely need to make changes to the DB models at some point.
 This involves: 
 1. Making your modifications (adding/removing a model, adding/removing fields to an existing model, etc) to the models at cataloger/models.py.
@@ -96,3 +96,6 @@ Getting the first user's email:
 >>> some_user.email
 >>> 'test@comcast.net'
 ```
+
+#### Resetting your database
+Instructions here: http://docs.metasfresh.org/installation_collection/EN/How_do_I_reset_database_using_docker.html
