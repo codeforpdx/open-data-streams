@@ -29,12 +29,12 @@ def register(request):
             user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
             if user is not None:
                 login(request, user)
+                return HttpResponseRedirect('/dashboard/')
             else:
                 # maybe we should redirect to invalid login page?
                 # this shouldn't happen, however
                 raise django.db.InternalError('Could not authenticate user')
-            # this should redirect to dashboard page once it exists
-            return HttpResponseRedirect('/')
+
     else:
         # this is a GET request
         form = RegistrationForm()

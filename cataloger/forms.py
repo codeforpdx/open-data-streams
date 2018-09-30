@@ -11,6 +11,6 @@ class RegistrationForm(forms.ModelForm):
     class Meta:
         model = Profile
         widgets = {
-            'user.password': forms.PasswordInput(),
+            'password': forms.PasswordInput(),
         }
         fields = ['username', 'password', 'email', 'department', 'office']
