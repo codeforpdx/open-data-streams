@@ -1,6 +1,37 @@
 {% extends "base.html" %}
+{% load staticfiles %}
+
+{% block css_content %}
+    <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
+
+<div class="container" style="max-width: 80%; margin-top: 30px">
+    <div class="row">
+        <div class="table-responsive">
+            <table id="datasetTable" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Tags</th>
+                        <th>Last Modified</th>
+                        <th>Publisher</th>
+                        <th>Contact Point</th>
+                        <th>Access Level</th>
+                        <th>Bureau Code</th>
+                        <th>Program Code</th>
+                        <th>License</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <table>
     {% for entry in datasets %}
     <tr>
@@ -10,4 +41,8 @@
     </tr>
     {% endfor %}
 </table>
+{% endblock %}
+
+{% block js_content %}
+    <script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}
