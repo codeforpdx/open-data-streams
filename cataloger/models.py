@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser, UserManager
 
@@ -25,22 +24,13 @@ class ProfileManager(UserManager):
         return user
 
 # Notice that first name, last name, and email are not columns here. That is
-# because Django includes them as columns in the User object, which Profile is related to.
+# because Django includes them as columns in the AbstractUser object, which Profile extends.
 class Profile(AbstractUser):
     department = models.TextField()
     office = models.TextField()
     
     # Set the custom UserManager for this class (for custom create_user() function call handling)
     objects = ProfileManager()
-
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
 
 class Schema(models.Model):
     data = JSONField()

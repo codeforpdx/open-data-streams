@@ -33,7 +33,7 @@
                 {% nav_item "/dashboard/" "Dashboard" request.get_full_path %}
                 {% if user.is_authenticated %}
                 <li class="nav-item">User: {{ user.get_username }}</li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'logout'%}?next=/">Logout</a></li>
                 {% else %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'login'%}?next={{request.path}}">Login</a></li>
                 {% endif %}
