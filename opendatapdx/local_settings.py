@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cataloger'
+    'cataloger',
+    'crispy_forms',
+
 ]
 
 MIDDLEWARE = [
@@ -133,3 +135,4 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Use the app's Profile class as the AUTH_USER_MODEL default
 AUTH_USER_MODEL = 'cataloger.Profile'
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

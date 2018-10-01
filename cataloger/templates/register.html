@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
   <section>
@@ -24,8 +25,8 @@
 
           <form method="post" action="{% url 'register' %}">
           {% csrf_token %}
-          {{ form }}
-          <input type="submit" class="btn btn-default btn-lg" value="Register">
+          {{ form|crispy }}
+          <input type="submit" class="btn btn-success" value="Register">
         </div>
       </div>
     <div>
