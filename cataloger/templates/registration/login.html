@@ -27,12 +27,14 @@
 {% csrf_token %}
 
 
-<div class="center"
+<div class="center">
   <div>
     <div>
       <td>{{ form.username.label_tag }}</td>
+    </div>
     <div>
       <td>{{ form.username }}</td>
+    </div>
   </div>
   <div>
     <td>{{ form.password.label_tag }}</td>
@@ -45,7 +47,7 @@
   </div>
   </form>
   <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
-<div>
+</div>
 
 {# Assumes you setup the password_reset view in your URLconf #}
 
