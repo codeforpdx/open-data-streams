@@ -81,14 +81,20 @@ class Dataset(models.Model):
 class BureauCode(models.Model):
     code = models.TextField()
     description = models.TextField(null=True)
+    def __str__(self):
+        return self.code
 
 class Division(models.Model):
     bureau = models.ForeignKey(BureauCode, on_delete=models.CASCADE)
     division = models.TextField()
     description = models.TextField(null=True)
+    def __str__(self):
+        return self.division
 
 class Office(models.Model):
     bureau = models.ForeignKey(BureauCode, on_delete=models.CASCADE)
     division = models.ForeignKey(Division, on_delete=models.CASCADE)
     office = models.TextField()
     description = models.TextField(null=True)
+    def __str__(self):
+        return self.office
