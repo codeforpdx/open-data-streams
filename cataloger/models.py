@@ -1,27 +1,8 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-from django.contrib.auth.models import User
-from django.dispatch import receiver
-from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth.models import AbstractUser
 
-class ProfileManager(UserManager):
-    def create_user(self, username, email=None, password=None, department=None, office=None, **extra_fields):
-        """
-        Creates and saves a User with the given username, email, password, department, and office.
-        """
-        if not email:
-            raise ValueError('Users must have an email address')
-
-        user = self.model(
-            username = username,
-            email=self.normalize_email(email),
-            department = department,
-            office = office,
-        )
-
-        user.set_password(password)
-        user.save()
-        return user
+from .managers import ProfileManager
 
 # Notice that first name, last name, and email are not columns here. That is
 # because Django includes them as columns in the AbstractUser object, which Profile extends.
@@ -96,3 +77,18 @@ class Dataset(models.Model):
     systemOfRecords = models.TextField(null=True)
     theme = models.TextField(null=True)
 
+# City bureau codes, divisions, and offices
+class BureauCode(models.Model):
+    code = models.TextField()
+    description = models.TextField(null=True)
+
+class Division(models.Model):
+    bureau = models.ForeignKey(BureauCode, on_delete=models.CASCADE)
+    division = models.TextField()
+    description = models.TextField(null=True)
+
+class Office(models.Model):
+    bureau = models.ForeignKey(BureauCode, on_delete=models.CASCADE)
+    division = models.ForeignKey(Division, on_delete=models.CASCADE)
+    office = models.TextField()
+    description = models.TextField(null=True)

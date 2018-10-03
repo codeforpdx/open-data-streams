@@ -24,9 +24,9 @@
           {% endif %}
 
           <form method="post" action="{% url 'register' %}">
-          {% csrf_token %}
-          {{ form|crispy }}
-          <input type="submit" class="btn btn-success" value="Register">
+            {% csrf_token %}
+            {% crispy form %}
+          </form>
         </div>
       </div>
     <div>

@@ -6,6 +6,8 @@
 
 from django import forms
 from .models import Profile
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
 
 class RegistrationForm(forms.ModelForm):
     class Meta:
@@ -14,3 +16,23 @@ class RegistrationForm(forms.ModelForm):
             'password': forms.PasswordInput(),
         }
         fields = ['username', 'password', 'email', 'department', 'office']
+
+    def __init__(self, *args, **kwargs):
+        super(RegistrationForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Fieldset(
+                'Registration field set',
+                'username',
+                'password',
+                'email',
+                'department',
+                'office',
+                ),
+            ButtonHolder(
+                Submit('submit', 'Register', css_class='button white')
+            )
+        )
+
+class UploadCSVFileForm(forms.Form):
+    file = forms.FileField()

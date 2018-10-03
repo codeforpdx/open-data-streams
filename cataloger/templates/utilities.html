@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <section>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="p-5">
+          <h2 class="display-4">Import Bureau Codes</h2>
+              <p>Import bureau codes into the database</p>
+        </div>
+        <div class="p-5">
+          {% if form.errors %}
+            <p> {{ form.errors.file }}</p>
+          {% endif %}
+
+          {% if next %}
+            {% if user.is_authenticated %}
+              <p>Your account doesn't have access to this page. To proceed,
+              please login with an account that has access.</p>
+            {% else %}
+              <p>Please login to see this page.</p>
+            {% endif %}
+          {% endif %}
+          <form method="post" action="/utilities/" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input type="submit" name="import" class="btn btn-success" value="Import">
+          </form>
+        </div>
+      </div>
+      <div class="p-5">
+          <h2 class="display-4">Delete Bureau Codes</h2>
+              <p>Remove bureau codes from the database</p>
+        </div>
+        <div class="p-5">
+          {% if next %}
+            {% if user.is_authenticated %}
+              <p>Your account doesn't have access to this page. To proceed,
+              please login with an account that has access.</p>
+            {% else %}
+              <p>Please login to see this page.</p>
+            {% endif %}
+          {% endif %}
+          <form method="post" action="/utilities/">
+            {% csrf_token %}
+            <input type="submit" name="delete" class="btn btn-danger" value="Delete">
+          </form>
+        </div>
+      </div>
+    <div>
+  </section>
+{% endblock %}
+

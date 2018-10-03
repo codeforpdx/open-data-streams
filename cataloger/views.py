@@ -3,9 +3,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views import View
 from django.contrib.auth import authenticate, login
 import django.db, random, string
+from django.contrib.auth.decorators import user_passes_test
 
-from .models import Dataset, Distribution, Schema, Profile
-from .forms import RegistrationForm
+from .models import Dataset, Distribution, Schema, Profile, BureauCode
+from .forms import RegistrationForm, UploadCSVFileForm
+from .utilities import bureau_import
 
 def random_str(length):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
@@ -60,4 +62,28 @@ def register(request):
         # this is a GET request
         form = RegistrationForm()
     return render(request, 'register.html', {'form':form})
+
+@user_passes_test(lambda u: u.is_superuser)
+def utilities(request):
+    if request.method == "POST":
+        # this is a POST request
+        if 'import' in request.POST:
+            # Bureau import form submission
+            form = UploadCSVFileForm(request.POST, request.FILES)
+            if form.is_valid():
+                if len(BureauCode.objects.all()) == 0:
+                    bureau_import.bureau_import(request.FILES['file'])
+                else:
+                    form.add_error('file', 'Bureau codes already exist. You must remove them before importing new codes')
+            else:
+                # invalid form - this should pass back through to the page (with errors attached?)
+                pass
+        elif 'delete' in request.POST:
+            # Bureau import form submission
+            BureauCode.objects.all().delete()
+            return HttpResponseRedirect('/utilities/')
+    else:
+        # this is a GET request
+        form = UploadCSVFileForm()
+    return render(request, 'utilities.html', {'form': form})
     

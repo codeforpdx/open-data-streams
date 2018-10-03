@@ -127,8 +127,8 @@ STATIC_URL = '/static/'
 
 django_heroku.settings(locals())
 
-# Redirect to home URL after login (Default redirects to /accounts/profile/)
-LOGIN_REDIRECT_URL = '/'
+# Redirect to dashboard URL after login (Default redirects to /accounts/profile/)
+LOGIN_REDIRECT_URL = '/dashboard/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
