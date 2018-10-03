@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login
 import django.db, random, string
 from django.contrib.auth.decorators import user_passes_test
 
-from .models import Dataset, Distribution, Schema, Profile, BureauCode
+from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
 from .forms import RegistrationForm, UploadCSVFileForm
 from .utilities import bureau_import
 
@@ -46,7 +46,7 @@ def register(request):
         # this is a POST request
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], request.POST['office'])
+            profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], Office.objects.all().filter(description = request.POST['office']).first())
             profile.save()
             
             user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
