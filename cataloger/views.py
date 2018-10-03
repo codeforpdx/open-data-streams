@@ -46,7 +46,7 @@ def register(request):
         # this is a POST request
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], request.POST['department'], request.POST['office'])
+            profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], request.POST['office'])
             profile.save()
             
             user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
@@ -57,7 +57,10 @@ def register(request):
                 # maybe we should redirect to invalid login page?
                 # this shouldn't happen, however
                 raise django.db.InternalError('Could not authenticate user')
-
+        else:
+            # If the form isn't valid, it will pass the form errors
+            # through to the render function that returns below
+            pass
     else:
         # this is a GET request
         form = RegistrationForm()
