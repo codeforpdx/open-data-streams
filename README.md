@@ -100,3 +100,6 @@ Getting the first user's email:
 #### Resetting your database (nuke)
 Instructions here: http://docs.metasfresh.org/installation_collection/EN/How_do_I_reset_database_using_docker.html
 (basically, `docker stop opendatapdx_db_1`, `docker rm opendatapdx_db_1`)
+
+#### Migrating the database on Heroku
+`heroku run python manage.py migrate`
