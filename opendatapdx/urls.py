@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^register$', cataloger.views.register, name='register'),
     path('admin/', admin.site.urls),
     path('dashboard/', cataloger.views.dashboard),
+    path('utilities/', cataloger.views.utilities),
 ]
 
 #Add Django site authentication urls (for login, logout, password management)
