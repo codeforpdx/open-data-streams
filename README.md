@@ -37,7 +37,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 docker-compose build
 `
 
-8. Run the images using docker (launches the application locally, go to http://0.0.0.0:8000/ to access).
+8. Run the images using docker (launches the application locally, go to http://localhost:8000/ to access).
 Note: after building, you only need to run docker-compose up from now on to test the application.
 
 `
