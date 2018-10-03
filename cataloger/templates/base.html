@@ -32,6 +32,10 @@
             <ul class="navbar-nav">
                 {% nav_item "/" "Home" request.get_full_path %}
                 {% nav_item "/dashboard/" "Dashboard" request.get_full_path %}
+                {% if user.is_superuser %}
+                {% nav_item "/utilities/" "Utilities" request.get_full_path %}
+                {% nav_item "/admin/" "Admin" request.get_full_path %}
+                {% endif %}
                 {% if user.is_authenticated %}
                 <li class="nav-item">User: {{ user.get_username }}</li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'logout'%}?next=/">Logout</a></li>

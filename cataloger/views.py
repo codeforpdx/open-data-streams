@@ -46,7 +46,7 @@ def register(request):
         # this is a POST request
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], Office.objects.all().filter(description = request.POST['office']).first())
+            profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], Office.objects.filter(description = request.POST['office']).first())
             profile.save()
             
             user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
