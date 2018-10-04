@@ -6,4 +6,5 @@ WORKDIR /code
 ADD . /code/
 RUN pipenv install
 RUN pipenv install django
+RUN pipenv install pylint
 
