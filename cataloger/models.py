@@ -10,7 +10,7 @@ class BureauCode(models.Model):
     description = models.TextField(null=True)
     
     def __str__(self):
-        return self.code
+        return self.description
 
 class Division(models.Model):
     bureau = models.ForeignKey(BureauCode, on_delete=models.CASCADE)
@@ -18,7 +18,7 @@ class Division(models.Model):
     description = models.TextField(null=True)
     
     def __str__(self):
-        return self.division
+        return self.description
 
 class Office(models.Model):
     bureau = models.ForeignKey(BureauCode, on_delete=models.CASCADE)

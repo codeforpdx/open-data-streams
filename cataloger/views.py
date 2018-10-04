@@ -46,7 +46,10 @@ def register(request):
         # this is a POST request
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], Office.objects.filter(description = request.POST['office']).first())
+            import logging
+            logging.error("POST data:" + str(request.POST))
+
+            profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], BureauCode.objects.filter(id = request.POST['bureau']).first(), Division.objects.filter(id = request.POST['division']).first(), Office.objects.filter(id = request.POST['office']).first())
             profile.save()
             
             user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
@@ -92,5 +95,10 @@ def utilities(request):
     
 def load_divisions(request):
     bureau_id = request.GET.get('bureau')
-    divisions = Divisions.objects.filter(bureau=bureau_id).order_by('description')
+    divisions = Division.objects.filter(bureau=bureau_id).order_by('description')
     return render(request, 'divisions_dropdown_list_options.html', {'divisions': divisions})
+
+def load_offices(request):
+    division_id = request.GET.get('division')
+    offices = Office.objects.filter(division=division_id).order_by('description')
+    return render(request, 'offices_dropdown_list_options.html', {'offices': offices})
