@@ -1,5 +1,5 @@
-{% load staticfiles %}
-{% load my_templatetags %}
+﻿{% load staticfiles %}
+{% load templatetags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -31,11 +31,12 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ">
-                {% nav_item "/" "Home" request.get_full_path %}
-                {% nav_item "/dashboard/" "Dashboard" request.get_full_path %}
+                {% nav_item request "/" "Home" %}
+                {% nav_item request "/dashboard/" "Dashboard" %}
+
                 {% if user.is_superuser %}
-                {% nav_item "/utilities/" "Utilities" request.get_full_path %}
-                {% nav_item "/admin/" "Admin" request.get_full_path %}
+                {% nav_item request "/utilities/" "Utilities" %}
+                {% nav_item request "/admin/" "Admin" %}
                 {% endif %}
             </ul>
 
@@ -51,8 +52,8 @@
 
                 {% else %}
             <ul class="navbar-nav ml-auto">
-                <!--<li class="nav-item"><a class="nav-link" href="{% url 'login'%}?next={{request.path}}">Login</a> </li>-->
-                <li class="nav-item"><a class="nav-link" href="{% url 'login'%}?next=/dashboard">Login</a> </li>
+                {% url 'login' as loginPath %}
+                {% nav_item request loginPath|add:"?next=/dashboard/" "Login" %}
             </ul>
                 {% endif %}
         </div>
