@@ -49,11 +49,8 @@
           
           <script>
             $("#id_division").change(function () {
-                console.log( $(this).val() );
               var url = $("#registrationForm").attr("data-offices-url");  // get the url of the `load_offices` view
-                console.log( url );
               var divisionId = $(this).val();  // get the selected division ID from the HTML input
-                console.log( divisionId );
 
               $.ajax({                       // initialize an AJAX request
                 url: url,                    // set the url of the request (= localhost:8000/ajax/load-offices/)
