@@ -22,7 +22,6 @@
             <p>Your username and password didn't match. Please try again.</p>
           {% endif %}
 
-<<<<<<< HEAD
           {% if next %}
             {% if user.is_authenticated %}
               <p>Your account doesn't have access to this page. To proceed,
@@ -31,45 +30,6 @@
               <p>Please login to see this page.</p>
             {% endif %}
           {% endif %}
-=======
-{% if next %}
-  {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-  {% else %}
-    <p>Please login to see this page.</p>
-  {% endif %}
-{% endif %}
-
-
-<form method="post" action="{% url 'login' %}">
-{% csrf_token %}
-
-
-<div class="center">
-  <div>
-    <div>
-      <td>{{ form.username.label_tag }}</td>
-    </div>
-    <div>
-      <td>{{ form.username }}</td>
-    </div>
-  </div>
-  <div>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-  </div>
-
-  <div>
-    <input type="submit" class="btn btn-primary btn-l" value="login" />
-    <input type="hidden" name="next" value="{{ next }}" />
-  </div>
-  </form>
-  <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
-</div>
-
-{# Assumes you setup the password_reset view in your URLconf #}
->>>>>>> 3294a70058f41c50a6f32d9f1bbebe066c11db3f
 
           <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
