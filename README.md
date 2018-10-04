@@ -100,3 +100,10 @@ Getting the first user's email:
 #### Resetting your database (nuke)
 Instructions here: http://docs.metasfresh.org/installation_collection/EN/How_do_I_reset_database_using_docker.html
 (basically, `docker stop opendatapdx_db_1`, `docker rm opendatapdx_db_1`)
+
+#### Migrating the database on Heroku
+`heroku run python manage.py migrate`
+
+#### Importing BureaCode, Division, and Office data from CSV
+
+To get the bureau codes into the DB, it's necessary to import them from CSV. The page at http://localhost:8000/utilities/ has an *Import Bureau Codes* form that will allow for upload of that data/file … To get to that page, you need to login as a “superuser” (which you need to create using the command `docker-compose run web pipenv run python3 manage.py createsuperuser --settings=opendatapdx.local_settings`)… The file you need to import is: a CSV-formatted export of the *Open Data Cataloging Information* spreadsheet’s *city costs object source* sheet in the shared Capstone Team B folder on Google Drive.
