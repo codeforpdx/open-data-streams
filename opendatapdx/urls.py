@@ -16,6 +16,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('dashboard/', cataloger.views.dashboard),
     path('utilities/', cataloger.views.utilities),
+    path('ajax/load-divisions/', cataloger.views.load_divisions, name='ajax_load_divisions'),  # <-- this one here
 ]
 
 #Add Django site authentication urls (for login, logout, password management)

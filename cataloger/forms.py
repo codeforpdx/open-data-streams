@@ -8,7 +8,7 @@ from django import forms
 from .models import Profile
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
-from .models import Office
+from .models import BureauCode, Division, Office
 
 class RegistrationForm(forms.ModelForm):
     class Meta:
@@ -16,10 +16,12 @@ class RegistrationForm(forms.ModelForm):
         widgets = {
             'password': forms.PasswordInput(),
         }
-        fields = ['username', 'password', 'email', 'office']
+        fields = ['username', 'password', 'email', 'bureau', 'division', 'office']
 
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
+        self.fields['division'].queryset = Division.objects.none()
+        self.fields['office'].queryset = Office.objects.none()
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Fieldset(
@@ -27,6 +29,8 @@ class RegistrationForm(forms.ModelForm):
                 'username',
                 'password',
                 'email',
+                'bureau',
+                'division',
                 'office',
                 ),
             ButtonHolder(

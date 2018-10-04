@@ -90,3 +90,7 @@ def utilities(request):
         form = UploadCSVFileForm()
     return render(request, 'utilities.html', {'form': form})
     
+def load_divisions(request):
+    bureau_id = request.GET.get('bureau')
+    divisions = Divisions.objects.filter(bureau=bureau_id).order_by('description')
+    return render(request, 'divisions_dropdown_list_options.html', {'divisions': divisions})

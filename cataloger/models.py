@@ -32,7 +32,9 @@ class Office(models.Model):
 # Notice that first name, last name, and email are not columns here. That is
 # because Django includes them as columns in the AbstractUser object, which Profile extends.
 class Profile(AbstractUser):
-    office = models.OneToOneField(Office, on_delete=models.CASCADE, null=True)
+    bureau = models.OneToOneField(BureauCode, on_delete=models.SET_NULL, null=True)
+    division = models.OneToOneField(Division, on_delete=models.SET_NULL, null=True)
+    office = models.OneToOneField(Office, on_delete=models.SET_NULL, null=True)
     # Set the custom UserManager for this class (for custom create_user() function call handling)
     objects = ProfileManager()
 
