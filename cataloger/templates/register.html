@@ -24,15 +24,9 @@
           {% endif %}
 
           <form method="post" action="{% url 'register' %}">
-<<<<<<< HEAD
             {% csrf_token %}
             {% crispy form %}
           </form>
-=======
-          {% csrf_token %}
-          {{ form }}
-          <input type="submit" class="btn btn-primary btn-l mt-5" value="Register">
->>>>>>> 3294a70058f41c50a6f32d9f1bbebe066c11db3f
         </div>
       </div>
     <div>
