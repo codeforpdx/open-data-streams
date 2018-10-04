@@ -1,114 +1,46 @@
-<style>
-.center {
-    margin: auto;
-    width: 50%;
-    padding: 10px;
-}
-</style>
-
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-{% if form.errors %}
-  <p>Your username and password didn't match. Please try again.</p>
-{% endif %}
+  <section>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-sm">
+          <h2 class="display-4">Welcome to OpenDataPDX!</h2>
+          <p>Please log in or create an account to get started!</p>
+        </div>
+        <div class="col-sm">
+          {% if form.errors %}
+            <p>Your username and password didn't match. Please try again.</p>
+          {% endif %}
 
-{% if next %}
-  {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-  {% else %}
-    <p>Please login to see this page.</p>
-  {% endif %}
-{% endif %}
+          {% if next %}
+            {% if user.is_authenticated %}
+              <p>Your account doesn't have access to this page. To proceed,
+              please login with an account that has access.</p>
+            {% else %}
+              <p>Please login to see this page.</p>
+            {% endif %}
+          {% endif %}
 
-
-<form method="post" action="{% url 'login' %}">
-{% csrf_token %}
-
-
-<div class="center">
-  <div>
+          <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            {% crispy form %}
+              <div class="container">
+                <div class="row">
+                  <div class="col-sm">
+                    <input type="submit" class="btn btn-primary btn-l" value="login" />
+                    <input type="hidden" name="next" value="{{ next }}" />
+                  </div>
+                  <div class="col-sm">
+                    <p><a href="{% url 'register' %}">Register an account</a></p>
+                    <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
+                  </div>
+                </div>
+              </div>
+          </form>
+        </div>
+      </div>
     <div>
-      <td>{{ form.username.label_tag }}</td>
-    </div>
-    <div>
-      <td>{{ form.username }}</td>
-    </div>
-  </div>
-  <div>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-  </div>
-  <div>
-    <div>
-      <td>{{ form.username.label_tag }}</td>
-    </div>
-    <div>
-      <td>{{ form.username }}</td>
-    </div>
-  </div>
-  <div>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-  </div>
-    <div>
-    <div>
-      <td>{{ form.username.label_tag }}</td>
-    </div>
-    <div>
-      <td>{{ form.username }}</td>
-    </div>
-  </div>
-  <div>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-  </div>
-  <div>
-    <div>
-      <td>{{ form.username.label_tag }}</td>
-    </div>
-    <div>
-      <td>{{ form.username }}</td>
-    </div>
-  </div>
-  <div>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-  </div>
-  <div>
-    <div>
-      <td>{{ form.username.label_tag }}</td>
-    </div>
-    <div>
-      <td>{{ form.username }}</td>
-    </div>
-  </div>
-  <div>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-  </div>
-    <div>
-    <div>
-      <td>{{ form.username.label_tag }}</td>
-    </div>
-    <div>
-      <td>{{ form.username }}</td>
-    </div>
-  </div>
-  <div>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-  </div>
-
-  <div>
-    <input type="submit" class="btn btn-primary btn-l" value="login" />
-    <input type="hidden" name="next" value="{{ next }}" />
-  </div>
-  </form>
-  <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
-</div>
-
-{# Assumes you setup the password_reset view in your URLconf #}
-
+  </section>
 {% endblock %}
