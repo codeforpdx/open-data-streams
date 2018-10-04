@@ -23,10 +23,46 @@
             {% endif %}
           {% endif %}
 
-          <form method="post" action="{% url 'register' %}">
+          <form method="post" id="registrationForm" action="{% url 'register' %}" data-divisions-url="{% url 'ajax_load_divisions' %}" data-offices-url="{% url 'ajax_load_offices' %}" novalidate>
             {% csrf_token %}
             {% crispy form %}
           </form>
+          
+          <script   src="https://code.jquery.com/jquery-3.3.1.min.js"   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="   crossorigin="anonymous"></script>
+          
+          <script>
+            $("#id_bureau").change(function () {
+              var url = $("#registrationForm").attr("data-divisions-url");  // get the url of the `load_divisions` view
+              var bureauId = $(this).val();  // get the selected bureau ID from the HTML input
+
+              $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= localhost:8000/ajax/load-divisions/)
+                data: {
+                  'bureau': bureauId       // add the bureau id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_divisions` view function
+                  $("#id_division").html(data);  // replace the contents of the division input with the data that came from the server
+                }
+              });
+            });
+          </script>
+          
+          <script>
+            $("#id_division").change(function () {
+              var url = $("#registrationForm").attr("data-offices-url");  // get the url of the `load_offices` view
+              var divisionId = $(this).val();  // get the selected division ID from the HTML input
+
+              $.ajax({                       // initialize an AJAX request
+                url: url,                    // set the url of the request (= localhost:8000/ajax/load-offices/)
+                data: {
+                  'division': divisionId       // add the division id to the GET parameters
+                },
+                success: function (data) {   // `data` is the return of the `load_offices` view function
+                  $("#id_office").html(data);  // replace the contents of the office input with the data that came from the server
+                }
+              });
+            });
+          </script>
         </div>
       </div>
     <div>

@@ -4,51 +4,49 @@
 {% block content %}
   <section>
     <div class="container">
+      {% if next %}
+        {% if user.is_authenticated %}
+          <p>Your account doesn't have access to this page. To proceed,
+          please login with an account that has access.</p>
+        {% else %}
+          <p>Please login to see this page.</p>
+        {% endif %}
+      {% endif %}
       <div class="row align-items-center">
         <div class="p-5">
           <h2 class="display-4">Import Bureau Codes</h2>
-              <p>Import bureau codes into the database</p>
-        </div>
-        <div class="p-5">
-          {% if form.errors %}
-            <p> {{ form.errors.file }}</p>
-          {% endif %}
-
-          {% if next %}
-            {% if user.is_authenticated %}
-              <p>Your account doesn't have access to this page. To proceed,
-              please login with an account that has access.</p>
-            {% else %}
-              <p>Please login to see this page.</p>
-            {% endif %}
+          <p>Import bureau codes into the database</p>
+          {% if bureaucodes_form.errors %}
+          <p> {{ bureaucodes_form.errors.file }}</p>
           {% endif %}
           <form method="post" action="/utilities/" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form|crispy }}
-            <input type="submit" name="import" class="btn btn-success" value="Import">
+            {{ bureaucodes_form|crispy }}
+            <input type="submit" name="import-bureaus" class="btn btn-success" value="Import">
           </form>
-        </div>
-      </div>
-      <div class="p-5">
-          <h2 class="display-4">Delete Bureau Codes</h2>
-              <p>Remove bureau codes from the database</p>
         </div>
         <div class="p-5">
-          {% if next %}
-            {% if user.is_authenticated %}
-              <p>Your account doesn't have access to this page. To proceed,
-              please login with an account that has access.</p>
-            {% else %}
-              <p>Please login to see this page.</p>
-            {% endif %}
-          {% endif %}
+          <h2 class="display-4">Delete Bureau Codes</h2>
+              <p>Remove bureau codes from the database</p>
           <form method="post" action="/utilities/">
             {% csrf_token %}
-            <input type="submit" name="delete" class="btn btn-danger" value="Delete">
+            <input type="submit" name="delete-bureaus" class="btn btn-danger" value="Delete">
+          </form>
+        </div>
+        <div class="p-5">
+          <h2 class="display-4">Import Datasets</h2>
+          <p>Import datasets into the database</p>
+          {% if datasets_form.errors %}
+          <p> {{ datasets_form.errors.file }}</p>
+          {% endif %}
+          <form method="post" action="/utilities/" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ datasets_form|crispy }}
+            <input type="submit" name="import-datasets" class="btn btn-success" value="Import">
           </form>
         </div>
       </div>
-    <div>
+    </div>
   </section>
 {% endblock %}
 
