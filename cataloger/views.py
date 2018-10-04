@@ -6,8 +6,8 @@ import django.db, random, string
 from django.contrib.auth.decorators import user_passes_test
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
-from .forms import RegistrationForm, UploadCSVFileForm
-from .utilities import bureau_import
+from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm
+from .utilities import bureau_import, dataset_import
 
 def random_str(length):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
@@ -73,25 +73,36 @@ def register(request):
 def utilities(request):
     if request.method == "POST":
         # this is a POST request
-        if 'import' in request.POST:
+        if 'import-bureaus' in request.POST:
             # Bureau import form submission
-            form = UploadCSVFileForm(request.POST, request.FILES)
-            if form.is_valid():
+            bureaucodes_form = UploadBureauCodesCSVFileForm(request.POST, request.FILES)
+            datasets_form = UploadDatasetsCSVFileForm()
+            if bureaucodes_form.is_valid():
                 if len(BureauCode.objects.all()) == 0:
                     bureau_import.bureau_import(request.FILES['file'])
                 else:
-                    form.add_error('file', 'Bureau codes already exist. You must remove them before importing new codes')
+                    bureaucodes_form.add_error('file', 'Bureau codes already exist. You must remove them before importing new codes')
             else:
                 # invalid form - this should pass back through to the page (with errors attached?)
                 pass
-        elif 'delete' in request.POST:
-            # Bureau import form submission
+        elif 'delete-bureaus' in request.POST:
+            # Bureau delete form submission
             BureauCode.objects.all().delete()
             return HttpResponseRedirect('/utilities/')
+        elif 'import-datasets' in request.POST:
+            # Dataset import form submission
+            datasets_form = UploadDatasetsCSVFileForm(request.POST, request.FILES)
+            bureaucodes_form = UploadBureauCodesCSVFileForm()
+            if datasets_form.is_valid():
+                    dataset_import.dataset_import(request.FILES['file'])
+            else:
+                # invalid form - this should pass back through to the page (with errors attached?)
+                pass
     else:
         # this is a GET request
-        form = UploadCSVFileForm()
-    return render(request, 'utilities.html', {'form': form})
+        bureaucodes_form = UploadBureauCodesCSVFileForm()
+        datasets_form = UploadDatasetsCSVFileForm()
+    return render(request, 'utilities.html', {'bureaucodes_form': bureaucodes_form, 'datasets_form': datasets_form})
     
 def load_divisions(request):
     bureau_id = request.GET.get('bureau')

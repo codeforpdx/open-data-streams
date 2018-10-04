@@ -53,5 +53,8 @@ class RegistrationForm(forms.ModelForm):
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty Office queryset
 
-class UploadCSVFileForm(forms.Form):
+class UploadBureauCodesCSVFileForm(forms.Form):
+    file = forms.FileField()
+
+class UploadDatasetsCSVFileForm(forms.Form):
     file = forms.FileField()

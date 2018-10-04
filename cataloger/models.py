@@ -57,7 +57,7 @@ class Distribution(models.Model):
 class Dataset(models.Model):
     # ---------- FOREIGN KEYS ----------
     # Relates a dataset to the user that published it.
-    publisher = models.OneToOneField(Profile, on_delete=models.CASCADE)
+    publisher = models.ForeignKey(Profile, on_delete=models.PROTECT)
     # Relates a dataset to its distribution.
     distribution = models.OneToOneField(Distribution, on_delete=models.CASCADE)
     # Relates a dataset to its schema.
