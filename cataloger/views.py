@@ -123,7 +123,7 @@ def new_dataset(request):
 
         #Checks if the form is valid.
         if form.is_valid():
-            #Checks if the form inputted contain a local file or a URL.
+            #Checks if the form inputted contain a local file or a URL. This will be decided by the value of a radio button.
             if(request.POST['contains_file']):
                 #if a file was submitted it grabs the file and stores a reference.
                 file = request.FILES['local_file']
@@ -145,6 +145,7 @@ def new_dataset(request):
                             created_schema = schema_generator(file)
                         else:
                             #otherwise, it failed to download the file.
+                            form.add_error(url, 'The provided HTTPS file failed to be downloaded.')
                             pass
                     else:
                         #otherwise, it checks if the string starts with sftp.
@@ -158,12 +159,15 @@ def new_dataset(request):
                                 created_schema = schema_generator(file)
                             else:
                                 #otherwise, it failed to download the file.
+                                form.add_error(url, 'The provided SFTP file failed to be downloaded.')
                                 pass
                         else:
                             #otherwise, the url isn't a supported type.
+                            form.add_error(url, 'The provided URL is neither a HTTPS or SFTP.')
                             pass
                 else:
                     #the URL doesn't end with a supported file type.
+                    form.add_error(url, 'The provided URL directs to an unsupported file type.')
                     pass
         else:
             #if the form isn't valid, it passed back the form.
