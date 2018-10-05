@@ -26,6 +26,7 @@
           <form method="post" id="registrationForm" action="{% url 'register' %}" data-divisions-url="{% url 'ajax_load_divisions' %}" data-offices-url="{% url 'ajax_load_offices' %}" novalidate>
             {% csrf_token %}
             {% crispy form %}
+            <br><p>Already have an account?<a href="{% url 'register' %}"> Login.</a></p><br>
           </form>
           
           <script   src="https://code.jquery.com/jquery-3.3.1.min.js"   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="   crossorigin="anonymous"></script>
