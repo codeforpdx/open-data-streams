@@ -5,9 +5,11 @@ from django.contrib.auth import authenticate, login
 import django.db, random, string
 from django.contrib.auth.decorators import user_passes_test
 
+from tempfile import TemporaryFile
+
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
-from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm
-from .utilities import bureau_import, dataset_import
+from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetForm
+from .utilities import bureau_import, dataset_import, file_downloader, schema_generator
 
 def random_str(length):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
@@ -113,3 +115,60 @@ def load_offices(request):
     division_id = request.GET.get('division')
     offices = Office.objects.filter(division=division_id).order_by('description')
     return render(request, 'offices_dropdown_list_options.html', {'offices': offices})
+
+def new_dataset(request):
+    if request.method == "POST":
+        #creates the form from the request.
+        form = NewDatasetForm(request.POST)
+
+        #Checks if the form is valid.
+        if form.is_valid():
+            #Checks if the form inputted contain a local file or a URL.
+            if(request.POST['contains_file']):
+                #if a file was submitted it grabs the file and stores a reference.
+                file = request.FILES['local_file']
+                #checks the file type matches
+                #if it does, it generates the schema.
+                created_schema = schema_generator(file)
+            else:
+                #if it's a url, it grabs the url.
+                url = request.POST['url']
+                #it checks if the url ends with the file type that is supported.
+                if(url.endswith('.csv') or url.endswith('.xlsx') or url.endswith('.json')):
+                    #the url ends with a supported file type.
+                    #checks if the string starts with a https.
+                    if(url.startswith('https://')):
+                        #if it does, it tries to download the file using the https url.
+                        temp_file = file_downloader(url)
+                        #if is succeeds, it will generate the schema.
+                        if(temp_file is not None):
+                            created_schema = schema_generator(file)
+                        else:
+                            #otherwise, it failed to download the file.
+                            pass
+                    else:
+                        #otherwise, it checks if the string starts with sftp.
+                        if(url.startswith('sftp')):
+                            #if it does, it grabs the username and password from the form tries to download the file.
+                            username = request.POST['sftp_username']
+                            password = request.POST['sftp_password']
+                            temp_file = file_downloader(url,username,password)
+                            #if is succeeds, it will generate the schema.
+                            if(temp_file is not None):
+                                created_schema = schema_generator(file)
+                            else:
+                                #otherwise, it failed to download the file.
+                                pass
+                        else:
+                            #otherwise, the url isn't a supported type.
+                            pass
+                else:
+                    #the URL doesn't end with a supported file type.
+                    pass
+        else:
+            #if the form isn't valid, it passed back the form.
+            pass
+    else:
+        form = NewDatasetForm()
+
+    return render(request, 'new_dataset.html', {'form':form})

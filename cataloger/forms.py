@@ -58,3 +58,6 @@ class UploadBureauCodesCSVFileForm(forms.Form):
 
 class UploadDatasetsCSVFileForm(forms.Form):
     file = forms.FileField()
+
+class NewDatasetForm(forms.Form):
+    file = forms.FileField()
