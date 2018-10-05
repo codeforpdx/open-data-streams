@@ -134,22 +134,23 @@ def new_dataset(request):
                 #if it's a url, it grabs the url.
                 url = request.POST['url']
                 #it checks if the url ends with the file type that is supported.
-                if(url.endswith('.csv') or url.endswith('.xlsx') or url.endswith('.json')):
-                    #the url ends with a supported file type.
-                    #checks if the string starts with a https.
-                    if(url.startswith('http')):
+                if(url.lower.endswith(('.csv','.xlsx','.json'))):
+                    #checks if the string starts with http.
+                    if(url.lower.startswith('http')):
                         #if it does, it tries to download the file using the https url.
                         temp_file = file_downloader(url)
                         #if is succeeds, it will generate the schema.
                         if(temp_file is not None):
                             created_schema = schema_generator(file)
+                            #deallocates the temporary file by closing it.
+                            temp_file.close()
                         else:
                             #otherwise, it failed to download the file.
                             form.add_error(url, 'The provided HTTP/HTTPS file failed to be downloaded.')
                             pass
                     else:
                         #otherwise, it checks if the string starts with sftp.
-                        if(url.startswith('sftp')):
+                        if(url.lower.startswith(('sftp','ftp'))):
                             #if it does, it grabs the username and password from the form tries to download the file.
                             username = request.POST['sftp_username']
                             password = request.POST['sftp_password']
@@ -157,6 +158,8 @@ def new_dataset(request):
                             #if is succeeds, it will generate the schema.
                             if(temp_file is not None):
                                 created_schema = schema_generator(file)
+                                #deallocates the temporary file by closing it.
+                                temp_file.close()
                             else:
                                 #otherwise, it failed to download the file.
                                 form.add_error(url, 'The provided SFTP file failed to be downloaded.')
