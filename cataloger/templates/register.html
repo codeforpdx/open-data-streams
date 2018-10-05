@@ -27,6 +27,7 @@
             {% csrf_token %}
             {% crispy form %}
           </form>
+          <p>Already have an account?<a href="{% url 'register' %}"> Login.</a></p>
         </div>
       </div>
     <div>
