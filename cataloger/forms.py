@@ -45,6 +45,8 @@ class RegistrationForm(forms.ModelForm):
                 self.fields['division'].queryset = Division.objects.filter(bureau_id=bureau_id).order_by('description')
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty Division queryset
+        elif self.instance.pk:
+            self.fields['division'].queryset = self.instance.bureau.division_set.order_by('description')
 
         if 'division' in self.data:
             try:
@@ -52,6 +54,8 @@ class RegistrationForm(forms.ModelForm):
                 self.fields['office'].queryset = Office.objects.filter(division_id=division_id).order_by('description')
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty Office queryset
+        elif self.instance.pk:
+            self.fields['office'].queryset = self.instance.division.office_set.order_by('description')
 
 class UploadBureauCodesCSVFileForm(forms.Form):
     file = forms.FileField()

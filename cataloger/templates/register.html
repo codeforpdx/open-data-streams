@@ -42,6 +42,7 @@
                 },
                 success: function (data) {   // `data` is the return of the `load_divisions` view function
                   $("#id_division").html(data);  // replace the contents of the division input with the data that came from the server
+                  $("#id_office").html('<option value="">---------</option>');  // replace the contents of the office input with an empty list
                 }
               });
             });
