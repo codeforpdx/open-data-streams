@@ -127,8 +127,7 @@ def new_dataset(request):
             if(request.POST['contains_file']):
                 #if a file was submitted it grabs the file and stores a reference.
                 file = request.FILES['local_file']
-                #checks the file type matches
-                #if it does, it generates the schema.
+                #the file type can be checked in the form so it should be a .csv, .xlsx, .json.
                 created_schema = schema_generator(file)
             else:
                 #if it's a url, it grabs the url.
@@ -136,7 +135,7 @@ def new_dataset(request):
                 #it checks if the url ends with the file type that is supported.
                 if(url.lower.endswith(('.csv','.xlsx','.json'))):
                     #checks if the string starts with http.
-                    if(url.lower.startswith('http')):
+                    if(url.lower.startswith('https')):
                         #if it does, it tries to download the file using the https url.
                         temp_file = file_downloader(url)
                         #if is succeeds, it will generate the schema.
@@ -146,11 +145,11 @@ def new_dataset(request):
                             temp_file.close()
                         else:
                             #otherwise, it failed to download the file.
-                            form.add_error(url, 'The provided HTTP/HTTPS file failed to be downloaded.')
+                            form.add_error(url, 'The provided https file failed to be downloaded.')
                             pass
                     else:
                         #otherwise, it checks if the string starts with sftp.
-                        if(url.lower.startswith(('sftp','ftp'))):
+                        if(url.lower.startswith('sftp')):
                             #if it does, it grabs the username and password from the form tries to download the file.
                             username = request.POST['sftp_username']
                             password = request.POST['sftp_password']
@@ -162,11 +161,11 @@ def new_dataset(request):
                                 temp_file.close()
                             else:
                                 #otherwise, it failed to download the file.
-                                form.add_error(url, 'The provided SFTP file failed to be downloaded.')
+                                form.add_error(url, 'The provided sftp file failed to be downloaded.')
                                 pass
                         else:
                             #otherwise, the url isn't a supported type.
-                            form.add_error(url, 'The provided URL is neither a HTTP/HTTPS or SFTP.')
+                            form.add_error(url, 'The provided URL is neither a http nor sftp.')
                             pass
                 else:
                     #the URL doesn't end with a supported file type.

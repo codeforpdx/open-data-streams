@@ -19,6 +19,11 @@ def file_downloader(url):
         return None
 
 #Assumes sftp since there is three inputs into the method.
-#Currently in the implementation process.
+#The format of the URL for sftp is sftp://[host]//[path to file]
 def file_downloader(url,username,password):
-    return None
+    try:
+        splintered_url = url.split("//") 
+        
+    except:
+        #if there is an error in the above process, it doesn't retuan anything to signify the failure.
+        return None
