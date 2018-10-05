@@ -137,7 +137,7 @@ def new_dataset(request):
                 if(url.endswith('.csv') or url.endswith('.xlsx') or url.endswith('.json')):
                     #the url ends with a supported file type.
                     #checks if the string starts with a https.
-                    if(url.startswith('https://')):
+                    if(url.startswith('http')):
                         #if it does, it tries to download the file using the https url.
                         temp_file = file_downloader(url)
                         #if is succeeds, it will generate the schema.
@@ -145,7 +145,7 @@ def new_dataset(request):
                             created_schema = schema_generator(file)
                         else:
                             #otherwise, it failed to download the file.
-                            form.add_error(url, 'The provided HTTPS file failed to be downloaded.')
+                            form.add_error(url, 'The provided HTTP/HTTPS file failed to be downloaded.')
                             pass
                     else:
                         #otherwise, it checks if the string starts with sftp.
@@ -163,7 +163,7 @@ def new_dataset(request):
                                 pass
                         else:
                             #otherwise, the url isn't a supported type.
-                            form.add_error(url, 'The provided URL is neither a HTTPS or SFTP.')
+                            form.add_error(url, 'The provided URL is neither a HTTP/HTTPS or SFTP.')
                             pass
                 else:
                     #the URL doesn't end with a supported file type.
