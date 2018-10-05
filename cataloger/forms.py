@@ -62,8 +62,6 @@ class UploadBureauCodesCSVFileForm(forms.Form):
 
 class UploadDatasetsCSVFileForm(forms.Form):
     file = forms.FileField()
-    
+
 class NewDatasetForm(forms.Form):
-    file = forms.FileField()
-   
-    
+    result = forms.CharField(label='test', max_length=100)

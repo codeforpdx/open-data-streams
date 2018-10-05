@@ -1,42 +1,12 @@
 {% extends "base.html" %}
 
-<!--
-The code used in this form is only temporary till a better new dataset form is created.
-    The code for the radio button and switching the visibility came from https://codepen.io/Zillionx/pen/xwOxoW.
-    Uploading URL came from https://getbootstrap.com/docs/4.0/components/input-group/.
-    Uploading file came from https://getbootstrap.com/docs/4.0/components/forms/.
--->
 {% block content %}
-File <input type="radio" onclick="javascript:fileURLCheck();" name="fileURL" id="fileCheck"> URL <input type="radio" onclick="javascript:fileURLCheck();" name="fileURL" id="URLCheck"><br>
-<div id="ifFile" style="visibility:hidden">
-    <label for="basic-url">Select your file</label>
-    <div class="form-group">
-        <label for="exampleFormControlFile1">Example file input</label>
-        <input type="file" class="form-control-file" id="exampleFormControlFile1">
-    </div>
-</div>
-<div id="ifURL" style="visibility:hidden">
-    <label for="basic-url">Type the URL to your file</label>
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
-        <label for="basic-url">Input your username</label>
-        <input type="text" class="form-control" id="login" aria-describedby="basic-addon3">
-        <label for="basic-url">Input your password</label>
-        <input type="text" class="form-control" id="password" aria-describedby="basic-addon3">
-    </div>
-</div>
-<input type="submit" class="btn btn-success" value="Submit">
-{% endblock %}
 
-<script>
-    function fileURLCheck() {
-        if (document.getElementById('fileCheck').checked) {
-            document.getElementById('ifFile').style.visibility = 'visible';
-            document.getElementById('ifURL').style.visibility = 'hidden';
-        }
-        else {
-            document.getElementById('ifFile').style.visibility = 'hidden';
-            document.getElementById('ifURL').style.visibility = 'visible';
-        }
-    }
-</script>
+<div class="container" style="max-width 80%; margin-top: 30px; margin-bottom: 30px">
+  <form action="{% url 'register' %}" method="post">
+    {% form %}
+    <input type="submit" value="Submit">
+  </form>
+</div>
+
+{% endblock %}
