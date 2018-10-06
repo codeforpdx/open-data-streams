@@ -107,3 +107,6 @@ Instructions here: http://docs.metasfresh.org/installation_collection/EN/How_do_
 #### Importing BureaCode, Division, and Office data from CSV
 
 To get the bureau codes into the DB, it's necessary to import them from CSV. The page at http://localhost:8000/utilities/ has an *Import Bureau Codes* form that will allow for upload of that data/file … To get to that page, you need to login as a “superuser” (which you need to create using the command `docker-compose run web pipenv run python3 manage.py createsuperuser --settings=opendatapdx.local_settings`)… The file you need to import is: a CSV-formatted export of the *Open Data Cataloging Information* spreadsheet’s *city costs object source* sheet in the shared Capstone Team B folder on Google Drive.
+
+## Installing new packages
+Run: pipenv install <package_name>
