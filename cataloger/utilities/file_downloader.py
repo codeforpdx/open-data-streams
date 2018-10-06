@@ -1,3 +1,7 @@
+#Referencing https://erlerobotics.gitbooks.io/erle-robotics-python-gitbook-free/telnet_and_ssh/sftp_file_transfer_over_ssh.html
+
+import functools
+import paramiko
 from tempfile import TemporaryFile
 import requests
 
@@ -18,12 +22,33 @@ def file_downloader(url):
         #if there is any errors in the above process, it doesn't return anything to signify the failure.
         return None
 
+class AllowAnythingPolicy(paramiko.MissingHostKeyPolicy):
+    def missing_host_key(self, client, hostname, key):
+        return
+
 #Assumes sftp since there is three inputs into the method.
 #The format of the URL for sftp is sftp://[host]//[path to file]
 def file_downloader(url,username,password):
     try:
+        #Attempts to split the URL into 3 parts, the "sftp:" part, the name of the host, and the path to the file.
         splintered_url = url.split("//") 
+
+        #Attempts to open a connection to the sftp server.
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(AllowAnythingPolicy())
+        client.connect(splintered_url[1], username=user,password = pssword)
+
+        #Creates a temporary file and attempts to open the file using the given file path. It then copies it into the temporary file.
+        sftp = client.open_sftp()
+        fileObject = sftp.file(fullFilePath,'rb')
+        temp_file = TemporaryFile()
+        for chunk in fileObject.xreadlines():
+            temp_file.write(chunk)
         
+        #Closes the connection to the server and navigates back to the top of the file before returning the temporary file.
+        client.close()
+        temp_file.seek(0)
+        return temp_file
     except:
         #if there is an error in the above process, it doesn't retuan anything to signify the failure.
         return None
