@@ -8,6 +8,7 @@ gunicorn = "*"
 django-heroku = "*"
 requests = "*"
 django-crispy-forms = "*"
+paramiko = "*"
 
 [requires]
 python_version = "3.6"
