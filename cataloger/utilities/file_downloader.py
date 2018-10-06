@@ -28,7 +28,7 @@ class AllowAnythingPolicy(paramiko.MissingHostKeyPolicy):
 
 #Assumes sftp since there is three inputs into the method.
 #The format of the URL for sftp is sftp://[host]//[path to file]
-def file_downloader(url,username,password):
+def file_downloader(url,sftp_username,sftp_password):
     try:
         #Attempts to split the URL into 3 parts, the "sftp:" part, the name of the host, and the path to the file.
         splintered_url = url.split("//") 
@@ -36,11 +36,11 @@ def file_downloader(url,username,password):
         #Attempts to open a connection to the sftp server.
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(AllowAnythingPolicy())
-        client.connect(splintered_url[1], username=user,password = pssword)
+        client.connect(splintered_url[1], username=sftp_username,password = sftp_password)
 
         #Creates a temporary file and attempts to open the file using the given file path. It then copies it into the temporary file.
         sftp = client.open_sftp()
-        fileObject = sftp.file(fullFilePath,'rb')
+        fileObject = sftp.file(splintered_url[2],'rb')
         temp_file = TemporaryFile()
         for chunk in fileObject.xreadlines():
             temp_file.write(chunk)
