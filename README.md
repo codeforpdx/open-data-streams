@@ -110,3 +110,4 @@ To get the bureau codes into the DB, it's necessary to import them from CSV. The
 
 ## Installing new packages
 `pipenv install <package_name>`
+And make sure to run `docker-compose build` to re-build the application with the new package.
