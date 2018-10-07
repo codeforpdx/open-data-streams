@@ -19,8 +19,8 @@ def index(request):
 
 def dashboard(request):
     datasets = None
-    if request.session.has_key('user_id'):
-      datasets = list(Dataset.objects.filter(publisher_id__exact = request.session['user_id']))
+    if request.user.is_authenticated:
+      datasets = list(Dataset.objects.filter(publisher = request.user.id))
     else:
         datasets = []
         keys = [
