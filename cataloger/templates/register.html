@@ -29,6 +29,8 @@
             <br><p>Already have an account?<a href="{% url 'register' %}"> Login.</a></p><br>
           </form>
           
+          <script   src="https://code.jquery.com/jquery-3.3.1.min.js"   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="   crossorigin="anonymous"></script>
+          
           <script>
             $("#id_bureau").change(function () {
               var url = $("#registrationForm").attr("data-divisions-url");  // get the url of the `load_divisions` view
