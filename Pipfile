@@ -9,6 +9,7 @@ django-heroku = "*"
 requests = "*"
 django-crispy-forms = "*"
 paramiko = "*"
+openpyxl = "*"
 
 [requires]
 python_version = "3.6"

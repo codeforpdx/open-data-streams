@@ -127,8 +127,10 @@ def new_dataset(request):
             if(request.POST['contains_file']):
                 #if a file was submitted it grabs the file and stores a reference.
                 file = request.FILES['local_file']
-                #the file type can be checked in the form so it should be a .csv, .xlsx, .json.
-                created_schema = schema_generator(file)
+                if not file.name.lower.endswith(('.csv','.xlsx','.json')):
+                    form.add_error(url, 'The provided file isn not an accepted type.')
+                    pass
+                created_schema = schema_generator(file,file.name)
             else:
                 #if it's a url, it grabs the url.
                 url = request.POST['url']
@@ -140,7 +142,7 @@ def new_dataset(request):
                         temp_file = file_downloader(url)
                         #if is succeeds, it will generate the schema.
                         if(temp_file is not None):
-                            created_schema = schema_generator(file)
+                            created_schema = schema_generator(file,url)
                             #deallocates the temporary file by closing it.
                             temp_file.close()
                         else:
@@ -156,7 +158,7 @@ def new_dataset(request):
                             temp_file = file_downloader(url,username,password)
                             #if is succeeds, it will generate the schema.
                             if(temp_file is not None):
-                                created_schema = schema_generator(file)
+                                created_schema = schema_generator(file,url)
                                 #deallocates the temporary file by closing it.
                                 temp_file.close()
                             else:
