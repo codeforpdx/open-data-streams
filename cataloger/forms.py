@@ -32,7 +32,7 @@ class RegistrationForm(forms.ModelForm):
                 'office',
                 ),
             ButtonHolder(
-                Submit('submit', 'Register', css_class='button white')
+                Submit('submit', 'Register', css_class='btn btn-primary btn-sm btn-block')
             )
         )
         # set division and office selects to blank for initial bureau selection
@@ -58,6 +58,8 @@ class UploadBureauCodesCSVFileForm(forms.Form):
 
 class UploadDatasetsCSVFileForm(forms.Form):
     file = forms.FileField()
-
+    
 class NewDatasetForm(forms.Form):
     file = forms.FileField()
+   
+    
