@@ -32,9 +32,9 @@ class Office(models.Model):
 # Notice that first name, last name, and email are not columns here. That is
 # because Django includes them as columns in the AbstractUser object, which Profile extends.
 class Profile(AbstractUser):
-    bureau = models.OneToOneField(BureauCode, on_delete=models.SET_NULL, null=True)
-    division = models.OneToOneField(Division, on_delete=models.SET_NULL, null=True)
-    office = models.OneToOneField(Office, on_delete=models.SET_NULL, null=True)
+    bureau = models.ForeignKey(BureauCode, on_delete=models.SET_NULL, null=True)
+    division = models.ForeignKey(Division, on_delete=models.SET_NULL, null=True)
+    office = models.ForeignKey(Office, on_delete=models.SET_NULL, null=True)
     # Set the custom UserManager for this class (for custom create_user() function call handling)
     objects = ProfileManager()
 
@@ -57,7 +57,7 @@ class Distribution(models.Model):
 class Dataset(models.Model):
     # ---------- FOREIGN KEYS ----------
     # Relates a dataset to the user that published it.
-    publisher = models.ForeignKey(Profile, on_delete=models.PROTECT)
+    publisher = models.ManyToManyField(Profile)
     # Relates a dataset to its distribution.
     distribution = models.OneToOneField(Distribution, on_delete=models.CASCADE)
     # Relates a dataset to its schema.
