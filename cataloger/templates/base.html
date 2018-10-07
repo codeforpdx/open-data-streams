@@ -25,25 +25,35 @@
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">OpenDataPDX</a>
+        <a class="navbar-brand" href="/">OpenDataPDX</a>   <!--Links back to home page-->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav ">
                 {% nav_item "/" "Home" request.get_full_path %}
                 {% nav_item "/dashboard/" "Dashboard" request.get_full_path %}
                 {% if user.is_superuser %}
                 {% nav_item "/utilities/" "Utilities" request.get_full_path %}
                 {% nav_item "/admin/" "Admin" request.get_full_path %}
                 {% endif %}
-                {% if user.is_authenticated %}
-                <li class="nav-item">User: {{ user.get_username }}</li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'logout'%}?next=/">Logout</a></li>
-                {% else %}
-                <li class="nav-item"><a class="nav-link" href="{% url 'login'%}?next={{request.path}}">Login</a></li>
-                {% endif %}
             </ul>
+
+                {% if user.is_authenticated %}
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                  <a class ="nav-link dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false"> Welcome  {{ user.get_username }} </a>
+                  <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="{% url 'logout'%}?next=/">Logout</a>
+                  </div>
+                </li>
+            </ul>
+
+                {% else %}
+            <ul class="nav navbar-nav ml-auto">
+                  <li class="nav-item"><a class="nav-link" href="{% url 'login'%}?next={{request.path}}">Login</a> </li>
+            </ul>
+                {% endif %}
         </div>
     </nav>
 
