@@ -64,7 +64,7 @@ class UploadDatasetsCSVFileForm(forms.Form):
     file = forms.FileField()
 
 class NewDatasetURLForm(forms.Form):
-    url_upload = forms.URLField(label="", required=True, widget=forms.TextInput(attrs={'placeholder': 'URL'}))
+    url = forms.URLField(label="", required=True, widget=forms.TextInput(attrs={'placeholder': 'URL'}))
 
 class NewDatasetFileForm(forms.Form):
-    file_upload = forms.FileField(label="",required=True)
+    file = forms.FileField(label="",required=True)

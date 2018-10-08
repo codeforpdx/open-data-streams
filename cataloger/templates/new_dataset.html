@@ -9,7 +9,7 @@
   <h5>Upload with a URL</h5>
   <form action="/new_dataset/" method="post">
     {% csrf_token %}
-    {{ new_dataset_url|crispy }}
+    {{ url_form|crispy }}
     <input type="submit" value="Submit" name="url_submit">
   </form>
   </br>
@@ -17,7 +17,7 @@
   <h5>Upload a file</h5>
   <form action="/new_dataset/" method="post">
     {% csrf_token %}
-    {{ new_dataset_file|crispy }}
+    {{ file_form|crispy }}
     <input type="submit" value="Upload" name="file_submit">
   </form>
 </div>
