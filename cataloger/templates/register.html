@@ -6,8 +6,8 @@
     <div class="container">
       <div class="row align-items-center">
         <div class="col-sm">
-          <h2 class="display-4">Register your account</h2>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod aliquid, mollitia odio veniam sit iste esse assumenda amet aperiam exercitationem, ea animi blanditiis recusandae! Ratione voluptatum molestiae adipisci, beatae obcaecati.</p>
+          <h2 class="display-4">Welcome to OpenDataPDX!</h2>
+              <p><b>Please create an account to get started!</b></p>
         </div>
         <div class="col-sm">
           {% if form.errors %}
@@ -26,7 +26,7 @@
           <form method="post" id="registrationForm" action="{% url 'register' %}" data-divisions-url="{% url 'ajax_load_divisions' %}" data-offices-url="{% url 'ajax_load_offices' %}" novalidate>
             {% csrf_token %}
             {% crispy form %}
-            <br><p>Already have an account?<a href="{% url 'register' %}"> Login.</a></p><br>
+            <br><p>Already have an account?<a href="{% url 'login' %}"> Log In</a></p><br>
           </form>
           
           <script   src="https://code.jquery.com/jquery-3.3.1.min.js"   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="   crossorigin="anonymous"></script>
