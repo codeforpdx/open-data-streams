@@ -40,11 +40,11 @@
                         <td>{{ ds.description }}</td>
                         <td>{{ ds.tags }}</td>
                         <td>{{ ds.modified }}</td>
-                        <td>{{ ds.publisher }}</td>
+                        <td>{% for publisher in ds.publisher.all %}{{ publisher.username }} {% endfor %}</td>
                         <td>{{ ds.contactPoint }}</td>
                         <td>{{ ds.accessLevel }}</td>
-                        <td>{{ ds.bureauCodeUSG }}</td>
-                        <td>{{ ds.programCodeUSG }}</td>
+                        <td>{{ ds.publisher.bureauCode }}</td>
+                        <td>{{ ds.publisher.programCode }}</td>
                         <td>{{ ds.license }}</td>
                     </tr>
                 {% endfor %}
