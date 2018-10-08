@@ -1,11 +1,24 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 
 <div class="container" style="max-width 80%; margin-top: 30px; margin-bottom: 30px">
+  <h2>Upload a new dataset</h2>
+  </br>
+  <h5>Upload with a URL</h5>
   <form action="/new_dataset/" method="post">
-    {{ new_dataset }}
-    <input type="submit" value="Submit">
+    {% csrf_token %}
+    {{ new_dataset_url|crispy }}
+    <input type="submit" value="Submit" name="url_submit">
+  </form>
+  </br>
+  </br>
+  <h5>Upload a file</h5>
+  <form action="/new_dataset/" method="post">
+    {% csrf_token %}
+    {{ new_dataset_file|crispy }}
+    <input type="submit" value="Upload" name="file_submit">
   </form>
 </div>
 

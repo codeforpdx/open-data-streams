@@ -53,7 +53,7 @@ def register(request):
 
             profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], BureauCode.objects.filter(id = request.POST['bureau']).first(), Division.objects.filter(id = request.POST['division']).first(), Office.objects.filter(id = request.POST['office']).first())
             profile.save()
-
+            
             user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
             if user is not None:
                 login(request, user)
@@ -105,7 +105,7 @@ def utilities(request):
         bureaucodes_form = UploadBureauCodesCSVFileForm()
         datasets_form = UploadDatasetsCSVFileForm()
     return render(request, 'utilities.html', {'bureaucodes_form': bureaucodes_form, 'datasets_form': datasets_form})
-
+    
 def load_divisions(request):
     bureau_id = request.GET.get('bureau')
     divisions = Division.objects.filter(bureau=bureau_id).order_by('description')
