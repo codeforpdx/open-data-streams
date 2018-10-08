@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import user_passes_test
 from tempfile import TemporaryFile
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
-from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetForm
+from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm
 from .utilities import bureau_import, dataset_import, file_downloader, schema_generator
 
 def random_str(length):
@@ -24,6 +24,7 @@ def dashboard(request):
     else:
         datasets = []
         keys = [
+            'id',
             'title',
             'description',
             'tags',
@@ -118,21 +119,14 @@ def load_offices(request):
 
 def new_dataset(request):
     if request.method == "POST":
-        #creates the form from the request.
-        form = NewDatasetForm(request.POST)
+        if 'url_submit' in request.POST:
+            #creates the form from the request.
+            url_form = NewDatasetURLForm(request.POST)
+            file_form = NewDatasetFileForm()
 
-        #Checks if the form is valid.
-        if form.is_valid():
-            #Checks if the form inputted contain a local file or a URL. This will be decided by the value of a radio button.
-            if(request.POST['contains_file']):
-                #if a file was submitted it grabs the file and stores a reference.
-                file = request.FILES['local_file']
-                if not file.name.lower.endswith(('.csv','.xlsx','.json')):
-                    form.add_error(url, 'The provided file isn not an accepted type.')
-                    pass
-                created_schema = schema_generator(file,file.name)
-            else:
-                #if it's a url, it grabs the url.
+            #Checks if the form is valid.
+            if url_form.is_valid():
+                #grabs the url
                 url = request.POST['url']
                 #it checks if the url ends with the file type that is supported.
                 if(url.lower.endswith(('.csv','.xlsx','.json'))):
@@ -145,9 +139,10 @@ def new_dataset(request):
                             created_schema = schema_generator(file,url)
                             #deallocates the temporary file by closing it.
                             temp_file.close()
+                            return HttpResponseRedirect('/dashboard/')
                         else:
                             #otherwise, it failed to download the file.
-                            form.add_error(url, 'The provided https file failed to be downloaded.')
+                            url_form.add_error(url, 'The provided https file failed to be downloaded.')
                             pass
                     else:
                         #otherwise, it checks if the string starts with sftp.
@@ -161,22 +156,36 @@ def new_dataset(request):
                                 created_schema = schema_generator(file,url)
                                 #deallocates the temporary file by closing it.
                                 temp_file.close()
+                                return HttpResponseRedirect('/dashboard/')
                             else:
                                 #otherwise, it failed to download the file.
-                                form.add_error(url, 'The provided sftp file failed to be downloaded.')
+                                url_form.add_error(url, 'The provided sftp file failed to be downloaded.')
                                 pass
                         else:
                             #otherwise, the url isn't a supported type.
-                            form.add_error(url, 'The provided URL is neither a http nor sftp.')
+                            url_form.add_error(url, 'The provided URL is neither a http nor sftp.')
                             pass
                 else:
                     #the URL doesn't end with a supported file type.
-                    form.add_error(url, 'The provided URL directs to an unsupported file type.')
+                    url_form.add_error(url, 'The provided URL directs to an unsupported file type.')
                     pass
-        else:
-            #if the form isn't valid, it passed back the form.
-            pass
+            else:
+                #if the form isn't valid, it passed back the form.
+                pass
+        #file form was submitted
+        elif 'file_submit' in request.POST:
+            url_form = NewDatasetURLForm()
+            file_form = NewDatasetFileForm(request.POST)
+            if file_form.is_valid():
+                #if a file was submitted it grabs the file and stores a reference.
+                file = request.FILES['file']
+                if not file.name.lower.endswith(('.csv','.xlsx','.json')):
+                    file_form.add_error(url, 'The provided file isn not an accepted type.')
+                    pass
+                created_schema = schema_generator(file,file.name)
+                return HttpResponseRedirect('/dashboard/')
     else:
-        form = NewDatasetForm()
+        url_form = NewDatasetURLForm()
+        file_form = NewDatasetFileForm()
 
-    return render(request, 'new_dataset.html', {'form':form})
+    return render(request, 'new_dataset.html', {'url_form':url_form, 'file_form':file_form})

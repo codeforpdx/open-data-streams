@@ -62,8 +62,9 @@ class UploadBureauCodesCSVFileForm(forms.Form):
 
 class UploadDatasetsCSVFileForm(forms.Form):
     file = forms.FileField()
-    
-class NewDatasetForm(forms.Form):
-    file = forms.FileField()
-   
-    
+
+class NewDatasetURLForm(forms.Form):
+    url = forms.URLField(label="", required=True, widget=forms.TextInput(attrs={'placeholder': 'URL'}))
+
+class NewDatasetFileForm(forms.Form):
+    file = forms.FileField(label="",required=True)
