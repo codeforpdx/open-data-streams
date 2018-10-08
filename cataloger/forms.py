@@ -64,4 +64,4 @@ class UploadDatasetsCSVFileForm(forms.Form):
     file = forms.FileField()
 
 class NewDatasetForm(forms.Form):
-    result = forms.CharField(label='test', max_length=100)
+    test_field = forms.CharField(label='test', max_length=100)

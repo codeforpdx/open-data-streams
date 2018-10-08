@@ -3,8 +3,8 @@
 {% block content %}
 
 <div class="container" style="max-width 80%; margin-top: 30px; margin-bottom: 30px">
-  <form action="{% url 'register' %}" method="post">
-    {% form %}
+  <form action="/new_dataset/" method="post">
+    {{ new_dataset }}
     <input type="submit" value="Submit">
   </form>
 </div>
