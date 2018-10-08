@@ -4,6 +4,7 @@ import functools
 import paramiko
 from tempfile import TemporaryFile
 import requests
+from urllib.parse import urlparse
 
 class AllowAnythingPolicy(paramiko.MissingHostKeyPolicy):
     def missing_host_key(self, client, hostname, key):
@@ -12,19 +13,21 @@ class AllowAnythingPolicy(paramiko.MissingHostKeyPolicy):
 def file_downloader(url,sftp_username=None,sftp_password=None):
     if sftp_username and sftp_password:
         #Assumes sftp if sftp_* inputs into the method aren't None.
-        #The format of the URL for sftp is sftp://[host]//[path to file]
+        #The format of the URL for sftp is sftp://[host]:[port]/[path to file] which is defined in the Uniform Resource Identifier schemes.
+        #https://www.iana.org/assignments/uri-schemes/prov/sftp
         try:
-            #Attempts to split the URL into 3 parts, the "sftp:" part, the name of the host, and the path to the file.
-            splintered_url = url.split("//")
-
+            #Uses the urllib library to parse the url to get the hostname and file.
+            parsed_url = urlparse(url)
             #Attempts to open a connection to the sftp server.
             client = paramiko.SSHClient()
             client.set_missing_host_key_policy(AllowAnythingPolicy())
-            client.connect(splintered_url[1], username=sftp_username,password = sftp_password)
-
+            if parsed_url.port is not None:
+                client.connect(hostname= parsed_url.hostname,port=parsed_url.port, username=sftp_username,password = sftp_password)
+            else:
+                client.connect(hostname= parsed_url.hostname, username=sftp_username,password = sftp_password)
             #Creates a temporary file and attempts to open the file using the given file path. It then copies it into the temporary file.
             sftp = client.open_sftp()
-            fileObject = sftp.file(splintered_url[2],'rb')
+            fileObject = sftp.file(parsed_url.path,'rb')
             temp_file = TemporaryFile()
             for chunk in fileObject.xreadlines():
                 temp_file.write(chunk)
