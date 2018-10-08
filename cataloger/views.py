@@ -163,11 +163,12 @@ def new_dataset(request):
                                 pass
                         else:
                             #otherwise, the url isn't a supported type.
-                            url_form.add_error('url', 'The provided URL is neither a http nor sftp.')
+
+                            url_form.add_error('url', 'Only https and sftp URLs are accepted.')
                             pass
                 else:
                     #the URL doesn't end with a supported file type.
-                    url_form.add_error('url', 'The provided URL directs to an unsupported file type.')
+                    url_form.add_error('url', 'The provided URL does not point to a supported file type.')
                     pass
             else:
                 #if the form isn't valid, it passed back the form.
@@ -180,7 +181,7 @@ def new_dataset(request):
                 #if a file was submitted it grabs the file and stores a reference.
                 file = request.FILES['file']
                 if not file.name.lower().endswith(('.csv','.xlsx','.json')):
-                    file_form.add_error(url, 'The provided file isn not an accepted type.')
+                    file_form.add_error('url', 'The provided file is not a supported type.')
                     pass
                 created_schema = schema_generator.schema_generator(file,file.name)
                 return HttpResponseRedirect('/dashboard/')
