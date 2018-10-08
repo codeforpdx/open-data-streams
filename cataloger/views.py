@@ -24,6 +24,7 @@ def dashboard(request):
     else:
         datasets = []
         keys = [
+            'id',
             'title',
             'description',
             'tags',

@@ -21,6 +21,7 @@
             <table id="datasetTable" class="table table-striped table-bordered">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Title</th>
                         <th>Description</th>
                         <th>Tags</th>
@@ -36,6 +37,7 @@
                 <tbody>
                 {% for ds in datasets %}
                     <tr>
+                        <td>{{ ds.id }}</td>
                         <td>{{ ds.title }}</td>
                         <td>{{ ds.description }}</td>
                         <td>{{ ds.tags }}</td>
