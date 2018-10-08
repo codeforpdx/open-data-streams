@@ -129,11 +129,11 @@ def new_dataset(request):
                 #grabs the url
                 url = request.POST['url']
                 #it checks if the url ends with the file type that is supported.
-                if(url.lower.endswith(('.csv','.xlsx','.json'))):
+                if(url.lower().endswith(('.csv','.xlsx','.json'))):
                     #checks if the string starts with http.
-                    if(url.lower.startswith('https')):
+                    if(url.lower().startswith('https')):
                         #if it does, it tries to download the file using the https url.
-                        temp_file = file_downloader(url)
+                        temp_file = file_downloader.file_downloader(url)
                         #if is succeeds, it will generate the schema.
                         if(temp_file is not None):
                             created_schema = schema_generator(file,url)
@@ -142,15 +142,15 @@ def new_dataset(request):
                             return HttpResponseRedirect('/dashboard/')
                         else:
                             #otherwise, it failed to download the file.
-                            url_form.add_error(url, 'The provided https file failed to be downloaded.')
+                            url_form.add_error('url', 'The provided https file failed to be downloaded.')
                             pass
                     else:
                         #otherwise, it checks if the string starts with sftp.
-                        if(url.lower.startswith('sftp')):
+                        if(url.lower().startswith('sftp')):
                             #if it does, it grabs the username and password from the form tries to download the file.
                             username = request.POST['sftp_username']
                             password = request.POST['sftp_password']
-                            temp_file = file_downloader(url,username,password)
+                            temp_file = file_downloader.file_downloader(url,username,password)
                             #if is succeeds, it will generate the schema.
                             if(temp_file is not None):
                                 created_schema = schema_generator(file,url)
@@ -159,15 +159,15 @@ def new_dataset(request):
                                 return HttpResponseRedirect('/dashboard/')
                             else:
                                 #otherwise, it failed to download the file.
-                                url_form.add_error(url, 'The provided sftp file failed to be downloaded.')
+                                url_form.add_error('url', 'The provided sftp file failed to be downloaded.')
                                 pass
                         else:
                             #otherwise, the url isn't a supported type.
-                            url_form.add_error(url, 'The provided URL is neither a http nor sftp.')
+                            url_form.add_error('url', 'The provided URL is neither a http nor sftp.')
                             pass
                 else:
                     #the URL doesn't end with a supported file type.
-                    url_form.add_error(url, 'The provided URL directs to an unsupported file type.')
+                    url_form.add_error('url', 'The provided URL directs to an unsupported file type.')
                     pass
             else:
                 #if the form isn't valid, it passed back the form.
@@ -175,14 +175,14 @@ def new_dataset(request):
         #file form was submitted
         elif 'file_submit' in request.POST:
             url_form = NewDatasetURLForm()
-            file_form = NewDatasetFileForm(request.POST)
+            file_form = NewDatasetFileForm(request.POST, request.FILES)
             if file_form.is_valid():
                 #if a file was submitted it grabs the file and stores a reference.
                 file = request.FILES['file']
-                if not file.name.lower.endswith(('.csv','.xlsx','.json')):
+                if not file.name.lower().endswith(('.csv','.xlsx','.json')):
                     file_form.add_error(url, 'The provided file isn not an accepted type.')
                     pass
-                created_schema = schema_generator(file,file.name)
+                created_schema = schema_generator.schema_generator(file,file.name)
                 return HttpResponseRedirect('/dashboard/')
     else:
         url_form = NewDatasetURLForm()
