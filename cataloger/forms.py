@@ -5,6 +5,7 @@
 # Also using ModelForms: https://docs.djangoproject.com/en/2.1/topics/forms/modelforms/
 
 from django import forms
+from django.core import validators
 from .models import Profile
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
@@ -64,7 +65,7 @@ class UploadDatasetsCSVFileForm(forms.Form):
     file = forms.FileField()
 
 class NewDatasetURLForm(forms.Form):
-    url = forms.URLField(label="", required=True, widget=forms.TextInput(attrs={'placeholder': 'URL'}))
+    url = forms.URLField(label="", required=True, widget=forms.TextInput(attrs={'placeholder': 'URL'}),validators = [validators.URLValidator(schemes=['https','sftp'])])
 
 class NewDatasetFileForm(forms.Form):
     file = forms.FileField(label="",required=True)
