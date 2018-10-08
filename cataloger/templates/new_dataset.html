@@ -15,7 +15,7 @@
   </br>
   </br>
   <h5>Upload a file</h5>
-  <form action="/new_dataset/" method="post">
+  <form action="/new_dataset/" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ file_form|crispy }}
     <input type="submit" value="Upload" name="file_submit">
