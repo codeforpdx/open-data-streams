@@ -40,14 +40,14 @@ def file_downloader(url,sftp_username=None,sftp_password=None):
         #takes in a given url and downloads the file into a temporary file.
         #Assumes https since there is a single input into the method.
         try:
-            with TemporaryFile as output:
+            with TemporaryFile() as output:
                 #attempts to open the file using the url.
                 file = requests.get(url, stream=True)
                 #writes the file into the temporary file in chunks.
                 for chunk in file.iter_content(chunk_size = 1024):
                     output.write(chunk)
                 #returns the start of the file before returning the temporary file.
-                file.seek(0)
+                output.seek(0)
                 return output
         except:
             #if there is any errors in the above process, it doesn't return anything to signify the failure.

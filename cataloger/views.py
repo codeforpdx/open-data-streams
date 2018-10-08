@@ -136,7 +136,7 @@ def new_dataset(request):
                         temp_file = file_downloader.file_downloader(url)
                         #if is succeeds, it will generate the schema.
                         if(temp_file is not None):
-                            created_schema = schema_generator(file,url)
+                            created_schema = schema_generator.schema_generator(temp_file,url)
                             #deallocates the temporary file by closing it.
                             temp_file.close()
                             return HttpResponseRedirect('/dashboard/')
@@ -153,7 +153,7 @@ def new_dataset(request):
                             temp_file = file_downloader.file_downloader(url,username,password)
                             #if is succeeds, it will generate the schema.
                             if(temp_file is not None):
-                                created_schema = schema_generator(file,url)
+                                created_schema = schema_generator.schema_generator(file,url)
                                 #deallocates the temporary file by closing it.
                                 temp_file.close()
                                 return HttpResponseRedirect('/dashboard/')
