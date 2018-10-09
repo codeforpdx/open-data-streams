@@ -7,7 +7,7 @@
 from django import forms
 from .models import Profile
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div
 from .models import BureauCode, Division, Office
 
 class RegistrationForm(forms.ModelForm):
@@ -65,6 +65,26 @@ class UploadDatasetsCSVFileForm(forms.Form):
 
 class NewDatasetURLForm(forms.Form):
     url = forms.URLField(label="", required=True, widget=forms.TextInput(attrs={'placeholder': 'URL'}))
+    username = forms.CharField(label="Username", required=False)
+    password = forms.CharField(label="Password", widget=forms.PasswordInput(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(NewDatasetURLForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'url',
+                Div(
+                    Div('username',css_class='col-md-6',),
+                    Div('password',css_class='col-md-6',),
+                    css_class='row'
+                ),
+            ),
+            ButtonHolder(
+                Submit('submit', 'Submit', css_class='btn btn-primary')
+            )
+        )
 
 class NewDatasetFileForm(forms.Form):
     file = forms.FileField(label="",required=True)

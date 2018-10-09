@@ -148,8 +148,8 @@ def new_dataset(request):
                         #otherwise, it checks if the string starts with sftp.
                         if(url.lower().startswith('sftp')):
                             #if it does, it grabs the username and password from the form tries to download the file.
-                            username = request.POST['sftp_username']
-                            password = request.POST['sftp_password']
+                            username = request.POST['username']
+                            password = request.POST['password']
                             temp_file = file_downloader.file_downloader(url,username,password)
                             #if is succeeds, it will generate the schema.
                             if(temp_file is not None):
