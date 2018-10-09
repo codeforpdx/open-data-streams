@@ -53,7 +53,7 @@
                 {% else %}
             <ul class="navbar-nav ml-auto">
                 {% url 'login' as loginPath %}
-                {% nav_item request loginPath|add:"?next=/dashboard/" "Login" %}
+                {% nav_item request loginPath "Login" %}
             </ul>
                 {% endif %}
         </div>
