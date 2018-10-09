@@ -18,6 +18,16 @@
                 <p>Please log in or create an account to get started!</p>
             </div>
             <div class="col-sm">
+                {% if user.is_authenticated %}
+                <div class="alert alert-warning">
+                        Your account doesn't have access to this page. To proceed,
+                        please login with an account that has access.
+                </div>
+                {% elif next != '' %}
+                <div class="alert alert-warning">
+                    Please login to see this page.
+                </div>
+                {% endif %}
                 <form method="post" action="{% url 'login' %}">
                     {% csrf_token %}
                     {{ form|crispy }}
