@@ -8,9 +8,7 @@
   </br>
   <h5>Upload with a URL</h5>
   <form action="/new_dataset/" method="post">
-    {% csrf_token %}
-    {{ url_form|crispy }}
-    <input type="submit" value="Submit" name="url_submit">
+    {% crispy url_form %}
   </form>
   </br>
   </br>
@@ -18,7 +16,7 @@
   <form action="/new_dataset/" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ file_form|crispy }}
-    <input type="submit" value="Upload" name="file_submit">
+    <input type="submit" value="Upload" name="file_submit" class="btn btn-primary">
   </form>
 </div>
 
