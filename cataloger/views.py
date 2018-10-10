@@ -150,6 +150,12 @@ def new_dataset(request):
                             #if it does, it grabs the username and password from the form tries to download the file.
                             username = request.POST['username']
                             password = request.POST['password']
+                            #validate user/pass fields
+                            if not username:
+                                url_form.add_error('username', 'Username must not be empty')
+                            if not password:
+                                url_form.add_error('password', 'Password must not be empty')
+                                pass
                             temp_file = file_downloader.file_downloader(url,username,password)
                             #if is succeeds, it will generate the schema.
                             if(temp_file is not None):
