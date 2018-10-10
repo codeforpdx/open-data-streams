@@ -4,13 +4,14 @@ from django.views import View
 from django.contrib.auth import authenticate, login
 import django.db, random, string
 from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import get_object_or_404
 
 from tempfile import TemporaryFile
 from urllib.parse import urlparse
 
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
-from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm
+from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm
 from .utilities import bureau_import, dataset_import, file_downloader, schema_generator
 
 def random_str(length):
@@ -204,3 +205,19 @@ def new_dataset(request):
         file_form = NewDatasetFileForm()
 
     return render(request, 'new_dataset.html', {'url_form':url_form, 'file_form':file_form})
+
+def dataset(request, dataset_id=None):
+    if request.method == "POST":
+        # this is a POST request
+        if form.is_valid():
+            # the form is valid - save it
+            pass
+        else:
+            # the return below will display form errors
+            pass
+    else:
+        # this is probably a GET request
+        ds = get_object_or_404(Dataset, id=dataset_id)
+        form = DatasetForm(instance=ds)
+    return render(request, 'dataset.html', {'dataset_id':dataset_id, 'form':form})
+

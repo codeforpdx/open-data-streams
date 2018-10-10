@@ -16,6 +16,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('dashboard/', cataloger.views.dashboard),
     path('new_dataset/', cataloger.views.new_dataset),
+    path('dataset/<int:dataset_id>/', cataloger.views.dataset, name='dataset'),
     path('utilities/', cataloger.views.utilities),
     path('new-dataset/', cataloger.views.new_dataset, name='new-dataset'),
     path('ajax/load-divisions/', cataloger.views.load_divisions, name='ajax_load_divisions'),
