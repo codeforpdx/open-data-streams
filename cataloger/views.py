@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
-from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm
+from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm
 from .utilities import bureau_import, dataset_import, file_downloader, schema_generator
 
 def random_str(length):
@@ -200,6 +200,21 @@ def new_dataset(request):
                     pass
                 created_schema = schema_generator.schema_generator(file,file.name)
                 return HttpResponseRedirect('/dashboard/')
+        elif 'blank_submit' in request.POST:
+            distribution = Distribution()
+            distribution.save()
+            schema = Schema()
+            schema.data = ''
+            schema.save()
+            dataset = Dataset()
+            dataset.distribution = distribution
+            dataset.schema = schema
+            profile = Profile.objects.get(id=request.user.id)
+            dataset.publisher = profile
+            dataset.save()
+            dataset.bureauCode.add(profile.bureau)
+            dataset.programCode.add(profile.division)
+            return HttpResponseRedirect('/dataset/' + str(dataset.id))
     else:
         url_form = NewDatasetURLForm()
         file_form = NewDatasetFileForm()
@@ -208,8 +223,9 @@ def new_dataset(request):
 
 def dataset(request, dataset_id=None):
     if request.method == "POST":
+        dataset_form = DatasetForm(request.POST)
         # this is a POST request
-        if form.is_valid():
+        if dataset_form.is_valid():
             # the form is valid - save it
             pass
         else:
@@ -218,6 +234,22 @@ def dataset(request, dataset_id=None):
     else:
         # this is probably a GET request
         ds = get_object_or_404(Dataset, id=dataset_id)
-        form = DatasetForm(instance=ds)
-    return render(request, 'dataset.html', {'dataset_id':dataset_id, 'form':form})
+        dataset_form = DatasetForm(instance=ds)
+    return render(request, 'dataset.html', {'dataset_id':dataset_id, 'form':dataset_form})
+
+def distribution(request, distribution_id=None):
+    if request.method == "POST":
+        distribution_form = DistributionForm(request.POST)
+        # this is a POST request
+        if distribution_form.is_valid():
+            # the form is valid - save it
+            pass
+        else:
+            # the return below will display form errors
+            pass
+    else:
+        # this is probably a GET request
+        dn = get_object_or_404(Distribution, id=distribution_id)
+        distribution_form = DistributionForm(instance=dn)
+    return render(request, 'distribution.html', {'distribution_id':distribution_id, 'form':distribution_form})
 

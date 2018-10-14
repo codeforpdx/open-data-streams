@@ -37,7 +37,7 @@
                 <tbody>
                 {% for ds in datasets %}
                     <tr>
-                        <td>{{ ds.id }}</td>
+                        <td><a href="/dataset/{{ ds.id }}">{{ ds.id }}</a></td>
                         <td>{{ ds.title }}</td>
                         <td>{{ ds.description }}</td>
                         <td>{{ ds.tags }}</td>

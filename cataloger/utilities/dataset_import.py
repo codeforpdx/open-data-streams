@@ -23,10 +23,6 @@ def dataset_import(csvfile):
         # Create the distribution, and populate its download URL from this data
         distribution.downloadURL = row['downloadURL']
         distribution.save()
-
-        # Create the dataset
-        dataset.distribution = distribution
-        dataset.save()
         
         # Get a profile if it exists. If not, create a new one
         email = re.sub('mailto:', '', row['hasEmail'])
@@ -44,7 +40,11 @@ def dataset_import(csvfile):
             profile.save()
         else:
             logging.error("Linking existing user...")
-        dataset.publisher.add(profile)
+        dataset.publisher = profile
+ 
+        # Create the dataset
+        dataset.distribution = distribution
+        dataset.save()
         
         # Set the rest of the (mostly text) fields of the dataset
         dataset.accessLevel = row['accessLevel']
