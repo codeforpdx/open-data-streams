@@ -6,6 +6,8 @@ import django.db, random, string
 from django.contrib.auth.decorators import user_passes_test
 
 from tempfile import TemporaryFile
+from urllib.parse import urlparse
+
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
 from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm
@@ -128,14 +130,21 @@ def new_dataset(request):
             if url_form.is_valid():
                 #grabs the url
                 url = request.POST['url']
+                #It then attempts to parse the url with the urllib library.
+                try:
+                     parsed_url = urlparse(url)
+                except:
+                    #If it fails, it sends a message back.
+                    url_form.add_error('url', 'The provided url is not in a recognized format.')
+                    pass
                 #it checks if the url ends with the file type that is supported.
-                if(url.lower().endswith(('.csv','.xlsx','.json'))):
-                    #checks if the string starts with http.
-                    if(url.lower().startswith('https')):
+                if parsed_url.path.lower().endswith(('.csv','.xlsx','.json')):
+                    #checks if the url's scheme is https.
+                    if parsed_url.scheme.lower() == 'https':
                         #if it does, it tries to download the file using the https url.
                         temp_file = file_downloader.file_downloader(url)
                         #if is succeeds, it will generate the schema.
-                        if(temp_file is not None):
+                        if temp_file is not None :
                             created_schema = schema_generator.schema_generator(temp_file,url)
                             #deallocates the temporary file by closing it.
                             temp_file.close()
@@ -144,34 +153,33 @@ def new_dataset(request):
                             #otherwise, it failed to download the file.
                             url_form.add_error('url', 'The provided https file failed to be downloaded.')
                             pass
-                    else:
-                        #otherwise, it checks if the string starts with sftp.
-                        if(url.lower().startswith('sftp')):
-                            #if it does, it grabs the username and password from the form tries to download the file.
-                            username = request.POST['username']
-                            password = request.POST['password']
-                            #validate user/pass fields
-                            if not username:
-                                url_form.add_error('username', 'Username must not be empty')
-                            if not password:
-                                url_form.add_error('password', 'Password must not be empty')
-                                pass
-                            temp_file = file_downloader.file_downloader(url,username,password)
-                            #if is succeeds, it will generate the schema.
-                            if(temp_file is not None):
-                                created_schema = schema_generator.schema_generator(file,url)
-                                #deallocates the temporary file by closing it.
-                                temp_file.close()
-                                return HttpResponseRedirect('/dashboard/')
-                            else:
-                                #otherwise, it failed to download the file.
-                                url_form.add_error('url', 'The provided sftp file failed to be downloaded.')
-                                pass
-                        else:
-                            #otherwise, the url isn't a supported type.
-
-                            url_form.add_error('url', 'Only https and sftp URLs are accepted.')
+                    #otherwise, it checks if the string starts with sftp.
+                    elif parsed_url.scheme.lower() == 'sftp':
+                        #if it does, it grabs the username and password from the form tries to download the file.
+                        username = request.POST['username']
+                        password = request.POST['password']
+                        #validate user/pass fields
+                        if not username:
+                            url_form.add_error('username', 'Username must not be empty')
                             pass
+                        if not password:
+                            url_form.add_error('password', 'Password must not be empty')
+                            pass
+                        temp_file = file_downloader.file_downloader(parsed_url,username,password)
+                        #if is succeeds, it will generate the schema.
+                        if temp_file is not None:
+                            created_schema = schema_generator.schema_generator(temp_file,url)
+                            #deallocates the temporary file by closing it.
+                            temp_file.close()
+                            return HttpResponseRedirect('/dashboard/')
+                        else:
+                            #otherwise, it failed to download the file.
+                            url_form.add_error('url', 'The provided sftp file failed to be downloaded.' + parsed_url.path)
+                            pass
+                    else:
+                        #otherwise, the url isn't a supported type.
+                        url_form.add_error('url', 'Only https and sftp URLs are accepted.')
+                        pass
                 else:
                     #the URL doesn't end with a supported file type.
                     url_form.add_error('url', 'The provided URL does not point to a supported file type.')

@@ -10,14 +10,12 @@ class AllowAnythingPolicy(paramiko.MissingHostKeyPolicy):
     def missing_host_key(self, client, hostname, key):
         return
 
-def file_downloader(url,sftp_username=None,sftp_password=None):
+def file_downloader(parsed_url,sftp_username=None,sftp_password=None):
     if sftp_username and sftp_password:
         #Assumes sftp if sftp_* inputs into the method aren't None.
         #The format of the URL for sftp is sftp://[host]:[port]/[path to file] which is defined in the Uniform Resource Identifier schemes.
         #https://www.iana.org/assignments/uri-schemes/prov/sftp
         try:
-            #Uses the urllib library to parse the url to get the hostname and file.
-            parsed_url = urlparse(url)
             #Attempts to open a connection to the sftp server.
             client = paramiko.SSHClient()
             client.set_missing_host_key_policy(AllowAnythingPolicy())
@@ -27,7 +25,7 @@ def file_downloader(url,sftp_username=None,sftp_password=None):
                 client.connect(hostname= parsed_url.hostname, username=sftp_username,password = sftp_password)
             #Creates a temporary file and attempts to open the file using the given file path. It then copies it into the temporary file.
             sftp = client.open_sftp()
-            fileObject = sftp.file(parsed_url.path,'rb')
+            fileObject = sftp.file(parsed_url.path[1:],'rb')
             temp_file = TemporaryFile()
             for chunk in fileObject.xreadlines():
                 temp_file.write(chunk)
