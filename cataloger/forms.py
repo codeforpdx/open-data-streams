@@ -138,7 +138,7 @@ class DistributionForm(forms.ModelForm):
     class Meta:
         model = Distribution
         fields = ['accessURL', 'conformsTo', 'describedBy', 'describedByType', 'description', 'downloadURL', 'dformat', 'mediaType', 'title',]
-    
+
     def __init__(self, *args, **kwargs):
         super(DistributionForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -158,4 +158,21 @@ class DistributionForm(forms.ModelForm):
             ButtonHolder(
                 Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block')
             )
+        )
+
+class SchemaForm(forms.Form):
+    schema = forms.CharField(label="schema", required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.data = kwargs.pop('data')
+        super(SchemaForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'schema',
+            ),
+            ButtonHolder(
+                Submit('submit', 'Submit', css_class='btn btn-primary')
+                    )
         )

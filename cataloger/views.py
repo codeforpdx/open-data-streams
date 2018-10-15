@@ -1,17 +1,18 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.views import View
 from django.contrib.auth import authenticate, login
 import django.db, random, string
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
 
 from tempfile import TemporaryFile
 from urllib.parse import urlparse
 import os, logging
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
-from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm
+from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm, SchemaForm
 from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages
 
 def random_str(length):
@@ -260,3 +261,23 @@ def distribution(request, distribution_id=None):
         distribution_form = DistributionForm(instance=dn)
     return render(request, 'distribution.html', {'distribution_id':distribution_id, 'form':distribution_form})
 
+def schema(request, slug=None):
+    import json
+
+    # COMMENTED OUT TILL DATASETS CAN BE MADE
+    # validate that the slug exists and grab json blob
+    #try:
+    #    schema = Dataset.objects.get(identifier=slug)
+    #except ObjectDoesNotExist:
+    #    raise Http404("Schema does not exist")
+    #data = schema.data
+
+    # temporary data variable
+    data = '{ "$id": "https://example.com/person.schema.json", "$schema": "http://json-schema.org/draft-07/schema#", "title": "Person", "type": "object", "properties": { "firstName": { "type": "string", "description": "The persons first name." }, "lastName": { "type": "string", "description": "The persons last name." }, "age": { "description": "Age in years which must be equal to or greater than zero.", "type": "integer", "minimum": 0 } } }'
+    json_data = json.loads(data)
+
+    if request.method == 'POST':
+        form = SchemaForm(request.Post,data=data)
+    else:
+        form = SchemaForm(data=data)
+    return render(request, 'schema.html', {'slug':slug, 'form':form})
