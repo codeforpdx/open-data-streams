@@ -26,7 +26,6 @@
           {% endif %}
 
           <form method="post" id="registrationForm" action="{% url 'register' %}" data-divisions-url="{% url 'ajax_load_divisions' %}" data-offices-url="{% url 'ajax_load_offices' %}" novalidate>
-            {% csrf_token %}
             {% crispy form %}
             <br><p>Already have an account?<a href="{% url 'login' %}"> Log In</a></p><br>
           </form>
