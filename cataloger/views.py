@@ -20,6 +20,7 @@ def random_str(length):
 def index(request):
     return render(request, 'index.html')
 
+@user_passes_test(lambda u: u.is_authenticated)
 def dashboard(request):
     datasets = None
     if request.user.is_authenticated:
@@ -52,9 +53,6 @@ def register(request):
         # this is a POST request
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            import logging
-            logging.error("POST data:" + str(request.POST))
-
             profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], BureauCode.objects.filter(id = request.POST['bureau']).first(), Division.objects.filter(id = request.POST['division']).first(), Office.objects.filter(id = request.POST['office']).first())
             profile.save()
 
@@ -212,9 +210,12 @@ def new_dataset(request):
             profile = Profile.objects.get(id=request.user.id)
             dataset.publisher = profile
             dataset.save()
+            dataset_identifier_path = '/dataset/' + str(dataset.id)
+            dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
             dataset.bureauCode.add(profile.bureau)
             dataset.programCode.add(profile.division)
-            return HttpResponseRedirect('/dataset/' + str(dataset.id))
+            dataset.save()
+            return HttpResponseRedirect(dataset_identifier_path)
     else:
         url_form = NewDatasetURLForm()
         file_form = NewDatasetFileForm()
@@ -222,34 +223,36 @@ def new_dataset(request):
     return render(request, 'new_dataset.html', {'url_form':url_form, 'file_form':file_form})
 
 def dataset(request, dataset_id=None):
+    ds = get_object_or_404(Dataset, id=dataset_id)
     if request.method == "POST":
-        dataset_form = DatasetForm(request.POST)
+        dataset_form = DatasetForm(instance=ds, data=request.POST)
         # this is a POST request
         if dataset_form.is_valid():
             # the form is valid - save it
-            pass
+                dataset_form.save()
         else:
             # the return below will display form errors
             pass
     else:
         # this is probably a GET request
-        ds = get_object_or_404(Dataset, id=dataset_id)
         dataset_form = DatasetForm(instance=ds)
+        dataset_form.fields['distribution'].queryset = Distribution.objects.filter(dataset=ds)
+
     return render(request, 'dataset.html', {'dataset_id':dataset_id, 'form':dataset_form})
 
 def distribution(request, distribution_id=None):
+    dn = get_object_or_404(Distribution, id=distribution_id)
     if request.method == "POST":
-        distribution_form = DistributionForm(request.POST)
+        distribution_form = DistributionForm(instance=dn, data=request.POST)
         # this is a POST request
         if distribution_form.is_valid():
             # the form is valid - save it
-            pass
+            distribution_form.save()
         else:
             # the return below will display form errors
             pass
     else:
         # this is probably a GET request
-        dn = get_object_or_404(Distribution, id=distribution_id)
         distribution_form = DistributionForm(instance=dn)
     return render(request, 'distribution.html', {'distribution_id':distribution_id, 'form':distribution_form})
 

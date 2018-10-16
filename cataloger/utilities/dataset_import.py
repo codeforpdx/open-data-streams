@@ -1,7 +1,7 @@
 import csv
 from cataloger.models import Profile, Dataset, Distribution, Schema, BureauCode, Division, Office
 from datetime import datetime
-import json, re, logging
+import json, re
 
 # Datasets have these column headers:
 # accessLevel,bureauCode,fn,hasEmail,description,downloadURL,mediaType,identifier,keyword,modified,programCode,publisher,title
@@ -28,7 +28,6 @@ def dataset_import(csvfile):
         email = re.sub('mailto:', '', row['hasEmail'])
         profile = Profile.objects.filter(email=email).first()
         if profile is None:
-            logging.error("Creating user...")
             # this email or Profile doesn't exist in the DB,
             # create a new profile
             profile = Profile()
@@ -38,8 +37,6 @@ def dataset_import(csvfile):
             if len(row['fn'].split(' ')) > 1:
                 profile.last_name = row['fn'].split(' ')[1] #danger[!]
             profile.save()
-        else:
-            logging.error("Linking existing user...")
         dataset.publisher = profile
  
         # Create the dataset

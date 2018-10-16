@@ -85,9 +85,9 @@ class Dataset(models.Model):
     # Relates a dataset to the user that published it.
     publisher = models.ForeignKey(Profile, on_delete=models.PROTECT)
     # Relates a dataset to its distribution.
-    distribution = models.ForeignKey(Distribution, on_delete=models.CASCADE)
+    distribution = models.OneToOneField(Distribution, on_delete=models.CASCADE)
     # Relates a dataset to its schema.
-    schema = models.ForeignKey(Schema, on_delete=models.CASCADE)
+    schema = models.OneToOneField(Schema, on_delete=models.CASCADE)
 
     # ---------- DATASET FIELDS ----------
     # @type field (renamed since type is a reserved Python keyword)
