@@ -1,5 +1,6 @@
 from cataloger.models import Schema
 import openpyxl
+import json
 
 #Takes in a file and parses it and generates a schema.
 def schema_generator(file,file_name):
@@ -28,6 +29,18 @@ def csv_schema_generator(file):
  
 #Takes in a given json file and returns the schema for it.
 def json_schema_generator(file):
+    data = json.load(file)
+    metadata_set = set()
+    for datum in data:
+        for datum_property in datum:
+            metadata_set.add(datum_property)
+    metadata_list = list(metadata_set)
+    #assumes list of objects with sparsse data
+    #OR
+    #for data_property in data[0]:
+    #    metadata_list.append(data_property)
+    #assumes list of objects and that first entry has full list of properties
+
     #Will be further implemented in phase 3.
     return None
 
