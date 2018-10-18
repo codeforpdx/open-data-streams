@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.auth.models import AbstractUser
-from django.conf.global_settings import LANGUAGES
 
 from .managers import ProfileManager
 
@@ -25,10 +24,11 @@ class Keyword(models.Model):
         return self.keyword
 
 class Language(models.Model):
-    language = models.CharField(max_length=7, choices=LANGUAGES, default='en')
-
+    language = models.CharField(max_length=10)
+    description = models.TextField()
+    
     def __str__(self):
-        return self.language
+        return self.description
 
 # City bureau codes, divisions, and offices
 class BureauCode(models.Model):
@@ -102,7 +102,7 @@ class Dataset(models.Model):
     accessLevel = models.ForeignKey(AccessLevel, on_delete=models.PROTECT, default=2)
     bureauCode = models.ManyToManyField(BureauCode)
     programCode = models.ManyToManyField(Division)
-    license = models.ForeignKey(License, on_delete=models.PROTECT, default=2)
+    license = models.ForeignKey(License, on_delete=models.PROTECT, default=3)
 
     # If applicable.
     spatial = models.TextField()
@@ -111,9 +111,9 @@ class Dataset(models.Model):
     # contactPoint -- doesn't exist as a field of Dataset. Instead, use the publisher's info.
     # (although we might decide to include this as a field or do this differently)
 
-    describedByType = models.TextField()
+    describedByType = models.TextField(blank=True)
     # Will store an API url for this dataset's schema.
-    describedBy = models.TextField()
+    describedBy = models.TextField(blank=True)
 
     # All dataset fields below this comment are (tentatively) to remain empty for this project.
     accrualPeriodicity = models.TextField(blank=True)
@@ -121,7 +121,7 @@ class Dataset(models.Model):
     dataQuality = models.BooleanField(blank=True, default=False)
     isPartOf = models.TextField(blank=True)
     issued = models.TextField(blank=True)
-    language = models.ManyToManyField(Language, blank=True)
+    language = models.ManyToManyField(Language, blank=True, default=57)
     landingPage = models.TextField(blank=True)
     primaryITInvestment = models.TextField(blank=True)
     references = models.TextField(blank=True)

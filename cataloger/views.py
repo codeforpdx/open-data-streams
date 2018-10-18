@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
 from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm
-from .utilities import bureau_import, dataset_import, file_downloader, schema_generator
+from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages
 
 def random_str(length):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
@@ -102,6 +102,10 @@ def utilities(request):
             else:
                 # invalid form - this should pass back through to the page (with errors attached?)
                 pass
+        elif 'import-languages' in request.POST:
+            # Languages import
+            import_languages.import_languages()
+            return HttpResponseRedirect('/utilities/')
     else:
         # this is a GET request
         bureaucodes_form = UploadBureauCodesCSVFileForm()
@@ -212,8 +216,10 @@ def new_dataset(request):
             dataset.save()
             dataset_identifier_path = '/dataset/' + str(dataset.id)
             dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
-            dataset.bureauCode.add(profile.bureau)
-            dataset.programCode.add(profile.division)
+            if profile.bureau:
+                dataset.bureauCode.add(profile.bureau)
+            if profile.division:
+                dataset.programCode.add(profile.division)
             dataset.save()
             return HttpResponseRedirect(dataset_identifier_path)
     else:
@@ -224,6 +230,9 @@ def new_dataset(request):
 
 def dataset(request, dataset_id=None):
     ds = get_object_or_404(Dataset, id=dataset_id)
+    if ds.publisher.id is not request.user.id:
+        # the user doesn't own this distribution, don't allow access
+        return HttpResponse('Forbidden', status=403)
     if request.method == "POST":
         dataset_form = DatasetForm(instance=ds, data=request.POST)
         # this is a POST request
@@ -242,6 +251,10 @@ def dataset(request, dataset_id=None):
 
 def distribution(request, distribution_id=None):
     dn = get_object_or_404(Distribution, id=distribution_id)
+    if dn.dataset.publisher.id is not request.user.id:
+        # the user doesn't own this distribution, throw an HTTP unauthorized
+        return HttpResponse('Unauthorized', status=401)
+
     if request.method == "POST":
         distribution_form = DistributionForm(instance=dn, data=request.POST)
         # this is a POST request
