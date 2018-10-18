@@ -198,7 +198,7 @@ def new_dataset(request):
                 #if a file was submitted it grabs the file and stores a reference.
                 file = request.FILES['file']
                 if not file.name.lower().endswith(('.csv','.xlsx','.json')):
-                    file_form.add_error('file', 'The provided file is not a supported type.')
+                    file_form.add_error(None, 'The provided file is not a supported type.')
                     pass
                 created_schema = schema_generator.schema_generator(file,file.name)
                 return HttpResponseRedirect('/dashboard/')
