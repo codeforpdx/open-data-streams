@@ -101,7 +101,7 @@ class DatasetForm(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 '',
-                'publisher',
+                Div('publisher', hidden="true"),
                 'distribution',
                 'schema',
                 'mtype',
