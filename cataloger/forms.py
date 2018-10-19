@@ -133,6 +133,10 @@ class DatasetForm(forms.ModelForm):
                 Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block')
             )
         )
+        if 'distribution' in self.fields:
+                self.fields['distribution'].widget.attrs['disabled'] = True
+        if 'schema' in self.fields:
+                self.fields['schema'].widget.attrs['disabled'] = True
 
 class DistributionForm(forms.ModelForm):
     class Meta:
