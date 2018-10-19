@@ -141,7 +141,7 @@ def new_dataset(request):
                         pass
                     else:
                         #if is succeeds, it will generate the schema.
-                        created_schema = schema_generator.schema_generator(temp_file,url)
+                        created_schema = schema_generator.schema_generator.build(temp_file,url)
                         temp_file.close()
                         return HttpResponseRedirect('/dashboard/')
                 #If it raises an exception, it attached the exception as an error on the form.
@@ -150,7 +150,7 @@ def new_dataset(request):
                     url_form.add_error('url',str(e))
                 #All of other exceptions are caught and handled.
                 except:
-                    url_form.add_error('url', 'An error occured while downloading the file.')
+                    url_form.add_error('url', 'An error occured while downloading the file')
             else:
                 #if the form isn't valid, it passed back the form.
                 pass
@@ -164,7 +164,7 @@ def new_dataset(request):
                 if not file.name.lower().endswith(('.csv','.xlsx','.json')):
                     file_form.add_error(None, 'The provided file is not a supported type.')
                 else:
-                    created_schema = schema_generator.schema_generator(file,file.name)
+                    created_schema = schema_generator.schema_generator.build(file,file.name)
                     return HttpResponseRedirect('/dashboard/')
     else:
         url_form = NewDatasetURLForm()
