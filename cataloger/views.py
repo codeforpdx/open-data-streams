@@ -135,7 +135,6 @@ def new_dataset(request):
                 url = request.POST['url']
                 username = request.POST['username']
                 password = request.POST['password']
-                #temp_file = None
                 #Attempts to download the file using the URL.
                 try:
                     temp_file = file_downloader.file_downloader.download_temp(url,username,password)
@@ -145,9 +144,8 @@ def new_dataset(request):
                         pass
                     else:
                         #if is succeeds, it will generate the schema.
-                        raise Exception(temp_file.readline())
                         created_schema = schema_generator.schema_generator(temp_file,url)
-                        #temp_file.close()
+                        temp_file.close()
                         return HttpResponseRedirect('/dashboard/')
                 #If it raises an exception, it attached the exception as an error on the form.
                 #The only exceptions that can be thrown are ones raised directly by the file_downloader class.

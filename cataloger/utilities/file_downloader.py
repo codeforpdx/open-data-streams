@@ -22,9 +22,9 @@ class file_downloader():
         if not parsed_url.path.lower().endswith(('.csv','.xlsx','.json')):
             raise Exception('The provided URL does not point to a supported file type.')
         if parsed_url.scheme.lower() == 'https':
-             return file_downloader.__https_file_downloader(url)
+            return file_downloader.__https_file_downloader(url)
         elif parsed_url.scheme.lower() == 'sftp':
-             return file_downloader.__sftp_file_downloader(parsed_url,sftp_username,sftp_password)
+            return file_downloader.__sftp_file_downloader(parsed_url,sftp_username,sftp_password)
         else:
             raise Exception('The provided URL does not use a https nor a sftp schema.')
 
@@ -45,7 +45,7 @@ class file_downloader():
             #if there is any errors in the above process, it doesn't return anything to signify the failure.
                 return None
 
-    def __sftp_file_downloader(parsed_url,sftp_username,_sftp_password):
+    def __sftp_file_downloader(parsed_url,sftp_username,sftp_password):
         #Assumes sftp if sftp_* inputs into the method aren't None.
         #The format of the URL for sftp is sftp://[host]:[port]/[path to file] which is defined in the Uniform Resource Identifier schemes.
         #https://www.iana.org/assignments/uri-schemes/prov/sftp
