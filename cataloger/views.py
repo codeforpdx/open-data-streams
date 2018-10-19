@@ -146,8 +146,11 @@ def new_dataset(request):
                         return HttpResponseRedirect('/dashboard/')
                 #If it raises an exception, it attached the exception as an error on the form.
                 #The only exceptions that can be thrown are ones raised directly by the file_downloader class.
-                except Exception as e:
+                except file_downloader.FailedDownloadingFileException as e:
                     url_form.add_error('url',str(e))
+                #All of other exceptions are caught and handled.
+                except:
+                    url_form.add_error('url', 'An error occured while downloading the file.')
             else:
                 #if the form isn't valid, it passed back the form.
                 pass
