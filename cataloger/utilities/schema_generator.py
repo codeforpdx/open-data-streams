@@ -7,12 +7,10 @@ def schema_generator(file,file_name):
     #Depending on the type of the file, it uses a different function to generate the schema.
     if file_name.lower().endswith('.csv'):
         return csv_schema_generator(file)
-    else:
-        if file_name.lower().endswith('.json'):
-            return json_schema_generator(file)
-        else:
-            if file_name.lower().endswith('.xlsx'):
-                return xlsx_schema_generator(file)
+    elif file_name.lower().endswith('.json'):
+        return json_schema_generator(file)
+    elif file_name.lower().endswith('.xlsx'):
+        return xlsx_schema_generator(file)
     #If there doesn't exist a function for that type of file, no schema is generated.
     return None
 
