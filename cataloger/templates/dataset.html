@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container" style="max-width 80%; margin-top: 30px; margin-bottom: 130px">
+    <div class="row">
+        <form method="post" id="datasetForm" action="{% url 'dataset' dataset_id %}">
+        {% crispy form %}
+        </form>
+    </div>
+</div>
+{% endblock %}

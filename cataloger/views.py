@@ -4,14 +4,15 @@ from django.views import View
 from django.contrib.auth import authenticate, login
 import django.db, random, string
 from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import get_object_or_404
 
 from tempfile import TemporaryFile
 from urllib.parse import urlparse
 
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
-from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm
-from .utilities import bureau_import, dataset_import, file_downloader, schema_generator
+from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm
+from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages
 
 def random_str(length):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
@@ -19,6 +20,7 @@ def random_str(length):
 def index(request):
     return render(request, 'index.html')
 
+@user_passes_test(lambda u: u.is_authenticated)
 def dashboard(request):
     datasets = None
     if request.user.is_authenticated:
@@ -51,9 +53,6 @@ def register(request):
         # this is a POST request
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            import logging
-            logging.error("POST data:" + str(request.POST))
-
             profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], BureauCode.objects.filter(id = request.POST['bureau']).first(), Division.objects.filter(id = request.POST['division']).first(), Office.objects.filter(id = request.POST['office']).first())
             profile.save()
 
@@ -103,6 +102,10 @@ def utilities(request):
             else:
                 # invalid form - this should pass back through to the page (with errors attached?)
                 pass
+        elif 'import-languages' in request.POST:
+            # Languages import
+            import_languages.import_languages()
+            return HttpResponseRedirect('/utilities/')
     else:
         # this is a GET request
         bureaucodes_form = UploadBureauCodesCSVFileForm()
@@ -196,11 +199,73 @@ def new_dataset(request):
                 file = request.FILES['file']
                 if not file.name.lower().endswith(('.csv','.xlsx','.json')):
                     file_form.add_error(None, 'The provided file is not a supported type.')
-                else:
-                    created_schema = schema_generator.schema_generator(file,file.name)
-                    return HttpResponseRedirect('/dashboard/')
+                    pass
+                created_schema = schema_generator.schema_generator(file,file.name)
+                return HttpResponseRedirect('/dashboard/')
+        elif 'blank_submit' in request.POST:
+            distribution = Distribution()
+            distribution.save()
+            schema = Schema()
+            schema.data = ''
+            schema.save()
+            dataset = Dataset()
+            dataset.distribution = distribution
+            dataset.schema = schema
+            profile = Profile.objects.get(id=request.user.id)
+            dataset.publisher = profile
+            dataset.save()
+            dataset_identifier_path = '/dataset/' + str(dataset.id)
+            dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
+            if profile.bureau:
+                dataset.bureauCode.add(profile.bureau)
+            if profile.division:
+                dataset.programCode.add(profile.division)
+            dataset.save()
+            return HttpResponseRedirect(dataset_identifier_path)
     else:
         url_form = NewDatasetURLForm()
         file_form = NewDatasetFileForm()
 
     return render(request, 'new_dataset.html', {'url_form':url_form, 'file_form':file_form})
+
+def dataset(request, dataset_id=None):
+    ds = get_object_or_404(Dataset, id=dataset_id)
+    if ds.publisher.id is not request.user.id:
+        # the user doesn't own this distribution, don't allow access
+        return HttpResponse('Forbidden', status=403)
+    if request.method == "POST":
+        dataset_form = DatasetForm(instance=ds, data=request.POST)
+        # this is a POST request
+        if dataset_form.is_valid():
+            # the form is valid - save it
+                dataset_form.save()
+        else:
+            # the return below will display form errors
+            pass
+    else:
+        # this is probably a GET request
+        dataset_form = DatasetForm(instance=ds)
+        dataset_form.fields['distribution'].queryset = Distribution.objects.filter(dataset=ds)
+
+    return render(request, 'dataset.html', {'dataset_id':dataset_id, 'form':dataset_form})
+
+def distribution(request, distribution_id=None):
+    dn = get_object_or_404(Distribution, id=distribution_id)
+    if dn.dataset.publisher.id is not request.user.id:
+        # the user doesn't own this distribution, throw an HTTP unauthorized
+        return HttpResponse('Unauthorized', status=401)
+
+    if request.method == "POST":
+        distribution_form = DistributionForm(instance=dn, data=request.POST)
+        # this is a POST request
+        if distribution_form.is_valid():
+            # the form is valid - save it
+            distribution_form.save()
+        else:
+            # the return below will display form errors
+            pass
+    else:
+        # this is probably a GET request
+        distribution_form = DistributionForm(instance=dn)
+    return render(request, 'distribution.html', {'distribution_id':distribution_id, 'form':distribution_form})
+
