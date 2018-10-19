@@ -10,7 +10,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<section style="margin-top: 3% !important; margin-bottom: 2.2% !important">
+<section style="section style="max-width 80%; margin-top: 30px; margin-bottom: 130px"">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-sm">
@@ -32,9 +32,9 @@
                     {% csrf_token %}
                     {{ form|crispy }}
                     <p>Forgot your password? Click<a href="{% url 'password_reset' %}"> Here</a></p>
-                    <input type="submit" class="btn btn-primary btn-sm btn-block" value="Log In" />
-                    <input type="hidden" name="next" value="{{ next }}" /><br>
-                    <p>Need an account?<a href="{% url 'register' %}"> Register</a></p>
+                    <input type="submit" class="btn btn-primary btn-sm btn-block" value="Log In"/>
+                    <input type="hidden" name="next" value="{{ next }}"/><br>
+                    <p>Need an account?<a href="{% url 'register' %}">Register</a></p>
                 </form>
             </div>
         </div>

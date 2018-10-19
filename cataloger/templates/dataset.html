@@ -3,10 +3,12 @@
 
 {% block content %}
 <div class="container" style="max-width 80%; margin-top: 30px; margin-bottom: 130px">
-    <div class="row">
-        <form method="post" id="datasetForm" action="{% url 'dataset' dataset_id %}">
-        {% crispy form %}
-        </form>
+    <div class="row justify-content-md-center">
+        <div class="col-lg-8">
+            <form method="post" id="datasetForm" action="{% url 'dataset' dataset_id %}">
+                {% crispy form %}
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
