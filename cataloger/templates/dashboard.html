@@ -40,13 +40,13 @@
                         <td><a href="/dataset/{{ ds.id }}">{{ ds.id }}</a></td>
                         <td>{{ ds.title }}</td>
                         <td>{{ ds.description }}</td>
-                        <td>{{ ds.tags }}</td>
+                        <td>{% for keyword in ds.keywords.all %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                         <td>{{ ds.modified }}</td>
                         <td>{{ ds.publisher }}</td>
                         <td>{{ ds.publisher.email }}</td>
                         <td>{{ ds.accessLevel }}</td>
-                        <td>{% for bureau in ds.bureauCode.all %}{{ bureau.description }}{% if ds.bureauCode.all.next %}, {% endif %}{% endfor %}</td>
-                        <td>{% for division in ds.programCode.all %}{{ division.description }}{% if ds.bureauCode.all.next %}, {% endif %}{% endfor %}</td>
+                        <td>{% for bureau in ds.bureauCode.all %}{{ bureau.description }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                        <td>{% for division in ds.programCode.all %}{{ division.description }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                         <td>{{ ds.license }}</td>
                     </tr>
                 {% endfor %}
