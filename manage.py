@@ -10,6 +10,6 @@ if __name__ == "__main__":
     execute_from_command_line(sys.argv)
 
     # Install fixtures (this should probably be done using migrations)
-    #if len(sys.argv) == 2 and sys.argv[1] == 'migrate':
-    #    execute_from_command_line(['manage.py', 'loaddata', 'initial_data.json'])
+    if len(sys.argv) == 2 and sys.argv[1] == 'migrate':
+        execute_from_command_line(['manage.py', 'loaddata', 'initial_data.json'])
 
