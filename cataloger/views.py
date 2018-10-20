@@ -146,7 +146,7 @@ def new_dataset(request):
                         #if is succeeds, it will generate the schema.
                         created_schema = schema_generator.schema_generator.build(temp_file,url)
                         temp_file.close()
-                        return HttpResponseRedirect('/dashboard/')
+
                 #If it raises an exception, it attached the exception as an error on the form.
                 #The only exceptions that can be thrown are ones raised directly by the file_downloader class.
                 except file_downloader.FailedDownloadingFileException as e:
@@ -168,26 +168,31 @@ def new_dataset(request):
                     file_form.add_error(None, 'The provided file is not a supported type.')
                 else:
                     created_schema = schema_generator.schema_generator.build(file,file.name)
-                    return HttpResponseRedirect('/dashboard/')
         elif 'blank_submit' in request.POST:
-            distribution = Distribution()
-            distribution.save()
-            schema = Schema()
-            schema.data = ''
-            schema.save()
-            dataset = Dataset()
-            dataset.distribution = distribution
-            dataset.schema = schema
-            profile = Profile.objects.get(id=request.user.id)
-            dataset.publisher = profile
-            dataset.save()
-            dataset_identifier_path = '/dataset/' + str(dataset.id)
-            dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
-            if profile.bureau:
-                dataset.bureauCode.add(profile.bureau)
-            if profile.division:
-                dataset.programCode.add(profile.division)
-            dataset.save()
+            created_schema = ''
+        #create shcema
+        schema = Schema()
+        schema.data = created_schema
+        schema.save()
+        #create distribution - BLANK
+        distribution = Distribution()
+        distribution.save()
+        #create dataset
+        dataset = Dataset()
+        dataset.distribution = distribution
+        dataset.schema = schema
+        profile = Profile.objects.get(id=request.user.id)
+        dataset.publisher = profile
+        dataset.save()
+
+        dataset_identifier_path = '/dataset/' + str(dataset.id)
+        dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
+        if profile.bureau:
+            dataset.bureauCode.add(profile.bureau)
+        if profile.division:
+            dataset.programCode.add(profile.division)
+        dataset.save()
+        return HttpResponseRedirect(dataset_identifier_path)
     else:
         url_form = NewDatasetURLForm()
         file_form = NewDatasetFileForm()
