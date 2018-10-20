@@ -1,17 +1,19 @@
 from cataloger.models import Schema
+from tempfile import TemporaryFile
 import openpyxl
 import json
 
-"""The exception raised if there is an error with creating the schema."""
 class FailedCreatingSchemaException(Exception):
+    """The exception raised if there is an error with creating the schema."""
     def __init__(self, *args):
         self.args = args
 
-"""Takes in a file and parses it and generates a schema."""
+
 class schema_generator:
+    """Takes in a file and parses it and generates a schema."""
     
     def build(file,file_name):
-        #Depending on the type of the file, it uses a different function to generate the schema.
+        """Depending on the type of the file, it uses a different function to generate the schema."""
         if file_name.lower().endswith('.csv'):
             return schema_generator.__csv_schema_generator(file)
         elif file_name.lower().endswith('.json'):
@@ -21,18 +23,18 @@ class schema_generator:
         #If there doesn't exist a function for that type of file, an exception is raised.
         raise FailedCreatingSchemaException("The file isn't a supported type to generate a schema.")
 
-    """Takes in a given csv file and returns the schema for it. We are assuming that the top row contains the headers for the sections."""
     def __csv_schema_generator(file):
+        """Takes in a given csv file and returns the schema for it. We are assuming that the top row contains the headers for the sections."""
         try:
             #parses the first line of the file to get all the headers.
-            metadata = file.readline().split(',')
+            metadata = str(file.readline()).split(',')
             #Will be further implemented in phase 3.
             return schema_generator.__build_schema(metadata)
         except:
             raise FailedCreatingSchemaException("Failed to create schema from csv file.")
  
-    """Takes in a given json file and returns the schema for it."""
     def __json_schema_generator(file):
+        """Takes in a given json file and returns the schema for it."""
         try:
             data = json.load(file)
             metadata_set = set()
@@ -50,26 +52,28 @@ class schema_generator:
         except:
             raise FailedCreatingSchemaException("Failed to create schema from json file.")
 
-    """Takes in a given json file and returns the schema for it. We are assuming that the top row of the first worksheet contains the headers for the sections."""
+    
     def __xlsx_schema_generator(file):
+        """Takes in a given json file and returns the schema for it. We are assuming that the top row of the first worksheet contains the headers for the sections."""
         try:
             #Loads the temporary file into a workbook.
             workbook = openpyxl.load_workbook(file)
 
             #Gets the name of all the sheets in the workbook.
-            sheet_names = wb.sheetnames
+            sheet_names = workbook.sheetnames
     
             #The first row on the first sheet is then added into a list.
             metadata_list = list()
             for cell in workbook[sheet_names[0]][1]:
-                metadata_list.append(cell)
+                metadata_list.append(str(cell))
 
             return schema_generator.__build_schema(metadata_list)
         except:
             raise FailedCreatingSchemaException("Failed to create schem from xlsx file.")
 
-    """Takes in a list words and creates a new schema."""
     def __build_schema(metaData):
+        """Takes in a list words and creates a new schema."""
+        
         #Builds the dictionary that represents the schema.
         jsonField = {}
         jsonField['title'] = None

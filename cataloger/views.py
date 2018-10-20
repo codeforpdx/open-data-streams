@@ -138,22 +138,20 @@ def new_dataset(request):
                 password = request.POST['password']
                 #Attempts to download the file using the URL.
                 try:
-                    temp_file = file_downloader.file_downloader.download_temp(url,username,password)
-                    if temp_file is None:
-                        #otherwise, it failed to download the file.
-                        url_form.add_error('url', 'The provided URL failed to be downloaded.')
-                        pass
-                    else:
-                        #if is succeeds, it will generate the schema.
-                        created_schema = schema_generator.schema_generator.build(temp_file,url)
-                        temp_file.close()
-
+                    temp_file = file_downloader.file_downloader.download_temp(url,username,password) 
+                    created_schema = schema_generator.schema_generator.build(temp_file,url)
+                    temp_file.close()
                 #If it raises an exception, it attached the exception as an error on the form.
                 #The only exceptions that can be thrown are ones raised directly by the file_downloader class.
                 except file_downloader.FailedDownloadingFileException as e:
+                    created_schema = None
+                    url_form.add_error('url',str(e))
+                except schema_generator.FailedCreatingSchemaException as e:
+                    created_schema = None
                     url_form.add_error('url',str(e))
                 #All of other exceptions are caught and handled.
-                except:
+                except Exception as e:
+                    created_schema = None
                     url_form.add_error('url', 'An error occured while downloading the file')
             else:
                 #if the form isn't valid, it passed back the form.
@@ -168,7 +166,14 @@ def new_dataset(request):
                 if not file.name.lower().endswith(('.csv','.xlsx','.json')):
                     file_form.add_error(None, 'The provided file is not a supported type.')
                 else:
-                    created_schema = schema_generator.schema_generator.build(file,file.name)
+                    try:
+                        created_schema = schema_generator.schema_generator.build(file,file.name)
+                    except schema_generator.FailedCreatingSchemaException as e:
+                        url_form.add_error(None,str(e))
+                    #All of other exceptions are caught and handled.
+                    except Exception as e:
+                        created_schema = None
+                        url_form.add_error(None, str(e))#'An error occured while downloading the file')
         elif 'blank_submit' in request.POST:
             created_schema = Schema()
             created_schema.data = ''
