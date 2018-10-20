@@ -10,14 +10,16 @@ class AllowAnythingPolicy(paramiko.MissingHostKeyPolicy):
     def missing_host_key(self, client, hostname, key):
         return
 
-"""The exception raised if there is an error with downloading the file"""
 class FailedDownloadingFileException(Exception):
+    """The exception raised if there is an error with downloading the file"""
     def __init__(self, *args):
         self.args = args
 
-"""This class functionality is to read supported file types into temporary files."""
 class file_downloader():
+    """This class functionality is to read supported file types into temporary files."""
+
     def download_temp(url,sftp_username=None,sftp_password=None):
+        """Parses the url and downloads the file into a temporary file."""
         try:
             #It then attempts to parse the url with the urllib library.
             parsed_url = urlparse(url)
@@ -33,11 +35,9 @@ class file_downloader():
             return file_downloader.__sftp_file_downloader(parsed_url,sftp_username,sftp_password)
         else:
             raise FailedDownloadingFileException('The provided URL does not use a https nor a sftp schema.')
-        return None
 
     def __https_file_downloader(url):
-        #takes in a given url and downloads the file into a temporary file.
-        #Assumes https since there is a single input into the method.
+        """Takes in a given https url and downloads the file into a temporary file."""
         try:
             output = TemporaryFile()
             #attempts to open the file using the url.
@@ -49,10 +49,11 @@ class file_downloader():
             output.seek(0)
             return output
         except:
-            #if there is any errors in the above process, it doesn't return anything to signify the failure.
-                return None
+            #if there is any errors in the above process, an exception is raised.
+            raise FailedDownloadingFileException('An error occurred while downloading the file from a https url.')
 
     def __sftp_file_downloader(parsed_url,sftp_username,sftp_password):
+        """Takes in a given sftp url and downloads the file into a temporary file."""
         #Assumes sftp if sftp_* inputs into the method aren't None.
         #The format of the URL for sftp is sftp://[host]:[port]/[path to file] which is defined in the Uniform Resource Identifier schemes.
         #https://www.iana.org/assignments/uri-schemes/prov/sftp
@@ -76,5 +77,5 @@ class file_downloader():
             temp_file.seek(0)
             return temp_file
         except:
-            #if there is an error in the above process, it doesn't retuan anything to signify the failure.
-            return None
+            #if there is any errors in the above process, an exception is raised.
+            raise FailedDownloadingFileException('An error occurred while downloading the file from a sftp url.')
