@@ -2,6 +2,7 @@ from cataloger.models import Schema
 import openpyxl
 import json
 
+
 """Takes in a file and parses it and generates a schema."""
 class schema_generator:
     

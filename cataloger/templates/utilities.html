@@ -45,6 +45,14 @@
             <input type="submit" name="import-datasets" class="btn btn-success" value="Import">
           </form>
         </div>
+        <div class="p-5">
+          <h2 class="display-4">Import Languages</h2>
+              <p>Import languages into the database</p>
+          <form method="post" action="/utilities/">
+            {% csrf_token %}
+            <input type="submit" name="import-languages" class="btn btn-success" value="Import">
+          </form>
+        </div>
       </div>
     </div>
   </section>

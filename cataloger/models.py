@@ -4,10 +4,36 @@ from django.contrib.auth.models import AbstractUser
 
 from .managers import ProfileManager
 
+class AccessLevel(models.Model):
+    accessLevel = models.CharField(max_length=12, default=3)
+
+    def __str__(self):
+        return self.accessLevel
+
+class License(models.Model):
+    license = models.CharField(max_length=12, default=3)
+    description = models.TextField()
+    
+    def __str__(self):
+        return self.description
+
+class Keyword(models.Model):
+    keyword = models.TextField()
+
+    def __str__(self):
+        return self.keyword
+
+class Language(models.Model):
+    language = models.CharField(max_length=10)
+    description = models.TextField()
+    
+    def __str__(self):
+        return self.description
+
 # City bureau codes, divisions, and offices
 class BureauCode(models.Model):
     code = models.TextField()
-    description = models.TextField(null=True)
+    description = models.TextField(blank=True)
     
     def __str__(self):
         return self.description
@@ -15,7 +41,7 @@ class BureauCode(models.Model):
 class Division(models.Model):
     bureau = models.ForeignKey(BureauCode, on_delete=models.CASCADE)
     division = models.TextField()
-    description = models.TextField(null=True)
+    description = models.TextField(blank=True)
     
     def __str__(self):
         return self.description
@@ -24,7 +50,7 @@ class Office(models.Model):
     bureau = models.ForeignKey(BureauCode, on_delete=models.CASCADE)
     division = models.ForeignKey(Division, on_delete=models.CASCADE)
     office = models.TextField()
-    description = models.TextField(null=True)
+    description = models.TextField(blank=True)
 
     def __str__(self):
         return self.description
@@ -42,22 +68,22 @@ class Schema(models.Model):
     data = JSONField()
 
 class Distribution(models.Model):
-    mtype = models.TextField()
-    accessURL = models.TextField()
-    conformsTo = models.TextField()
-    describedBy = models.TextField()
-    describedByType = models.TextField()
-    description = models.TextField()
-    downloadURL = models.TextField()
+    mtype = models.TextField(default='dcat:Distribution',blank=True)
+    accessURL = models.TextField(blank=True)
+    conformsTo = models.TextField(blank=True)
+    describedBy = models.TextField(blank=True)
+    describedByType = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    downloadURL = models.TextField(blank=True)
     # format field (renamed since format is a reserved Python keyword)
-    dformat = models.TextField()
-    mediaType = models.TextField()
-    title = models.TextField()
+    dformat = models.TextField(blank=True)
+    mediaType = models.TextField(blank=True)
+    title = models.TextField(blank=True)
 
 class Dataset(models.Model):
     # ---------- FOREIGN KEYS ----------
     # Relates a dataset to the user that published it.
-    publisher = models.ManyToManyField(Profile)
+    publisher = models.ForeignKey(Profile, on_delete=models.PROTECT)
     # Relates a dataset to its distribution.
     distribution = models.OneToOneField(Distribution, on_delete=models.CASCADE)
     # Relates a dataset to its schema.
@@ -65,39 +91,39 @@ class Dataset(models.Model):
 
     # ---------- DATASET FIELDS ----------
     # @type field (renamed since type is a reserved Python keyword)
-    mtype = models.TextField()
+    mtype = models.TextField(default='dcat:Dataset',)
     title = models.TextField()
     description = models.TextField()
     # Could be a string that is a comma separated list.
-    keywords = models.TextField()
+    keywords = models.ManyToManyField(Keyword)
     modified = models.DateTimeField(auto_now_add=True)
-    # Will store a unique hash/slug that will be used to identify this dataset.
-    identifier = models.TextField()
-    accessLevel = models.TextField()
-    bureauCode = models.TextField()
-    programCode = models.TextField()
-    license = models.TextField()
+    # Will store the URL to this dataset.
+    identifier = models.URLField()
+    accessLevel = models.ForeignKey(AccessLevel, on_delete=models.PROTECT, default=2)
+    bureauCode = models.ManyToManyField(BureauCode)
+    programCode = models.ManyToManyField(Division)
+    license = models.ForeignKey(License, on_delete=models.PROTECT, default=3)
 
     # If applicable.
-    spatial = models.TextField()
-    temporal = models.TextField()
+    spatial = models.TextField(blank=True)
+    temporal = models.TextField(blank=True)
 
     # contactPoint -- doesn't exist as a field of Dataset. Instead, use the publisher's info.
     # (although we might decide to include this as a field or do this differently)
 
-    describedByType = models.TextField()
+    describedByType = models.TextField(blank=True)
     # Will store an API url for this dataset's schema.
-    describedBy = models.TextField()
+    describedBy = models.TextField(blank=True)
 
     # All dataset fields below this comment are (tentatively) to remain empty for this project.
-    accrualPeriodicity = models.TextField(null=True)
-    conformsTo = models.TextField(null=True)
-    dataQuality = models.TextField(null=True)
-    isPartOf = models.TextField(null=True)
-    issued = models.TextField(null=True)
-    language = models.TextField(null=True)
-    landingPage = models.TextField(null=True)
-    primaryITInvestment = models.TextField(null=True)
-    references = models.TextField(null=True)
-    systemOfRecords = models.TextField(null=True)
-    theme = models.TextField(null=True)
+    accrualPeriodicity = models.TextField(blank=True)
+    conformsTo = models.TextField(blank=True)
+    dataQuality = models.BooleanField(blank=True, default=False)
+    isPartOf = models.TextField(blank=True)
+    issued = models.TextField(blank=True)
+    language = models.ManyToManyField(Language, blank=True, default=57)
+    landingPage = models.TextField(blank=True)
+    primaryITInvestment = models.TextField(blank=True)
+    references = models.TextField(blank=True)
+    systemOfRecords = models.TextField(blank=True)
+    theme = models.TextField(blank=True)

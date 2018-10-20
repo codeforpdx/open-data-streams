@@ -37,16 +37,16 @@
                 <tbody>
                 {% for ds in datasets %}
                     <tr>
-                        <td>{{ ds.id }}</td>
+                        <td><a href="/dataset/{{ ds.id }}">{{ ds.id }}</a></td>
                         <td>{{ ds.title }}</td>
                         <td>{{ ds.description }}</td>
-                        <td>{{ ds.tags }}</td>
+                        <td>{% for keyword in ds.keywords.all %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                         <td>{{ ds.modified }}</td>
-                        <td>{% for publisher in ds.publisher.all %}{{ publisher.username }} {% endfor %}</td>
-                        <td>{{ ds.contactPoint }}</td>
+                        <td>{{ ds.publisher }}</td>
+                        <td>{{ ds.publisher.email }}</td>
                         <td>{{ ds.accessLevel }}</td>
-                        <td>{{ ds.publisher.bureauCode }}</td>
-                        <td>{{ ds.publisher.programCode }}</td>
+                        <td>{% for bureau in ds.bureauCode.all %}{{ bureau.description }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                        <td>{% for division in ds.programCode.all %}{{ division.description }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                         <td>{{ ds.license }}</td>
                     </tr>
                 {% endfor %}

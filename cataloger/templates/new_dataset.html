@@ -18,6 +18,14 @@
     {{ file_form|crispy }}
     <input type="submit" value="Upload" name="file_submit" class="btn btn-primary">
   </form>
+  </br>
+  </br>
+  <h5>Create a empty dataset</h5>
+  <form action="/new_dataset/" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Create" name="blank_submit" class="btn btn-primary">
+  </form>
+  blank_submit
 </div>
 
 {% endblock %}

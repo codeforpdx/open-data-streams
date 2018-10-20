@@ -9,7 +9,7 @@ from django.core import validators
 from .models import Profile
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div
-from .models import BureauCode, Division, Office
+from .models import BureauCode, Division, Office, Dataset, Distribution
 
 class RegistrationForm(forms.ModelForm):
     class Meta:
@@ -24,7 +24,7 @@ class RegistrationForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Fieldset(
-                'Registration field set',
+                'Create your OpenDataPDX Account',
                 'username',
                 'password',
                 'email',
@@ -89,3 +89,73 @@ class NewDatasetURLForm(forms.Form):
 
 class NewDatasetFileForm(forms.Form):
     file = forms.FileField(label="",required=True)
+
+class DatasetForm(forms.ModelForm):
+    class Meta:
+        model = Dataset
+        fields = ['publisher', 'distribution', 'schema', 'mtype', 'title', 'description', 'keywords', 'identifier', 'accessLevel', 'bureauCode', 'programCode', 'license', 'spatial', 'temporal', 'describedByType', 'describedBy', 'accrualPeriodicity', 'conformsTo', 'dataQuality', 'isPartOf', 'issued', 'language', 'landingPage', 'primaryITInvestment', 'references', 'systemOfRecords', 'theme',]
+
+    def __init__(self, *args, **kwargs):
+        super(DatasetForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'publisher',
+                'distribution',
+                'schema',
+                'mtype',
+                'title',
+                'description',
+                'keywords',
+                'identifier',
+                'accessLevel',
+                'bureauCode',
+                'programCode',
+                'license',
+                'language',
+                'spatial',
+                'temporal',
+                'describedByType',
+                'describedBy',
+                'accrualPeriodicity',
+                'conformsTo',
+                'dataQuality',
+                'isPartOf',
+                'issued',
+                'landingPage',
+                'primaryITInvestment',
+                'references',
+                'systemOfRecords',
+                'theme',
+                ),
+            ButtonHolder(
+                Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block')
+            )
+        )
+
+class DistributionForm(forms.ModelForm):
+    class Meta:
+        model = Distribution
+        fields = ['accessURL', 'conformsTo', 'describedBy', 'describedByType', 'description', 'downloadURL', 'dformat', 'mediaType', 'title',]
+    
+    def __init__(self, *args, **kwargs):
+        super(DistributionForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'accessURL',
+                'conformsTo',
+                'describedBy',
+                'describedByType',
+                'description',
+                'downloadURL',
+                'dformat',
+                'mediaType',
+                'title',
+                ),
+            ButtonHolder(
+                Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block')
+            )
+        )
