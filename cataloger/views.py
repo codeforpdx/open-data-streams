@@ -163,7 +163,7 @@ def new_dataset(request):
             if file_form.is_valid():
                 #if a file was submitted it grabs the file and stores a reference.
                 file = request.FILES['file']
-                if not file.name.lower().endswith(('.csv','.xlsx','.json')):
+                if not file.name.lower().endswith(schema_generator.schema_generator.valid_extensions):
                     file_form.add_error(None, 'The provided file is not a supported type.')
                 else:
                     try:

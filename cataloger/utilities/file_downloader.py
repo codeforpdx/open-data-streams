@@ -27,7 +27,7 @@ class file_downloader():
             #If it fails, it sends a message back.
             raise FailedDownloadingFileException('The provided url is not in a recognized format.')
         #If the file doesn't end with a supported type, it throws an error.
-        if not parsed_url.path.lower().endswith(('.csv','.xlsx','.json')):
+        if not parsed_url.path.lower().endswith(schema_generator.schema_generator.valid_extensions):
             raise FailedDownloadingFileException('The provided URL does not point to a supported file type.')
         if parsed_url.scheme.lower() == 'https':
             return file_downloader.__https_file_downloader(url)

@@ -11,6 +11,7 @@ class FailedCreatingSchemaException(Exception):
 
 class schema_generator:
     """Takes in a file and parses it and generates a schema."""
+    valid_extensions = ('.csv','.xlsx','.json')
     
     def build(file,file_name):
         """Depending on the type of the file, it uses a different function to generate the schema."""
