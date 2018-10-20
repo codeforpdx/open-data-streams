@@ -113,7 +113,7 @@ class Migration(migrations.Migration):
             name='Keyword',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('keyword', models.TextField()),
+                ('keyword', models.TextField(help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.')),
             ],
         ),
         migrations.CreateModel(
