@@ -123,6 +123,7 @@ def load_offices(request):
     return render(request, 'offices_dropdown_list_options.html', {'offices': offices})
 
 def new_dataset(request):
+    created_schema = None
     if request.method == "POST":
         if 'url_submit' in request.POST:
             #creates the form from the request.
@@ -169,30 +170,29 @@ def new_dataset(request):
                 else:
                     created_schema = schema_generator.schema_generator.build(file,file.name)
         elif 'blank_submit' in request.POST:
-            created_schema = ''
-        #create shcema
-        schema = Schema()
-        schema.data = created_schema
-        schema.save()
-        #create distribution - BLANK
-        distribution = Distribution()
-        distribution.save()
-        #create dataset
-        dataset = Dataset()
-        dataset.distribution = distribution
-        dataset.schema = schema
-        profile = Profile.objects.get(id=request.user.id)
-        dataset.publisher = profile
-        dataset.save()
+            created_schema = Schema()
+            created_schema.data = ''
+        if created_schema != None:
+            created_schema.save()
+            #create distribution - BLANK
+            distribution = Distribution()
+            distribution.save()
+            #create dataset
+            dataset = Dataset()
+            dataset.distribution = distribution
+            dataset.schema = created_schema
+            profile = Profile.objects.get(id=request.user.id)
+            dataset.publisher = profile
+            dataset.save()
 
-        dataset_identifier_path = '/dataset/' + str(dataset.id)
-        dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
-        if profile.bureau:
-            dataset.bureauCode.add(profile.bureau)
-        if profile.division:
-            dataset.programCode.add(profile.division)
-        dataset.save()
-        return HttpResponseRedirect(dataset_identifier_path)
+            dataset_identifier_path = '/dataset/' + str(dataset.id)
+            dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
+            if profile.bureau:
+                dataset.bureauCode.add(profile.bureau)
+            if profile.division:
+                dataset.programCode.add(profile.division)
+            dataset.save()
+            return HttpResponseRedirect(dataset_identifier_path)
     else:
         url_form = NewDatasetURLForm()
         file_form = NewDatasetFileForm()
