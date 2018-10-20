@@ -2,6 +2,10 @@ from cataloger.models import Schema
 import openpyxl
 import json
 
+"""The exception raised if there is an error with creating the schema."""
+class FailedCreatingSchemaException(Exception):
+    def __init__(self, *args):
+        self.args = args
 
 """Takes in a file and parses it and generates a schema."""
 class schema_generator:
@@ -14,8 +18,8 @@ class schema_generator:
             return schema_generator.__json_schema_generator(file)
         elif file_name.lower().endswith('.xlsx'):
             return schema_generator.__xlsx_schema_generator(file)
-        #If there doesn't exist a function for that type of file, no schema is generated.
-        return None
+        #If there doesn't exist a function for that type of file, an exception is raised.
+        raise FailedCreatingSchemaException("The file isn't a supported type to generate a schema.")
 
     """Takes in a given csv file and returns the schema for it. We are assuming that the top row contains the headers for the sections."""
     def __csv_schema_generator(file):
@@ -25,23 +29,26 @@ class schema_generator:
             #Will be further implemented in phase 3.
             return schema_generator.__build_schema(metadata)
         except:
-            return None
+            raise FailedCreatingSchemaException("Failed to create schema from csv file.")
  
     """Takes in a given json file and returns the schema for it."""
     def __json_schema_generator(file):
-        data = json.load(file)
-        metadata_set = set()
-        for datum in data:
-            for datum_property in datum:
-                metadata_set.add(datum_property)
-        metadata_list = list(metadata_set)
-        #assumes list of objects with sparsse data
-        #OR
-        #for data_property in data[0]:
-        #    metadata_list.append(data_property)
-        #assumes list of objects and that first entry has full list of properties
+        try:
+            data = json.load(file)
+            metadata_set = set()
+            for datum in data:
+                for datum_property in datum:
+                    metadata_set.add(datum_property)
+            metadata_list = list(metadata_set)
+            #assumes list of objects with sparsse data
+            #OR
+            #for data_property in data[0]:
+            #    metadata_list.append(data_property)
+            #assumes list of objects and that first entry has full list of properties
 
-        return schema_generator.__build_schema(metadata_list)
+            return schema_generator.__build_schema(metadata_list)
+        except:
+            raise FailedCreatingSchemaException("Failed to create schema from json file.")
 
     """Takes in a given json file and returns the schema for it. We are assuming that the top row of the first worksheet contains the headers for the sections."""
     def __xlsx_schema_generator(file):
@@ -59,25 +66,21 @@ class schema_generator:
 
             return schema_generator.__build_schema(metadata_list)
         except:
-            return None
+            raise FailedCreatingSchemaException("Failed to create schem from xlsx file.")
 
     """Takes in a list words and creates a new schema."""
     def __build_schema(metaData):
-        try:
-            #Builds the dictionary that represents the schema.
-            jsonField = {}
-            jsonField['title'] = None
-            jsonField['type'] = None
-            jsonField['properties'] = []
-            for x in metaData:
-                jsonField['properties'].append({
-                    'name': x,
-                    'type': None,
-                    'description': None})
-            #Creates a new instance of the schema and inserts the dictionary as a json into the field and returns it.
-            returned_schema = Schema()
-            returned_schema.data = json.dumps(jsonField)
-            return returned_schema
-        except:
-            #Any errors with this process and it returns None to signify the failure.
-            return None
+        #Builds the dictionary that represents the schema.
+        jsonField = {}
+        jsonField['title'] = None
+        jsonField['type'] = None
+        jsonField['properties'] = []
+        for x in metaData:
+            jsonField['properties'].append({
+                'name': x,
+                'type': None,
+                'description': None})
+        #Creates a new instance of the schema and inserts the dictionary as a json into the field and returns it.
+        returned_schema = Schema()
+        returned_schema.data = json.dumps(jsonField)
+        return returned_schema
