@@ -2,7 +2,7 @@ from cataloger.models import Schema
 import openpyxl
 import json
 
-#Takes in a file and parses it and generates a schema.
+"""Takes in a file and parses it and generates a schema."""
 class schema_generator:
     
     def build(file,file_name):
@@ -16,8 +16,7 @@ class schema_generator:
         #If there doesn't exist a function for that type of file, no schema is generated.
         return None
 
-    #Takes in a given csv file and returns the schema for it.
-    #We are assuming that the top row contains the headers for the sections.
+    """Takes in a given csv file and returns the schema for it. We are assuming that the top row contains the headers for the sections."""
     def __csv_schema_generator(file):
         try:
             #parses the first line of the file to get all the headers.
@@ -27,7 +26,7 @@ class schema_generator:
         except:
             return None
  
-    #Takes in a given json file and returns the schema for it.
+    """Takes in a given json file and returns the schema for it."""
     def __json_schema_generator(file):
         data = json.load(file)
         metadata_set = set()
@@ -43,8 +42,7 @@ class schema_generator:
 
         return schema_generator.__build_schema(metadata_list)
 
-    #Takes in a given json file and returns the schema for it.
-    #We are assuming that the top row of the first worksheet contains the headers for the sections.
+    """Takes in a given json file and returns the schema for it. We are assuming that the top row of the first worksheet contains the headers for the sections."""
     def __xlsx_schema_generator(file):
         try:
             #Loads the temporary file into a workbook.
@@ -62,8 +60,10 @@ class schema_generator:
         except:
             return None
 
+    """Takes in a list words and creates a new schema."""
     def __build_schema(metaData):
         try:
+            #Builds the dictionary that represents the schema.
             jsonField = {}
             jsonField['title'] = None
             jsonField['type'] = None
@@ -73,8 +73,10 @@ class schema_generator:
                     'name': x,
                     'type': None,
                     'description': None})
+            #Creates a new instance of the schema and inserts the dictionary as a json into the field and returns it.
             returned_schema = Schema()
             returned_schema.data = json.dumps(jsonField)
             return returned_schema
         except:
+            #Any errors with this process and it returns None to signify the failure.
             return None

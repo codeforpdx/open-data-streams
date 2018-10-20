@@ -10,10 +10,12 @@ class AllowAnythingPolicy(paramiko.MissingHostKeyPolicy):
     def missing_host_key(self, client, hostname, key):
         return
 
+"""The exception raised if there is an error with downloading the file"""
 class FailedDownloadingFileException(Exception):
     def __init__(self, *args):
         self.args = args
 
+"""This class functionality is to read supported file types into temporary files."""
 class file_downloader():
     def download_temp(url,sftp_username=None,sftp_password=None):
         try:
