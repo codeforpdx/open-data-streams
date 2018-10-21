@@ -78,6 +78,18 @@ class Keyword(models.Model):
         return self.keyword
 
 class Language(models.Model):
+    """
+    License represents the POD 1.1 language field
+    
+    https://project-open-data.cio.gov/v1.1/schema/#language
+    
+    Note:
+        This should adhere to the RFC 5646 standard.
+        
+        Example: "en-US","es-MX","wo","nv","en-US", etc.
+        
+    .. _language: https://project-open-data.cio.gov/v1.1/schema/#language
+    """
     language = models.CharField(max_length=10)
     description = models.TextField()
     
