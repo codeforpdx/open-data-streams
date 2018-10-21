@@ -70,7 +70,7 @@ class schema_generator:
 
             return schema_generator.__build_schema(metadata_list)
         except:
-            raise FailedCreatingSchemaException("Failed to create schem from xlsx file.")
+            raise FailedCreatingSchemaException("Failed to create schema from xlsx file.")
 
     def __build_schema(metaData):
         """Takes in a list words and creates a new schema."""

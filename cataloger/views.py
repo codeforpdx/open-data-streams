@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 
 from tempfile import TemporaryFile
 from urllib.parse import urlparse
-
+import os, logging
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
 from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm
@@ -140,7 +140,7 @@ def new_dataset(request):
                 #Attempts to download the file using the URL.
                 try:
                     temp_file = file_downloader.file_downloader.download_temp(url,username,password) 
-                    created_schema = schema_generator.schema_generator.build(temp_file,url)
+                    created_schema = schema_generator.schema_generator.build(temp_file,urlparse(url).path.split('?')[0])
                     temp_file.close()
                 #If it raises an exception, it attached the exception as an error on the form.
                 #The only exceptions that can be thrown are ones raised directly by the file_downloader class.
@@ -154,6 +154,8 @@ def new_dataset(request):
                 except Exception as e:
                     created_schema = None
                     url_form.add_error('url', 'An error occured while downloading the file')
+                    # log the error to console so that it can be found somewhere
+                    logging.error("url_form Exception:" + str(e))
             else:
                 #if the form isn't valid, it passed back the form.
                 pass
@@ -178,10 +180,20 @@ def new_dataset(request):
         elif 'blank_submit' in request.POST:
             created_schema = Schema()
             created_schema.data = ''
+            url = None
         if created_schema != None:
             created_schema.save()
-            #create distribution - BLANK
+            #create distribution
             distribution = Distribution()
+            if url:
+                distribution.downloadURL = url
+                distribution.title = os.path.basename(urlparse(url).path.split('?')[0])
+                if distribution.title.endswith('json'):
+                    distribution.mediaType = "application/json"
+                elif distribution.title.endswith('csv'):
+                    distribution.mediaType = "text/csv"
+                elif distribution.title.endswith('xlsx'):
+                    distribution.mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             distribution.save()
             #create dataset
             dataset = Dataset()
