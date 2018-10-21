@@ -5,19 +5,73 @@ from django.contrib.auth.models import AbstractUser
 from .managers import ProfileManager
 
 class AccessLevel(models.Model):
+    """
+    AccessLevel represents the POD 1.1 accessLevel field
+    
+    https://project-open-data.cio.gov/v1.1/schema/#accessLevel
+    
+    This field accepts the following values:
+     
+    - **Public**: This information might not need to be disclosed, but if it is, it shouldn’t cause any damage.
+    - **Sensitive**: This information requires a greater level of protection to prevent loss of inappropriate disclosure.
+    - **Private**: This information is for agency use only, and its disclosure would damage the public trust placed in the agency.
+    - **Confidential**: This is the highest level of sensitivity, and disclosure could cause extreme damage to the agency’s ability to perform its primary business function. Datasets containing information whose disclosure could lead directly to massive financial loss, danger to public safety, or lead to loss of life is classified as confidential.
+    
+    Note:
+        The Accepted Values of the original `accessLevel`_ definition
+        specified:
+        
+            Must be one of the following: “public”, “restricted public”, “non-public”
+        
+    .. _accessLevel: https://project-open-data.cio.gov/v1.1/schema/#accessLevel
+    """
     accessLevel = models.CharField(max_length=12, default=3)
+    description = models.TextField()
 
     def __str__(self):
         return self.accessLevel
 
 class License(models.Model):
+    """
+    License represents the POD 1.1 license field
+    
+    https://project-open-data.cio.gov/v1.1/schema/#license
+    
+    Note:
+        The Accepted Values of the `license`_ field are:
+    
+        - *Creative Commons CCZero* (**CC0**)
+    
+        - *Open Data Commons Public Domain Dedication and Licence* (**PDDL**)
+    
+        - *Creative Commons Attribution 4.0* (**CC-BY-4.0**)
+    
+        - *Open Data Commons Attribution License* (**ODC-BY**)
+    
+        - *Creative Commons Attribution Share-Alike 4.0* (**CC-BY-SA-4.0**)
+    
+        - *Open Data Commons Open Database License* (**ODbL**)
+        
+        
+    .. _license: https://project-open-data.cio.gov/v1.1/schema/#license
+    """
     license = models.CharField(max_length=12, default=3)
     description = models.TextField()
-    
+
     def __str__(self):
         return self.description
 
 class Keyword(models.Model):
+    """
+    Keyword represents the POD 1.1 keyword field
+    
+    https://project-open-data.cio.gov/v1.1/schema/#keyword
+    
+    Note:
+        The Values of the `keyword`_ field will be strings
+        
+    .. _keyword: https://project-open-data.cio.gov/v1.1/schema/#keyword
+    """
     keyword = models.TextField()
 
     def __str__(self):

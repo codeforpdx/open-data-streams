@@ -3,28 +3,32 @@
     "model": "cataloger.accesslevel",
     "pk": 1,
     "fields": {
-      "accessLevel": "Public"
+      "accessLevel": "Public",
+      "description": "This information might not need to be disclosed, but if it is, it shouldn’t cause any damage."
     }
   },
   {
     "model": "cataloger.accesslevel",
     "pk": 2,
     "fields": {
-      "accessLevel": "Sensitive"
+      "accessLevel": "Sensitive",
+      "description": "This information requires a greater level of protection to prevent loss of inappropriate disclosure."
     }
   },
   {
     "model": "cataloger.accesslevel",
     "pk": 3,
     "fields": {
-      "accessLevel": "Private"
+      "accessLevel": "Private",
+      "description": "This information is for agency use only, and its disclosure would damage the public trust placed in the agency."
     }
   },
   {
     "model": "cataloger.accesslevel",
     "pk": 4,
     "fields": {
-      "accessLevel": "Confidential"
+      "accessLevel": "Confidential",
+      "description": "This is the highest level of sensitivity, and disclosure could cause extreme damage to the agency’s ability to perform its primary business function. Datasets containing information whose disclosure could lead directly to massive financial loss, danger to public safety, or lead to loss of life is classified as confidential."
     }
   },
   {

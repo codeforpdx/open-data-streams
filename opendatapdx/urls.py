@@ -13,6 +13,7 @@ import cataloger.views
 urlpatterns = [
     url(r'^$', cataloger.views.index, name='index'),
     url(r'^register$', cataloger.views.register, name='register'),
+    path('admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
     path('dashboard/', cataloger.views.dashboard),
     path('new_dataset/', cataloger.views.new_dataset),
