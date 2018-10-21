@@ -13,14 +13,13 @@ class schema_generator:
     """Takes in a file and parses it and generates a schema."""
     valid_extensions = ('.csv','.xlsx','.json')
     
-    def build(file,url):
+    def build(file,file_name):
         """Depending on the type of the file, it uses a different function to generate the schema."""
-        file_name = url.lower().split('?')[0]
-        if file_name.endswith('.csv'):
+        if file_name.lower().endswith('.csv'):
             return schema_generator.__csv_schema_generator(file)
-        elif file_name.endswith('.json'):
+        elif file_name.lower().endswith('.json'):
             return schema_generator.__json_schema_generator(file)
-        elif file_name.endswith('.xlsx'):
+        elif file_name.lower().endswith('.xlsx'):
             return schema_generator.__xlsx_schema_generator(file)
         #If there doesn't exist a function for that type of file, an exception is raised.
         raise FailedCreatingSchemaException("The file isn't a supported type to generate a schema.")

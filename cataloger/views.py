@@ -140,7 +140,7 @@ def new_dataset(request):
                 #Attempts to download the file using the URL.
                 try:
                     temp_file = file_downloader.file_downloader.download_temp(url,username,password) 
-                    created_schema = schema_generator.schema_generator.build(temp_file,url)
+                    created_schema = schema_generator.schema_generator.build(temp_file,urlparse(url).path.split('?')[0])
                     temp_file.close()
                 #If it raises an exception, it attached the exception as an error on the form.
                 #The only exceptions that can be thrown are ones raised directly by the file_downloader class.
