@@ -124,6 +124,7 @@ def load_offices(request):
 
 def new_dataset(request):
     created_schema = None
+    valid_extensions = schema_generator.schema_generator.valid_extensions
     if request.method == "POST":
         if 'url_submit' in request.POST:
             #creates the form from the request.
@@ -163,7 +164,7 @@ def new_dataset(request):
             if file_form.is_valid():
                 #if a file was submitted it grabs the file and stores a reference.
                 file = request.FILES['file']
-                if not file.name.lower().endswith(schema_generator.schema_generator.valid_extensions):
+                if not file.name.lower().endswith(valid_extensions):
                     file_form.add_error(None, 'The provided file is not a supported type.')
                 else:
                     try:
@@ -202,7 +203,7 @@ def new_dataset(request):
         url_form = NewDatasetURLForm()
         file_form = NewDatasetFileForm()
 
-    return render(request, 'new_dataset.html', {'url_form':url_form, 'file_form':file_form})
+    return render(request, 'new_dataset.html', {'url_form':url_form, 'file_form':file_form, 'extensions':valid_extensions})
 
 def dataset(request, dataset_id=None):
     ds = get_object_or_404(Dataset, id=dataset_id)

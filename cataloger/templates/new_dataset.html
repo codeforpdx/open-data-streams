@@ -5,6 +5,7 @@
 
 <div class="container" style="max-width 80%; margin-top: 30px; margin-bottom: 30px">
   <h2>Upload a new dataset</h2>
+    <h5>supported filetypes are: {% for ext in extensions %}{% if forloop.last %}and {% endif %}{{ ext }}{% if not forloop.last %}, {% endif %}{% endfor %}</h5>
   </br>
   <h5>Upload with a URL</h5>
   <form action="/new_dataset/" method="post">
@@ -25,7 +26,6 @@
     {% csrf_token %}
     <input type="submit" value="Create" name="blank_submit" class="btn btn-primary">
   </form>
-  blank_submit
 </div>
 
 {% endblock %}
