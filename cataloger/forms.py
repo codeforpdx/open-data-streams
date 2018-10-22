@@ -8,7 +8,7 @@ from django import forms
 from django.core import validators
 from .models import Profile
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div, Row
 from .models import BureauCode, Division, Office, Dataset, Distribution
 
 class RegistrationForm(forms.ModelForm):
@@ -161,18 +161,34 @@ class DistributionForm(forms.ModelForm):
         )
 
 class SchemaForm(forms.Form):
-    schema = forms.CharField(label="schema", required=False)
+    def __init__(self, json_data, *args, **kwargs):
+        import json
 
-    def __init__(self, *args, **kwargs):
-        self.data = kwargs.pop('data')
+        data = json.loads(json_data)
+
         super(SchemaForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Fieldset(
                 '',
-                'schema',
             ),
             ButtonHolder(
                 Submit('submit', 'Submit', css_class='btn btn-primary')
-                    )
+            )
         )
+
+        # choices for dropdown menu of types
+        type_choices = [
+            ('null', 'null'),
+            ('boolean', 'boolean'),
+            ('object', 'object'),
+            ('array', 'array'),
+            ('number', 'number'),
+            ('string', 'string')
+        ]
+
+        # loop through data and append forms to layout
+        for name, meta in data.items():
+            self.fields[name+"_description"] = forms.CharField()
+            self.fields[name+"_type"] = forms.ChoiceField(choices=type_choices)
+            self.helper.layout[0].extend(Row(name+"_description", name+"_type"))

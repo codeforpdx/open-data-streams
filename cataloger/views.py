@@ -271,13 +271,48 @@ def schema(request, slug=None):
     #except ObjectDoesNotExist:
     #    raise Http404("Schema does not exist")
     #data = schema.data
+    #property_data = json.dumps(data["properties"])
 
     # temporary data variable
-    data = '{ "$id": "https://example.com/person.schema.json", "$schema": "http://json-schema.org/draft-07/schema#", "title": "Person", "type": "object", "properties": { "firstName": { "type": "string", "description": "The persons first name." }, "lastName": { "type": "string", "description": "The persons last name." }, "age": { "description": "Age in years which must be equal to or greater than zero.", "type": "integer", "minimum": 0 } } }'
-    json_data = json.loads(data)
+    data = {
+        "$id": "https://example.com/person.schema.json",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "title": "Person",
+        "type": "object",
+        "properties": {
+            "first": {
+                "type": "string",
+                "description": "The person's first name."
+            },
+            "last": {
+                "type": "string",
+                "description": "The person's last name."
+            },
+            "age": {
+                "description": "Age in years which must be equal to or greater than zero.",
+                "type": "integer",
+                "minimum": 0
+            }
+        }
+    }
+
+    property_data = json.dumps(data["properties"])
 
     if request.method == 'POST':
-        form = SchemaForm(request.Post,data=data)
+        form = SchemaForm(property_data, data=request.POST)
+        if form.is_valid():
+            # loop over the property fields and pull the submitted data
+            for name in data['properties']:
+                data["properties"][name]["type"] = request.POST[name+'_type']
+                data["properties"][name]["description"] = request.POST[name+'_description']
+            # the form is valid - save it (uncomment when ready)
+            # schema.data = data
+            # schema.save()
+            return HttpResponseRedirect('/dashboard/')
+        else:
+            # the return below will display form errors
+            pass
     else:
-        form = SchemaForm(data=data)
+        form = SchemaForm(property_data)
+
     return render(request, 'schema.html', {'slug':slug, 'form':form})
