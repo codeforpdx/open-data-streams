@@ -5,8 +5,8 @@
 <div class="container" style="max-width 80%; margin-top: 30px; margin-bottom: 130px">
     <div class="row justify-content-md-center">
         <div class="col-lg-8">
-            <h2>Edit Distribution</h2><br>  
-            <form method="post" id="distributionForm" action="{% url 'distribution' distribution_id %}">
+            <p>Edit Distribution</p><br>  
+            <form method="post" id="distributionForm" action="{% url 'cataloger:distribution' distribution_id %}">
                 {% crispy form %}
             </form>
         </div>
