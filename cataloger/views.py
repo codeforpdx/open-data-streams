@@ -123,9 +123,10 @@ def load_offices(request):
     return render(request, 'offices_dropdown_list_options.html', {'offices': offices})
 
 def new_dataset(request):
-    created_schema = None
     valid_extensions = schema_generator.schema_generator.valid_extensions
     if request.method == "POST":
+        created_schema = None
+        url = request.POST.get('url')  # None if not found
         if 'url_submit' in request.POST:
             #creates the form from the request.
             url_form = NewDatasetURLForm(request.POST)
@@ -134,28 +135,28 @@ def new_dataset(request):
             #Checks if the form is valid.
             if url_form.is_valid():
                 #Grabs the url, username, and password.
-                url = request.POST['url']
                 username = request.POST['username']
                 password = request.POST['password']
                 #Attempts to download the file using the URL.
                 try:
-                    temp_file = file_downloader.file_downloader.download_temp(url,username,password) 
-                    created_schema = schema_generator.schema_generator.build(temp_file,urlparse(url).path.split('?')[0])
-                    temp_file.close()
+                    temp_file = file_downloader.file_downloader.download_temp(url, username, password)
+                    created_schema = schema_generator.schema_generator.build(temp_file, urlparse(url).path.split('?')[0])
                 #If it raises an exception, it attached the exception as an error on the form.
-                #The only exceptions that can be thrown are ones raised directly by the file_downloader class.
                 except file_downloader.FailedDownloadingFileException as e:
                     created_schema = None
-                    url_form.add_error('url',str(e))
+                    url_form.add_error('url', str(e))
                 except schema_generator.FailedCreatingSchemaException as e:
                     created_schema = None
-                    url_form.add_error('url',str(e))
+                    url_form.add_error('url', str(e))
                 #All of other exceptions are caught and handled.
                 except Exception as e:
                     created_schema = None
                     url_form.add_error('url', 'An error occured while downloading the file')
                     # log the error to console so that it can be found somewhere
                     logging.error("url_form Exception:" + str(e))
+                finally:
+                    if temp_file is not None:
+                        temp_file.close()
             else:
                 #if the form isn't valid, it passed back the form.
                 pass
@@ -170,22 +171,21 @@ def new_dataset(request):
                     file_form.add_error(None, 'The provided file is not a supported type.')
                 else:
                     try:
-                        created_schema = schema_generator.schema_generator.build(file,file.name)
-                    except schema_generator.FailedCreatingSchemaException as e:
-                        url_form.add_error(None,str(e))
-                    #All of other exceptions are caught and handled.
+                        created_schema = schema_generator.schema_generator.build(file, file.name)
                     except Exception as e:
                         created_schema = None
-                        url_form.add_error(None, str(e))#'An error occured while downloading the file')
+                        url_form.add_error(None, str(e))
         elif 'blank_submit' in request.POST:
             created_schema = Schema()
             created_schema.data = ''
-            url = None
-        if created_schema != None:
+
+        # if a schema was created, we create a new dataset with the schema and a new distribution (blank or url)
+        if created_schema is not None:
+            # save the created schema
             created_schema.save()
-            #create distribution
+            # create and save distribution
             distribution = Distribution()
-            if url:
+            if url is not None:
                 distribution.downloadURL = url
                 distribution.title = os.path.basename(urlparse(url).path.split('?')[0])
                 if distribution.title.endswith('json'):
@@ -195,21 +195,21 @@ def new_dataset(request):
                 elif distribution.title.endswith('xlsx'):
                     distribution.mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             distribution.save()
-            #create dataset
+            # create and save dataset
             dataset = Dataset()
-            dataset.distribution = distribution
             dataset.schema = created_schema
+            dataset.distribution = distribution
             profile = Profile.objects.get(id=request.user.id)
             dataset.publisher = profile
-            dataset.save()
-
-            dataset_identifier_path = '/dataset/' + str(dataset.id)
-            dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
             if profile.bureau:
                 dataset.bureauCode.add(profile.bureau)
             if profile.division:
                 dataset.programCode.add(profile.division)
             dataset.save()
+            # redirect to schema customization
+            # TODO Currently skips to dataset customization
+            dataset_identifier_path = '/dataset/' + str(dataset.id)
+            dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
             return HttpResponseRedirect(dataset_identifier_path)
     else:
         url_form = NewDatasetURLForm()
