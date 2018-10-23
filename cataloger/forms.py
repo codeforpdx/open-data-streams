@@ -8,7 +8,7 @@ from django import forms
 from django.core import validators
 from .models import Profile
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div, HTML
 from .models import BureauCode, Division, Office, Dataset, Distribution
 
 class RegistrationForm(forms.ModelForm):
@@ -103,7 +103,9 @@ class DatasetForm(forms.ModelForm):
                 '',
                 Div('publisher', hidden="true"),
                 'distribution',
+                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "#" > Edit Distribution </a>""")),
                 'schema',
+                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "#" > Edit Schema </a>""")),
                 'mtype',
                 'title',
                 'description',
@@ -142,7 +144,7 @@ class DistributionForm(forms.ModelForm):
     class Meta:
         model = Distribution
         fields = ['accessURL', 'conformsTo', 'describedBy', 'describedByType', 'description', 'downloadURL', 'dformat', 'mediaType', 'title',]
-    
+
     def __init__(self, *args, **kwargs):
         super(DistributionForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
