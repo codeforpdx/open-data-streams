@@ -147,8 +147,8 @@ def new_dataset(request):
                 temp_file = None
                 # Attempts to download the file using the URL.
                 try:
-                    temp_file = file_downloader.file_downloader.download_temp(url, username, password)
-                    created_schema = schema_generator.schema_generator.build(temp_file, urlparse(url).path.split('?')[0])
+                    temp_file = file_downloader.FileDownloader.download_temp(url, username, password)
+                    created_schema = schema_generator.SchemaGenerator.build(temp_file, urlparse(url).path.split('?')[0])
                 # If it raises an exception, it attached the exception as an error on the form.
                 except file_downloader.FailedDownloadingFileException as e:
                     created_schema = None
@@ -179,7 +179,7 @@ def new_dataset(request):
                     file_form.add_error(None, 'The provided file is not a supported type.')
                 else:
                     try:
-                        created_schema = schema_generator.schema_generator.build(file, file.name)
+                        created_schema = schema_generator.SchemaGenerator.build(file, file.name)
                     except Exception as e:
                         created_schema = None
                         url_form.add_error(None, str(e))
