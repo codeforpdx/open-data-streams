@@ -5,7 +5,27 @@
 
 <div class="container" style="max-width 80%; margin-top: 30px; margin-bottom: 30px">
   <h2>Schema # {{ slug }}</h2>
-  {% crispy form %}
+  <div class="buttonHolder">
+    <input id="submit-id-submit" class="btn btn-primary" name="submit" value="Submit" type="submit">
+  </div>
+  </br>
+
+  <table class="table">
+    <thead>
+      <tr>
+	<th scope="col">Column</th>
+	<th scope="col">Description</th>
+	<th scope="col">Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% crispy form %}
+    </tbody>
+  </table>
+
+  <div class="buttonHolder">
+    <input id="submit-id-submit" class="btn btn-primary" name="submit" value="Submit" type="submit">
+  </div>
 </div>
 
 {% endblock %}

@@ -8,7 +8,7 @@ from django import forms
 from django.core import validators
 from .models import Profile
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div, Row
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div, HTML
 from .models import BureauCode, Division, Office, Dataset, Distribution
 
 class RegistrationForm(forms.ModelForm):
@@ -171,9 +171,6 @@ class SchemaForm(forms.Form):
         self.helper.layout = Layout(
             Fieldset(
                 '',
-            ),
-            ButtonHolder(
-                Submit('submit', 'Submit', css_class='btn btn-primary')
             )
         )
 
@@ -188,7 +185,14 @@ class SchemaForm(forms.Form):
         ]
 
         # loop through data and append forms to layout
-        for name, meta in data.items():
+        for fields in data:
+            name = fields['name']
             self.fields[name+"_description"] = forms.CharField()
             self.fields[name+"_type"] = forms.ChoiceField(choices=type_choices)
-            self.helper.layout[0].extend(Row(name+"_description", name+"_type"))
+            self.helper.layout[0].extend([
+                HTML("<tr> <td>"+name+"</td> <td>"),
+                Div(name+"_description"),
+                HTML("</td> <td>"),
+                Div(name+"_type"),
+                HTML("</td> </tr>")
+            ])

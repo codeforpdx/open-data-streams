@@ -264,50 +264,28 @@ def distribution(request, distribution_id=None):
 def schema(request, slug=None):
     import json
 
-    # COMMENTED OUT TILL DATASETS CAN BE MADE
     # validate that the slug exists and grab json blob
-    #try:
-    #    schema = Dataset.objects.get(identifier=slug)
-    #except ObjectDoesNotExist:
-    #    raise Http404("Schema does not exist")
-    #data = schema.data
-    #property_data = json.dumps(data["properties"])
-
-    # temporary data variable
-    data = {
-        "$id": "https://example.com/person.schema.json",
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "title": "Person",
-        "type": "object",
-        "properties": {
-            "first": {
-                "type": "string",
-                "description": "The person's first name."
-            },
-            "last": {
-                "type": "string",
-                "description": "The person's last name."
-            },
-            "age": {
-                "description": "Age in years which must be equal to or greater than zero.",
-                "type": "integer",
-                "minimum": 0
-            }
-        }
-    }
-
+    try:
+        schema = Dataset.objects.get(identifier=slug)
+    except ObjectDoesNotExist:
+        raise Http404("Schema does not exist")
+    data = schema.data
     property_data = json.dumps(data["properties"])
 
     if request.method == 'POST':
         form = SchemaForm(property_data, data=request.POST)
         if form.is_valid():
             # loop over the property fields and pull the submitted data
-            for name in data['properties']:
-                data["properties"][name]["type"] = request.POST[name+'_type']
-                data["properties"][name]["description"] = request.POST[name+'_description']
+            counter = 0
+            for fields in data['properties']:
+                name = fields["name"]
+                data["properties"][counter]["type"] = request.POST[name+'_type']
+                data["properties"][counter]["description"] = request.POST[name+'_description']
+                counter += 1
+
             # the form is valid - save it (uncomment when ready)
-            # schema.data = data
-            # schema.save()
+            schema.data = data
+            schema.save()
             return HttpResponseRedirect('/dashboard/')
         else:
             # the return below will display form errors
