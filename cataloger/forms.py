@@ -101,12 +101,10 @@ class DatasetForm(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 '',
-                Div('publisher', hidden="true"),
                 'distribution',
-                ButtonHolder(HTML("""<a role="button" class="btn-sm btn-link" href= "{% url 'distribution' dataset_id %}" > Edit Distribution </a>""")),
+                ButtonHolder(HTML("""<a role="button" class="btn-sm btn-primary" href= "{% url 'distribution' dataset_id %}" > Edit Distribution </a>""")),
                 'schema',
-                ButtonHolder(HTML("""<a role="button" class="btn-sm btn-link" href= "#" > Edit Schema </a>""")),
-                Div('mtype', hidden="true"),
+                ButtonHolder(HTML("""<a role="button" class="btn-sm btn-primary" href= "#" > Edit Schema </a>""")),
                 'title',
                 'description',
                 'keywords',
