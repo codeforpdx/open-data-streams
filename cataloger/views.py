@@ -6,7 +6,6 @@ import django.db, random, string
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404
 
-from tempfile import TemporaryFile
 from urllib.parse import urlparse
 import os, logging
 
@@ -14,11 +13,14 @@ from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division
 from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm
 from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages
 
+
 def random_str(length):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
 
+
 def index(request):
     return render(request, 'index.html')
+
 
 @user_passes_test(lambda u: u.is_authenticated)
 def dashboard(request):
@@ -48,6 +50,7 @@ def dashboard(request):
 
     return render(request, 'dashboard.html', {'datasets' : datasets})
 
+
 def register(request):
     if request.method == "POST":
         # this is a POST request
@@ -72,6 +75,7 @@ def register(request):
         # this is a GET request
         form = RegistrationForm()
     return render(request, 'register.html', {'form':form})
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def utilities(request):
@@ -112,15 +116,18 @@ def utilities(request):
         datasets_form = UploadDatasetsCSVFileForm()
     return render(request, 'utilities.html', {'bureaucodes_form': bureaucodes_form, 'datasets_form': datasets_form})
 
+
 def load_divisions(request):
     bureau_id = request.GET.get('bureau')
     divisions = Division.objects.filter(bureau=bureau_id).order_by('description')
     return render(request, 'divisions_dropdown_list_options.html', {'divisions': divisions})
 
+
 def load_offices(request):
     division_id = request.GET.get('division')
     offices = Office.objects.filter(division=division_id).order_by('description')
     return render(request, 'offices_dropdown_list_options.html', {'offices': offices})
+
 
 def new_dataset(request):
     valid_extensions = schema_generator.schema_generator.valid_extensions
@@ -128,27 +135,28 @@ def new_dataset(request):
         created_schema = None
         url = request.POST.get('url')  # None if not found
         if 'url_submit' in request.POST:
-            #creates the form from the request.
+            # creates the form from the request.
             url_form = NewDatasetURLForm(request.POST)
             file_form = NewDatasetFileForm()
 
-            #Checks if the form is valid.
+            # Checks if the form is valid.
             if url_form.is_valid():
-                #Grabs the url, username, and password.
+                # Grabs the url, username, and password.
                 username = request.POST['username']
                 password = request.POST['password']
-                #Attempts to download the file using the URL.
+                temp_file = None
+                # Attempts to download the file using the URL.
                 try:
                     temp_file = file_downloader.file_downloader.download_temp(url, username, password)
                     created_schema = schema_generator.schema_generator.build(temp_file, urlparse(url).path.split('?')[0])
-                #If it raises an exception, it attached the exception as an error on the form.
+                # If it raises an exception, it attached the exception as an error on the form.
                 except file_downloader.FailedDownloadingFileException as e:
                     created_schema = None
                     url_form.add_error('url', str(e))
                 except schema_generator.FailedCreatingSchemaException as e:
                     created_schema = None
                     url_form.add_error('url', str(e))
-                #All of other exceptions are caught and handled.
+                # All of other exceptions are caught and handled.
                 except Exception as e:
                     created_schema = None
                     url_form.add_error('url', 'An error occured while downloading the file')
@@ -158,14 +166,14 @@ def new_dataset(request):
                     if temp_file is not None:
                         temp_file.close()
             else:
-                #if the form isn't valid, it passed back the form.
+                # If the form isn't valid, it passed back the form.
                 pass
-        #file form was submitted
+        # File form was submitted
         elif 'file_submit' in request.POST:
             url_form = NewDatasetURLForm()
             file_form = NewDatasetFileForm(request.POST, request.FILES)
             if file_form.is_valid():
-                #if a file was submitted it grabs the file and stores a reference.
+                # If a file was submitted, it grabs the file and stores a reference.
                 file = request.FILES['file']
                 if not file.name.lower().endswith(valid_extensions):
                     file_form.add_error(None, 'The provided file is not a supported type.')
@@ -195,7 +203,7 @@ def new_dataset(request):
                 elif distribution.title.endswith('xlsx'):
                     distribution.mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             distribution.save()
-            # create and save dataset
+            # create and saves a dataset.
             dataset = Dataset()
             dataset.schema = created_schema
             dataset.distribution = distribution
@@ -219,6 +227,7 @@ def new_dataset(request):
 
     return render(request, 'new_dataset.html', {'url_form':url_form, 'file_form':file_form, 'extensions':valid_extensions})
 
+
 def dataset(request, dataset_id=None):
     ds = get_object_or_404(Dataset, id=dataset_id)
     if ds.publisher.id is not request.user.id:
@@ -239,6 +248,7 @@ def dataset(request, dataset_id=None):
         dataset_form.fields['distribution'].queryset = Distribution.objects.filter(dataset=ds)
 
     return render(request, 'dataset.html', {'dataset_id':dataset_id, 'form':dataset_form})
+
 
 def distribution(request, distribution_id=None):
     dn = get_object_or_404(Distribution, id=distribution_id)
