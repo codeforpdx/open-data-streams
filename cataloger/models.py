@@ -114,9 +114,8 @@ class BureauCode(models.Model):
     
     https://project-open-data.cio.gov/v1.1/schema/#bureauCode
     
-    **Accepted Values**:
-    
-    2-letter City of Portland `bureauCode`_ (e.g., "AT", "AU", "BO", etc.)
+    Accepted Values:
+        2-letter City of Portland `bureauCode`_ (e.g., "AT", "AU", "BO", etc.)
         
     .. _bureauCode: https://project-open-data.cio.gov/v1.1/schema/#bureauCode
     """
@@ -198,10 +197,13 @@ class Schema(models.Model):
     
     Schema objects are (in most instances) created by the *schema_generator.py* module, and have their **data** field (a JSONField object) set to the JSON text blob that was generated.
     
+    Accepted Values:
+        JSON-formatted string
+        
     Note:
-        The model's **data** field should include a JSON key ($schema) that specifies the format of the JSON blob. In most cases, that format will be based on `JSON Schema draft-04`_
+        The model's **data** field should include a JSON key ($schema) that specifies the format of the JSON blob. In most cases, that format will be based on `JSON Schema draft-07`_
 
-    .. _JSON Schema draft-04: http://json-schema.org/draft-04
+    .. _JSON Schema draft-07: http://json-schema.org/draft-07
     .. _describedBy: https://project-open-data.cio.gov/v1.1/schema/#describedBy
     """
     data = JSONField()
