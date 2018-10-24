@@ -2,6 +2,7 @@ from cataloger.models import Schema
 from tempfile import TemporaryFile
 import openpyxl
 import json
+import logging
 
 
 class FailedCreatingSchemaException(Exception):
