@@ -182,7 +182,7 @@ def new_dataset(request):
                         created_schema = schema_generator.SchemaGenerator.build(file, file.name)
                     except Exception as e:
                         created_schema = None
-                        url_form.add_error(None, str(e))
+                        file_form.add_error(None, str(e))
         elif 'blank_submit' in request.POST:
             created_schema = Schema()
             created_schema.data = ''
