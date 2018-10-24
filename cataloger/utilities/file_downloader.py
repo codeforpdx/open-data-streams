@@ -7,6 +7,7 @@ from tempfile import TemporaryFile
 import requests
 from urllib.parse import urlparse
 from . import schema_generator
+import logging
 
 
 class AllowAnythingPolicy(paramiko.MissingHostKeyPolicy):
@@ -28,7 +29,8 @@ class FileDownloader:
         try:
             # It then attempts to parse the url with the urllib library.
             parsed_url = urlparse(url)
-        except Exception:
+        except Exception as e:
+            logging.error('Failed to parse url: ' + str(e))
             # If it fails, it sends a message back.
             raise FailedDownloadingFileException('The provided url is not in a recognized format.')
         # If the file doesn't end with a supported type, it throws an error.
@@ -54,9 +56,9 @@ class FileDownloader:
             output.seek(0)
             return output
         except Exception as e:
+            logging.error('Failed to download https file: ' + str(e))
             # if there is any errors in the above process, an exception is raised.
-            raise FailedDownloadingFileException('An error occurred while downloading the file from a https url: '
-                                                 + str(e))
+            raise FailedDownloadingFileException('An error occurred while downloading the file from a https url.')
 
     def __sftp_file_downloader(parsed_url, sftp_username, sftp_password):
         """Takes in a given sftp url and downloads the file into a temporary file."""
@@ -89,6 +91,7 @@ class FileDownloader:
             client.close()
             temp_file.seek(0)
             return temp_file
-        except Exception:
+        except Exception as e:
+            logging.error('Failed to download sftp file: ' + str(e))
             # if there is any errors in the above process, an exception is raised.
             raise FailedDownloadingFileException('An error occurred while downloading the file from a sftp url.')

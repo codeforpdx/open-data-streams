@@ -22,7 +22,9 @@ class SchemaGenerator:
             return SchemaGenerator.__json_schema_generator(file)
         elif file_name.lower().endswith('.xlsx'):
             return SchemaGenerator.__xlsx_schema_generator(file)
+
         # If there doesn't exist a function for that type of file, an exception is raised.
+        logging.error('Non-support file type inputted into schema generator: ' + file_name.lower())
         raise FailedCreatingSchemaException("The file isn't a supported type to generate a schema.")
 
     def __csv_schema_generator(file):
@@ -33,7 +35,8 @@ class SchemaGenerator:
             metadata = str(file.readline()).split(',')
             # Will be further implemented in phase 3.
             return SchemaGenerator.__build_schema(metadata)
-        except Exception:
+        except Exception as e:
+            logging.error('Failed to parse csv file into schema: ' + str(e))
             raise FailedCreatingSchemaException("Failed to create schema from csv file.")
  
     def __json_schema_generator(file):
@@ -52,7 +55,8 @@ class SchemaGenerator:
             # assumes list of objects and that first entry has full list of properties
 
             return SchemaGenerator.__build_schema(metadata_list)
-        except Exception:
+        except Exception as e:
+            logging.error('Failed to parse json file into schema: ' + str(e))
             raise FailedCreatingSchemaException("Failed to create schema from json file.")
 
     def __xlsx_schema_generator(file):
@@ -71,7 +75,8 @@ class SchemaGenerator:
                 metadata_list.append(str(cell))
 
             return SchemaGenerator.__build_schema(metadata_list)
-        except Exception:
+        except Exception as e:
+            logging.error('Failed to parse xlsx file into schema: ' + str(e))
             raise FailedCreatingSchemaException("Failed to create schema from xlsx file.")
 
     def __build_schema(meta_data):
