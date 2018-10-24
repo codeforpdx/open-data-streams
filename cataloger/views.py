@@ -201,15 +201,17 @@ def new_dataset(request):
             dataset.distribution = distribution
             profile = Profile.objects.get(id=request.user.id)
             dataset.publisher = profile
+            dataset.save()
+            # save in order to cross link to other models and populate the identifier
             if profile.bureau:
                 dataset.bureauCode.add(profile.bureau)
             if profile.division:
                 dataset.programCode.add(profile.division)
-            dataset.save()
-            # redirect to schema customization
+            # prepare path for dataset
             # TODO Currently skips to dataset customization
             dataset_identifier_path = '/dataset/' + str(dataset.id)
             dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
+            dataset.save()
             return HttpResponseRedirect(dataset_identifier_path)
     else:
         url_form = NewDatasetURLForm()
