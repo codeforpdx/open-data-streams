@@ -103,7 +103,7 @@ class DatasetForm(forms.ModelForm):
                 '',
                 Div('publisher', hidden="true"),
                 'distribution',
-                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "#" > Edit Distribution </a>""")),
+                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'distribution' dataset_id %}" > Edit Distribution </a>""")),
                 'schema',
                 ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "#" > Edit Schema </a>""")),
                 'mtype',
