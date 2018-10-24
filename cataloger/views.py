@@ -130,7 +130,7 @@ def load_offices(request):
 
 
 def new_dataset(request):
-    valid_extensions = schema_generator.schema_generator.valid_extensions
+    valid_extensions = schema_generator.SchemaGenerator.valid_extensions
     if request.method == "POST":
         created_schema = None
         url = request.POST.get('url')  # None if not found
