@@ -17,11 +17,11 @@ class SchemaGenerator:
     def build(file, file_name):
         """Depending on the type of the file, it uses a different function to generate the schema."""
         if file_name.lower().endswith('.csv'):
-            return schema_generator.__csv_schema_generator(file)
+            return SchemaGenerator.__csv_schema_generator(file)
         elif file_name.lower().endswith('.json'):
-            return schema_generator.__json_schema_generator(file)
+            return SchemaGenerator.__json_schema_generator(file)
         elif file_name.lower().endswith('.xlsx'):
-            return schema_generator.__xlsx_schema_generator(file)
+            return SchemaGenerator.__xlsx_schema_generator(file)
         # If there doesn't exist a function for that type of file, an exception is raised.
         raise FailedCreatingSchemaException("The file isn't a supported type to generate a schema.")
 
@@ -32,7 +32,7 @@ class SchemaGenerator:
             # Parses the first line of the file to get all the headers.
             metadata = str(file.readline()).split(',')
             # Will be further implemented in phase 3.
-            return schema_generator.__build_schema(metadata)
+            return SchemaGenerator.__build_schema(metadata)
         except Exception:
             raise FailedCreatingSchemaException("Failed to create schema from csv file.")
  
@@ -51,7 +51,7 @@ class SchemaGenerator:
             #    metadata_list.append(data_property)
             # assumes list of objects and that first entry has full list of properties
 
-            return schema_generator.__build_schema(metadata_list)
+            return SchemaGenerator.__build_schema(metadata_list)
         except Exception:
             raise FailedCreatingSchemaException("Failed to create schema from json file.")
 
@@ -70,7 +70,7 @@ class SchemaGenerator:
             for cell in workbook[sheet_names[0]][1]:
                 metadata_list.append(str(cell))
 
-            return schema_generator.__build_schema(metadata_list)
+            return SchemaGenerator.__build_schema(metadata_list)
         except Exception:
             raise FailedCreatingSchemaException("Failed to create schema from xlsx file.")
 

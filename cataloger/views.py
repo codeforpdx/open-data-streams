@@ -159,7 +159,7 @@ def new_dataset(request):
                 # All of other exceptions are caught and handled.
                 except Exception as e:
                     created_schema = None
-                    url_form.add_error('url', 'An error occured while downloading the file')
+                    url_form.add_error('url', 'An error occurred while downloading the file: ')
                     # log the error to console so that it can be found somewhere
                     logging.error("url_form Exception:" + str(e))
                 finally:
