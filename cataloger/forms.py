@@ -94,19 +94,34 @@ class DatasetForm(forms.ModelForm):
     class Meta:
         model = Dataset
         fields = ['publisher', 'distribution', 'schema', 'mtype', 'title', 'description', 'keywords', 'identifier', 'accessLevel', 'bureauCode', 'programCode', 'license', 'spatial', 'temporal', 'describedByType', 'describedBy', 'accrualPeriodicity', 'conformsTo', 'dataQuality', 'isPartOf', 'issued', 'language', 'landingPage', 'primaryITInvestment', 'references', 'systemOfRecords', 'theme',]
-
+        widgets = {
+          'title': forms.Textarea(attrs={'rows':1, 'cols':15}),
+          'description': forms.Textarea(attrs={'rows':4, 'cols':15}),
+          'spatial': forms.Textarea(attrs={'rows':4, 'cols':15}),
+          'temporal': forms.Textarea(attrs={'rows':4, 'cols':15}),
+          'describedByType': forms.Textarea(attrs={'rows':4, 'cols':15}),
+          'describedBy': forms.Textarea(attrs={'rows':4, 'cols':15}),
+          'accrualPeriodicity': forms.Textarea(attrs={'rows':4, 'cols':15}),
+          'conformsTo': forms.Textarea(attrs={'rows':4, 'cols':15}),
+          'isPartOf': forms.Textarea(attrs={'rows':4, 'cols':15}),
+          'issued': forms.Textarea(attrs={'rows':4, 'cols':15}),
+          'landingPage': forms.Textarea(attrs={'rows':4, 'cols':15}),
+          'primaryITInvestment': forms.Textarea(attrs={'rows':4, 'cols':15}),
+          'references': forms.Textarea(attrs={'rows':4, 'cols':15}),
+          'systemOfRecords': forms.Textarea(attrs={'rows':4, 'cols':15}),
+          'theme': forms.Textarea(attrs={'rows':4, 'cols':15}),
+        }
     def __init__(self, *args, **kwargs):
         super(DatasetForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Fieldset(
                 '',
-                'distribution',
-                ButtonHolder(HTML("""<a role="button" class="btn-sm btn-primary" href= "{% url 'distribution' dataset_id %}" > Edit Distribution </a>""")),
-                'schema',
-                ButtonHolder(HTML("""<a role="button" class="btn-sm btn-primary" href= "#" > Edit Schema </a>""")),
                 'title',
                 'description',
+                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'distribution' dataset_id %}" > Edit Distribution </a>""")),
+                HTML("<br>"), #TODO quick fix spacing the buttons for now
+                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "#" > Edit Schema </a>""")),
                 'keywords',
                 'identifier',
                 'accessLevel',
@@ -133,10 +148,10 @@ class DatasetForm(forms.ModelForm):
                 Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block')
             )
         )
-        if 'distribution' in self.fields:
-                self.fields['distribution'].widget.attrs['disabled'] = True
-        if 'schema' in self.fields:
-                self.fields['schema'].widget.attrs['disabled'] = True
+        #if 'distribution' in self.fields:
+                #self.fields['distribution'].widget.attrs['disabled'] = True
+        #if 'schema' in self.fields:
+                #self.fields['schema'].widget.attrs['disabled'] = True
 
 class DistributionForm(forms.ModelForm):
     class Meta:
