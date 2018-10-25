@@ -157,7 +157,17 @@ class DistributionForm(forms.ModelForm):
     class Meta:
         model = Distribution
         fields = ['accessURL', 'conformsTo', 'describedBy', 'describedByType', 'description', 'downloadURL', 'dformat', 'mediaType', 'title',]
-
+        widgets = {
+          'accessURL': forms.Textarea(attrs={'rows':1, 'cols':15}),
+          'conformsTo': forms.Textarea(attrs={'rows':1, 'cols':15}),
+          'describedBy': forms.Textarea(attrs={'rows':1, 'cols':15}),
+          'describedByType': forms.Textarea(attrs={'rows':1, 'cols':15}),
+          'description': forms.Textarea(attrs={'rows':1, 'cols':15}),
+          'downloadURL': forms.Textarea(attrs={'rows':1, 'cols':15}),
+          'dformat': forms.Textarea(attrs={'rows':1, 'cols':15}),
+          'mediaType': forms.Textarea(attrs={'rows':1, 'cols':15}),
+          'title': forms.Textarea(attrs={'rows':1, 'cols':15}),
+        }
     def __init__(self, *args, **kwargs):
         super(DistributionForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
