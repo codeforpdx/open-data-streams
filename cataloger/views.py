@@ -1,16 +1,17 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.views import View
 from django.contrib.auth import authenticate, login
 import django.db, random, string
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
 
 from urllib.parse import urlparse
 import os, logging
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
-from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm
+from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm, SchemaForm
 from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages
 
 
@@ -216,9 +217,8 @@ def new_dataset(request):
             if profile.division:
                 dataset.programCode.add(profile.division)
             # prepare path for dataset
-            # TODO Currently skips to dataset customization
             dataset_identifier_path = '/dataset/' + str(dataset.id)
-            dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
+            dataset.identifier = str(dataset.id) #request.build_absolute_uri(dataset_identifier_path)
             dataset.save()
             return HttpResponseRedirect(dataset_identifier_path)
     else:
@@ -270,3 +270,41 @@ def distribution(request, distribution_id=None):
         distribution_form = DistributionForm(instance=dn)
     return render(request, 'distribution.html', {'distribution_id':distribution_id, 'form':distribution_form})
 
+def schema(request, slug=None):
+    import json
+
+    # validate that the slug exists and grab json blob
+    try:
+        dataset = Dataset.objects.get(identifier=slug)
+    except ObjectDoesNotExist:
+        raise Http404("Schema does not exist")
+    data = dataset.schema.data
+    print(data)
+    data = json.loads(data)
+    property_data = json.dumps(data["properties"])
+
+    if request.method == 'POST':
+        form = SchemaForm(property_data, data=request.POST)
+        if form.is_valid():
+            # loop over the property fields and pull the submitted data
+            counter = 0
+            for fields in data['properties']:
+                name = fields["name"]
+                data["properties"][counter]["type"] = request.POST[name+'_type']
+                data["properties"][counter]["description"] = request.POST[name+'_description']
+                counter += 1
+
+            # the form is valid - save it
+            schema = Schema()
+            schema.data = json.dumps(data)
+            schema.save()
+            dataset.schema = schema
+            dataset.save()
+            return HttpResponseRedirect('/dashboard/')
+        else:
+            # the return below will display form errors
+            pass
+    else:
+        form = SchemaForm(property_data)
+
+    return render(request, 'schema.html', {'slug':slug, 'form':form})
