@@ -2,29 +2,36 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-
-<div class="container" style="max-width 80%; margin-top: 30px; margin-bottom: 30px">
-  <h2>Upload a new dataset</h2>
-  </br>
-  <h5>Upload with a URL</h5>
-  <form action="/new_dataset/" method="post">
-    {% crispy url_form %}
-  </form>
-  </br>
-  </br>
-  <h5>Upload a file</h5>
-  <form action="/new_dataset/" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ file_form|crispy }}
-    <input type="submit" value="Upload" name="file_submit" class="btn btn-primary">
-  </form>
-  </br>
-  </br>
-  <h5>Create a empty dataset</h5>
-  <form action="/new_dataset/" method="post">
-    {% csrf_token %}
-    <input type="submit" value="Create" name="blank_submit" class="btn btn-primary">
-  </form>
-</div>
-
+<section style="margin-top: 3% !important; margin-bottom: 2.2% !important">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-sm">
+              <h2>Upload a new dataset</h2>
+              <h5>Upload with a URL</h5>
+              <form action="/new_dataset/" method="post">
+                {% crispy url_form %}
+              </form><br>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-sm">
+              <h5>Upload a file</h5>
+              <form action="/new_dataset/" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ file_form|crispy }}
+                <input type="submit" value="Upload" name="file_submit" class="btn btn-primary">
+              </form><br>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-sm">
+              <h5>Create a empty dataset</h5>
+              <form action="/new_dataset/" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Create" name="blank_submit" class="btn btn-primary">
+              </form><br>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
