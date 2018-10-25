@@ -218,9 +218,9 @@ def new_dataset(request):
                 dataset.programCode.add(profile.division)
             # prepare path for dataset
             dataset_identifier_path = '/dataset/' + str(dataset.id)
-            dataset.identifier = str(dataset.id) #request.build_absolute_uri(dataset_identifier_path)
+            dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
             dataset.save()
-            return HttpResponseRedirect(dataset_identifier_path)
+            return HttpResponseRedirect('/schema/'+str(dataset.id))
     else:
         url_form = NewDatasetURLForm()
         file_form = NewDatasetFileForm()
@@ -275,11 +275,10 @@ def schema(request, slug=None):
 
     # validate that the slug exists and grab json blob
     try:
-        dataset = Dataset.objects.get(identifier=slug)
+        dataset = Dataset.objects.get(id=slug)
     except ObjectDoesNotExist:
         raise Http404("Schema does not exist")
     data = dataset.schema.data
-    print(data)
     data = json.loads(data)
     property_data = json.dumps(data["properties"])
 
