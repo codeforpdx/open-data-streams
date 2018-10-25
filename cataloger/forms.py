@@ -226,8 +226,10 @@ class SchemaForm(forms.Form):
         # loop through data and append forms to layout
         for fields in data:
             name = fields['name']
-            self.fields[name+"_description"] = forms.CharField(required=False, label='')
-            self.fields[name+"_type"] = forms.ChoiceField(choices=type_choices, required=False, label='')
+            self.fields[name+"_description"] = forms.CharField(required=False, label='',
+                                                               initial=fields['description'])
+            self.fields[name+"_type"] = forms.ChoiceField(choices=type_choices,
+                                                          required=False, label='', initial=fields['type'])
             self.helper.layout[1].extend([
                 HTML("<tr> <td>"+name+"</td> <td>"),
                 Div(name+"_description"),
