@@ -32,9 +32,9 @@
                     {% csrf_token %}
                     {{ form|crispy }}
                     <p>Forgot your password? Click<a href="{% url 'password_reset' %}"> Here</a></p>
-                    <input type="submit" class="btn btn-primary btn-sm btn-block" value="Log In" />
-                    <input type="hidden" name="next" value="{{ next }}" /><br>
-                    <p>Need an account?<a href="{% url 'register' %}"> Register</a></p>
+                    <input type="submit" class="btn btn-primary btn-sm btn-block" value="Log In"/>
+                    <input type="hidden" name="next" value="{{ next }}"/><br>
+                    <p>Need an account? <a href="{% url 'register' %}">Register</a></p>
                 </form>
             </div>
         </div>

@@ -24,7 +24,6 @@
               <p>Please login to see this page.</p>
             {% endif %}
           {% endif %}
-
           <form method="post" id="registrationForm" action="{% url 'register' %}" data-divisions-url="{% url 'ajax_load_divisions' %}" data-offices-url="{% url 'ajax_load_offices' %}" novalidate>
             {% crispy form %}
             <br><p>Already have an account?<a href="{% url 'login' %}"> Log In</a></p><br>
