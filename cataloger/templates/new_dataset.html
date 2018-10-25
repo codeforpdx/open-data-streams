@@ -3,12 +3,11 @@
 
 {% block content %}
 <section style="margin-top: 3% !important; margin-bottom: 2.2% !important">
-    <h2>Upload a new dataset</h2>
-    <h5>supported filetypes are: {% for ext in extensions %}{% if forloop.last %}and {% endif %}{{ ext }}{% if not forloop.last %}, {% endif %}{% endfor %}</h5>
     <div class="container">
         <div class="row align-items-center">
             <div class="col-sm">
               <h2>Upload a new dataset</h2>
+              <p>supported filetypes are: {% for ext in extensions %}{% if forloop.last %}and {% endif %}{{ ext }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
               <h5>Upload with a URL</h5>
               <form action="/new_dataset/" method="post">
                 {% crispy url_form %}
