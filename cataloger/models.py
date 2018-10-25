@@ -105,8 +105,8 @@ class Dataset(models.Model):
     license = models.ForeignKey(License, on_delete=models.PROTECT, default=3)
 
     # If applicable.
-    spatial = models.TextField()
-    temporal = models.TextField()
+    spatial = models.TextField(blank=True)
+    temporal = models.TextField(blank=True)
 
     # contactPoint -- doesn't exist as a field of Dataset. Instead, use the publisher's info.
     # (although we might decide to include this as a field or do this differently)

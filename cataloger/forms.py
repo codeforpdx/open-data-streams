@@ -128,6 +128,7 @@ class DatasetForm(forms.ModelForm):
                 'bureauCode',
                 'programCode',
                 'license',
+                'language',
                 'spatial',
                 'temporal',
                 'describedByType',
@@ -137,7 +138,6 @@ class DatasetForm(forms.ModelForm):
                 'dataQuality',
                 'isPartOf',
                 'issued',
-                'language',
                 'landingPage',
                 'primaryITInvestment',
                 'references',
@@ -188,3 +188,64 @@ class DistributionForm(forms.ModelForm):
                 Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block')
             )
         )
+
+class SchemaForm(forms.Form):
+    def __init__(self, json_data, *args, **kwargs):
+        import json
+
+        data = json.loads(json_data)
+
+        super(SchemaForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            ButtonHolder(
+                Submit('submit', 'Save', css_class='btn btn-primary')
+            ),
+            Fieldset(
+                '',
+            ),
+            ButtonHolder(
+                Submit('submit', 'Save', css_class='btn btn-primary')
+            )
+        )
+
+        # choices for dropdown menu of types
+        type_choices = [
+            ('null', 'null'),
+            ('boolean', 'boolean'),
+            ('object', 'object'),
+            ('array', 'array'),
+            ('number', 'number'),
+            ('string', 'string')
+        ]
+
+        # Insert whole table here so that submit buttons can exist outside table
+        self.helper.layout[1].extend([HTML("""
+</br>
+<table class='table'>
+    <thead>
+        <tr>
+            <th scope='col'>Column</th>
+            <th scope='col'>Description</th>
+            <th scope='col'>Type</th>
+        </tr>
+    </thead>
+<tbody>
+        """)])
+
+        # loop through data and append forms to layout
+        for fields in data:
+            name = fields['name']
+            self.fields[name+"_description"] = forms.CharField(required=False, label='',
+                                                               initial=fields['description'])
+            self.fields[name+"_type"] = forms.ChoiceField(choices=type_choices,
+                                                          required=False, label='', initial=fields['type'])
+            self.helper.layout[1].extend([
+                HTML("<tr> <td>"+name+"</td> <td>"),
+                Div(name+"_description"),
+                HTML("</td> <td>"),
+                Div(name+"_type"),
+                HTML("</td> </tr>")
+            ])
+
+        self.helper.layout[1].extend([HTML('</tbody> </table>')])

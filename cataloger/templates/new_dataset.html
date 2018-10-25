@@ -3,6 +3,8 @@
 
 {% block content %}
 <section style="margin-top: 3% !important; margin-bottom: 2.2% !important">
+    <h2>Upload a new dataset</h2>
+    <h5>supported filetypes are: {% for ext in extensions %}{% if forloop.last %}and {% endif %}{{ ext }}{% if not forloop.last %}, {% endif %}{% endfor %}</h5>
     <div class="container">
         <div class="row align-items-center">
             <div class="col-sm">
@@ -34,4 +36,32 @@
         </div>
     </div>
 </section>
+{% endblock %}
+=======
+
+<div class="container" style="margin-top: 30px; margin-bottom: 30px">
+  <h2>Upload a new dataset</h2>
+    <h5>supported filetypes are: {% for ext in extensions %}{% if forloop.last %}and {% endif %}{{ ext }}{% if not forloop.last %}, {% endif %}{% endfor %}</h5>
+  </br>
+  <h5>Upload with a URL</h5>
+  <form action="/new_dataset/" method="post">
+    {% crispy url_form %}
+  </form>
+  </br>
+  </br>
+  <h5>Upload a file</h5>
+  <form action="/new_dataset/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ file_form|crispy }}
+    <input type="submit" value="Upload" name="file_submit" class="btn btn-primary">
+  </form>
+  </br>
+  </br>
+  <h5>Create a empty dataset</h5>
+  <form action="/new_dataset/" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Create" name="blank_submit" class="btn btn-primary">
+  </form>
+</div>
+
 {% endblock %}

@@ -1,24 +1,27 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.views import View
 from django.contrib.auth import authenticate, login
 import django.db, random, string
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
 
-from tempfile import TemporaryFile
 from urllib.parse import urlparse
-
+import os, logging
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
-from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm
+from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm, SchemaForm
 from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages
+
 
 def random_str(length):
     return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
 
+
 def index(request):
     return render(request, 'index.html')
+
 
 @user_passes_test(lambda u: u.is_authenticated)
 def dashboard(request):
@@ -48,6 +51,7 @@ def dashboard(request):
 
     return render(request, 'dashboard.html', {'datasets' : datasets})
 
+
 def register(request):
     if request.method == "POST":
         # this is a POST request
@@ -72,6 +76,7 @@ def register(request):
         # this is a GET request
         form = RegistrationForm()
     return render(request, 'register.html', {'form':form})
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def utilities(request):
@@ -112,121 +117,116 @@ def utilities(request):
         datasets_form = UploadDatasetsCSVFileForm()
     return render(request, 'utilities.html', {'bureaucodes_form': bureaucodes_form, 'datasets_form': datasets_form})
 
+
 def load_divisions(request):
     bureau_id = request.GET.get('bureau')
     divisions = Division.objects.filter(bureau=bureau_id).order_by('description')
     return render(request, 'divisions_dropdown_list_options.html', {'divisions': divisions})
+
 
 def load_offices(request):
     division_id = request.GET.get('division')
     offices = Office.objects.filter(division=division_id).order_by('description')
     return render(request, 'offices_dropdown_list_options.html', {'offices': offices})
 
+
 def new_dataset(request):
+    valid_extensions = schema_generator.SchemaGenerator.valid_extensions
     if request.method == "POST":
+        created_schema = None
+        url = request.POST.get('url')  # None if not found
         if 'url_submit' in request.POST:
-            #creates the form from the request.
+            # creates the form from the request.
             url_form = NewDatasetURLForm(request.POST)
             file_form = NewDatasetFileForm()
 
-            #Checks if the form is valid.
+            # Checks if the form is valid.
             if url_form.is_valid():
-                #grabs the url
-                url = request.POST['url']
-                #It then attempts to parse the url with the urllib library.
+                # Grabs the url, username, and password.
+                username = request.POST['username']
+                password = request.POST['password']
+                temp_file = None
+                # Attempts to download the file using the URL.
                 try:
-                     parsed_url = urlparse(url)
-                except:
-                    #If it fails, it sends a message back.
-                    url_form.add_error('url', 'The provided url is not in a recognized format.')
-                    pass
-                #it checks if the url ends with the file type that is supported.
-                if parsed_url.path.lower().endswith(('.csv','.xlsx','.json')):
-                    #checks if the url's scheme is https.
-                    if parsed_url.scheme.lower() == 'https':
-                        #if it does, it tries to download the file using the https url.
-                        temp_file = file_downloader.file_downloader(url)
-                        #if is succeeds, it will generate the schema.
-                        if temp_file is not None :
-                            created_schema = schema_generator.schema_generator(temp_file,url)
-                            #deallocates the temporary file by closing it.
-                            temp_file.close()
-                            return HttpResponseRedirect('/dashboard/')
-                        else:
-                            #otherwise, it failed to download the file.
-                            url_form.add_error('url', 'The provided https file failed to be downloaded.')
-                            pass
-                    #otherwise, it checks if the string starts with sftp.
-                    elif parsed_url.scheme.lower() == 'sftp':
-                        #if it does, it grabs the username and password from the form tries to download the file.
-                        username = request.POST['username']
-                        password = request.POST['password']
-                        #validate user/pass fields
-                        if not username:
-                            url_form.add_error('username', 'Username must not be empty')
-                            pass
-                        if not password:
-                            url_form.add_error('password', 'Password must not be empty')
-                            pass
-                        temp_file = file_downloader.file_downloader(parsed_url,username,password)
-                        #if is succeeds, it will generate the schema.
-                        if temp_file is not None:
-                            created_schema = schema_generator.schema_generator(temp_file,url)
-                            #deallocates the temporary file by closing it.
-                            temp_file.close()
-                            return HttpResponseRedirect('/dashboard/')
-                        else:
-                            #otherwise, it failed to download the file.
-                            url_form.add_error('url', 'The provided sftp file failed to be downloaded.' + parsed_url.path)
-                            pass
-                    else:
-                        #otherwise, the url isn't a supported type.
-                        url_form.add_error('url', 'Only https and sftp URLs are accepted.')
-                        pass
-                else:
-                    #the URL doesn't end with a supported file type.
-                    url_form.add_error('url', 'The provided URL does not point to a supported file type.')
-                    pass
+                    temp_file = file_downloader.FileDownloader.download_temp(url, username, password)
+                    created_schema = schema_generator.SchemaGenerator.build(temp_file, urlparse(url).path.split('?')[0])
+                # If it raises an exception, it attached the exception as an error on the form.
+                except file_downloader.FailedDownloadingFileException as e:
+                    created_schema = None
+                    url_form.add_error('url', str(e))
+                except schema_generator.FailedCreatingSchemaException as e:
+                    created_schema = None
+                    url_form.add_error('url', str(e))
+                # All of other exceptions are caught and handled.
+                except Exception as e:
+                    created_schema = None
+                    url_form.add_error('url', 'An error occurred while downloading the file.')
+                    # log the error to console so that it can be found somewhere
+                    logging.error("url_form Exception:" + str(e))
+                finally:
+                    if temp_file is not None:
+                        temp_file.close()
             else:
-                #if the form isn't valid, it passed back the form.
+                # If the form isn't valid, it passed back the form.
                 pass
-        #file form was submitted
+        # File form was submitted
         elif 'file_submit' in request.POST:
             url_form = NewDatasetURLForm()
             file_form = NewDatasetFileForm(request.POST, request.FILES)
             if file_form.is_valid():
-                #if a file was submitted it grabs the file and stores a reference.
+                # If a file was submitted, it grabs the file and stores a reference.
                 file = request.FILES['file']
-                if not file.name.lower().endswith(('.csv','.xlsx','.json')):
+                if not file.name.lower().endswith(valid_extensions):
                     file_form.add_error(None, 'The provided file is not a supported type.')
-                    pass
-                created_schema = schema_generator.schema_generator(file,file.name)
-                return HttpResponseRedirect('/dashboard/')
+                else:
+                    try:
+                        created_schema = schema_generator.SchemaGenerator.build(file, file.name)
+                    except Exception as e:
+                        created_schema = None
+                        file_form.add_error(None, str(e))
         elif 'blank_submit' in request.POST:
+            created_schema = Schema()
+            created_schema.data = ''
+
+        # if a schema was created, we create a new dataset with the schema and a new distribution (blank or url)
+        if created_schema is not None:
+            # save the created schema
+            created_schema.save()
+            # create and save distribution
             distribution = Distribution()
+            if url is not None:
+                distribution.downloadURL = url
+                distribution.title = os.path.basename(urlparse(url).path.split('?')[0])
+                if distribution.title.endswith('json'):
+                    distribution.mediaType = "application/json"
+                elif distribution.title.endswith('csv'):
+                    distribution.mediaType = "text/csv"
+                elif distribution.title.endswith('xlsx'):
+                    distribution.mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             distribution.save()
-            schema = Schema()
-            schema.data = ''
-            schema.save()
+            # create and saves a dataset.
             dataset = Dataset()
+            dataset.schema = created_schema
             dataset.distribution = distribution
-            dataset.schema = schema
             profile = Profile.objects.get(id=request.user.id)
             dataset.publisher = profile
             dataset.save()
-            dataset_identifier_path = '/dataset/' + str(dataset.id)
-            dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
+            # save in order to cross link to other models and populate the identifier
             if profile.bureau:
                 dataset.bureauCode.add(profile.bureau)
             if profile.division:
                 dataset.programCode.add(profile.division)
+            # prepare path for dataset
+            dataset_identifier_path = '/dataset/' + str(dataset.id)
+            dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
             dataset.save()
-            return HttpResponseRedirect(dataset_identifier_path)
+            return HttpResponseRedirect('/schema/'+str(dataset.id))
     else:
         url_form = NewDatasetURLForm()
         file_form = NewDatasetFileForm()
 
-    return render(request, 'new_dataset.html', {'url_form':url_form, 'file_form':file_form})
+    return render(request, 'new_dataset.html', {'url_form':url_form, 'file_form':file_form, 'extensions':valid_extensions})
+
 
 def dataset(request, dataset_id=None):
     ds = get_object_or_404(Dataset, id=dataset_id)
@@ -249,6 +249,7 @@ def dataset(request, dataset_id=None):
 
     return render(request, 'dataset.html', {'dataset_id':dataset_id, 'form':dataset_form})
 
+
 def distribution(request, distribution_id=None):
     dn = get_object_or_404(Distribution, id=distribution_id)
     if dn.dataset.publisher.id is not request.user.id:
@@ -269,3 +270,40 @@ def distribution(request, distribution_id=None):
         distribution_form = DistributionForm(instance=dn)
     return render(request, 'distribution.html', {'distribution_id':distribution_id, 'form':distribution_form})
 
+def schema(request, slug=None):
+    import json
+
+    # validate that the slug exists and grab json blob
+    try:
+        dataset = Dataset.objects.get(id=slug)
+    except ObjectDoesNotExist:
+        raise Http404("Schema does not exist")
+    data = dataset.schema.data
+    data = json.loads(data)
+    property_data = json.dumps(data["properties"])
+
+    if request.method == 'POST':
+        form = SchemaForm(property_data, data=request.POST)
+        if form.is_valid():
+            # loop over the property fields and pull the submitted data
+            counter = 0
+            for fields in data['properties']:
+                name = fields["name"]
+                data["properties"][counter]["type"] = request.POST[name+'_type']
+                data["properties"][counter]["description"] = request.POST[name+'_description']
+                counter += 1
+
+            # the form is valid - save it
+            schema = Schema()
+            schema.data = json.dumps(data)
+            schema.save()
+            dataset.schema = schema
+            dataset.save()
+            return HttpResponseRedirect('/dashboard/')
+        else:
+            # the return below will display form errors
+            pass
+    else:
+        form = SchemaForm(property_data)
+
+    return render(request, 'schema.html', {'slug':slug, 'form':form})
