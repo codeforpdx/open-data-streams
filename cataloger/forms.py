@@ -169,8 +169,14 @@ class SchemaForm(forms.Form):
         super(SchemaForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
+            ButtonHolder(
+                Submit('submit', 'Save', css_class='btn btn-primary')
+            ),
             Fieldset(
                 '',
+            ),
+            ButtonHolder(
+                Submit('submit', 'Save', css_class='btn btn-primary')
             )
         )
 
@@ -184,15 +190,31 @@ class SchemaForm(forms.Form):
             ('string', 'string')
         ]
 
+        # Insert whole table here so that submit buttons can exist outside table
+        self.helper.layout[1].extend([HTML("""
+</br>
+<table class='table'>
+    <thead>
+        <tr>
+            <th scope='col'>Column</th>
+            <th scope='col'>Description</th>
+            <th scope='col'>Type</th>
+        </tr>
+    </thead>
+<tbody>
+        """)])
+
         # loop through data and append forms to layout
         for fields in data:
             name = fields['name']
-            self.fields[name+"_description"] = forms.CharField()
-            self.fields[name+"_type"] = forms.ChoiceField(choices=type_choices)
-            self.helper.layout[0].extend([
+            self.fields[name+"_description"] = forms.CharField(required=False, label='')
+            self.fields[name+"_type"] = forms.ChoiceField(choices=type_choices, required=False, label='')
+            self.helper.layout[1].extend([
                 HTML("<tr> <td>"+name+"</td> <td>"),
                 Div(name+"_description"),
                 HTML("</td> <td>"),
                 Div(name+"_type"),
                 HTML("</td> </tr>")
             ])
+
+        self.helper.layout[1].extend([HTML('</tbody> </table>')])

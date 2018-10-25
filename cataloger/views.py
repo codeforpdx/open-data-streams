@@ -209,9 +209,8 @@ def new_dataset(request):
             if profile.division:
                 dataset.programCode.add(profile.division)
             # prepare path for dataset
-            # TODO Currently skips to dataset customization
             dataset_identifier_path = '/dataset/' + str(dataset.id)
-            dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
+            dataset.identifier = str(dataset.id) #request.build_absolute_uri(dataset_identifier_path)
             dataset.save()
             return HttpResponseRedirect(dataset_identifier_path)
     else:
@@ -266,10 +265,12 @@ def schema(request, slug=None):
 
     # validate that the slug exists and grab json blob
     try:
-        schema = Dataset.objects.get(identifier=slug)
+        dataset = Dataset.objects.get(identifier=slug)
     except ObjectDoesNotExist:
         raise Http404("Schema does not exist")
-    data = schema.data
+    data = dataset.schema.data
+    print(data)
+    data = json.loads(data)
     property_data = json.dumps(data["properties"])
 
     if request.method == 'POST':
@@ -283,9 +284,12 @@ def schema(request, slug=None):
                 data["properties"][counter]["description"] = request.POST[name+'_description']
                 counter += 1
 
-            # the form is valid - save it (uncomment when ready)
-            schema.data = data
+            # the form is valid - save it
+            schema = Schema()
+            schema.data = json.dumps(data)
             schema.save()
+            dataset.schema = schema
+            dataset.save()
             return HttpResponseRedirect('/dashboard/')
         else:
             # the return below will display form errors
