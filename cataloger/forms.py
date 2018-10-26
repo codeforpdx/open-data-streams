@@ -12,6 +12,14 @@ from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div, HTM
 from .models import BureauCode, Division, Office, Dataset, Distribution
 
 class RegistrationForm(forms.ModelForm):
+    """
+    RegistrationForm is a Django ModelForm
+    
+    This form is used for the /registration page, and is rendered by the registration() fuction in views.py. The ModelForm is based off of the :model:`cataloger.models.Profile` class.
+    
+    Accepted Values:
+        A request.POST dictionary (when filling existing form data), or None (when displaying a new/blank form)
+    """
     class Meta:
         model = Profile
         widgets = {
@@ -59,9 +67,31 @@ class RegistrationForm(forms.ModelForm):
             self.fields['office'].queryset = self.instance.division.office_set.order_by('description')
 
 class UploadBureauCodesCSVFileForm(forms.Form):
+    """
+    UploadBureauCodesCSVFileForm is a standard Django Form
+    
+    This form is used on the /utilities page, and is rendered by the utilities() function in views.py
+    
+    Purpose:
+        The form is used to import :model:`cataloger.models.BureauCode`, :model:`cataloger.models.Division`, and :model:`cataloger.models.Office` objects from a CSV file
+    
+    Accepted Values:
+        None (this form only displays a new/blank form)
+    """
     file = forms.FileField()
 
 class UploadDatasetsCSVFileForm(forms.Form):
+    """
+    UploadDatasetsCSVFileForm is a standard Django Form
+    
+    This form is used on the /utilities page, and is rendered by the utilities() function in views.py
+
+    Purpose:
+        The form is used to import :model:`cataloger.models.Dataset` objects from a CSV file
+
+    Accepted Values:
+        None (this form only displays a new/blank form)
+    """
     file = forms.FileField()
 
 class NewDatasetURLForm(forms.Form):
@@ -119,7 +149,7 @@ class DatasetForm(forms.ModelForm):
                 '',
                 'title',
                 'description',
-                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'distribution' dataset_id %}" > Edit Distribution </a>""")),
+                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:distribution' dataset_id %}" > Edit Distribution </a>""")),
                 HTML("<br>"), #TODO quick fix spacing the buttons for now
                 ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "#" > Edit Schema </a>""")),
                 'keywords',

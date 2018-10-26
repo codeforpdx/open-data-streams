@@ -10,6 +10,7 @@ requests = "*"
 django-crispy-forms = "*"
 paramiko = "*"
 openpyxl = "*"
+django-docutils = "*"
 
 [requires]
 python_version = "3.6"

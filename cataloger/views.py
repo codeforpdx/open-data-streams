@@ -14,45 +14,51 @@ from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division
 from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm, SchemaForm
 from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages
 
-
-def random_str(length):
-    return ''.join(random.choice(string.ascii_uppercase + string.digits) for i in range(length))
-
-
 def index(request):
+    """
+    Display the main site page.
+    
+    **Template:**
+
+    :template:`cataloger/templates/index.html`
+    """
     return render(request, 'index.html')
 
 
 @user_passes_test(lambda u: u.is_authenticated)
 def dashboard(request):
-    datasets = None
-    if request.user.is_authenticated:
-      datasets = list(Dataset.objects.filter(publisher = request.user.id))
-    else:
-        datasets = []
-        keys = [
-            'id',
-            'title',
-            'description',
-            'tags',
-            'modified',
-            'publisher',
-            'contactPoint',
-            'accessLevel',
-            'bureauCodeUSG',
-            'programCodeUSG',
-            'license',
-        ]
-        for i in range(1, 30):
-            new_dataset = {}
-            for key in keys:
-                new_dataset[key] = random_str(5)
-            datasets.append(new_dataset)
+    """
+    Display a dashboard interface, allowing the user to select from a list of :model:`cataloger.Dataset` objects.
+
+    **Context**
+    
+    ``datasets``
+        A list of :model:`cataloger.Dataset` instances affiliated with this user.
+
+    **Template:**
+
+    :template:`cataloger/templates/dashboard.html`
+    """
+    datasets = list(Dataset.objects.filter(publisher = request.user.id))
 
     return render(request, 'dashboard.html', {'datasets' : datasets})
 
 
 def register(request):
+    """
+    Display the registration page, allowing a user to register for an account.
+    
+    This page is based off of the **form**:`cataloger.forms.RegistrationForm`.
+
+    **Context**
+    
+    ``form``
+        An instance of the **form**:`cataloger.forms.RegistrationForm` instances.
+
+    **Template:**
+
+    :template:`cataloger/templates/register.html`
+    """
     if request.method == "POST":
         # this is a POST request
         form = RegistrationForm(request.POST)
@@ -80,6 +86,21 @@ def register(request):
 
 @user_passes_test(lambda u: u.is_superuser)
 def utilities(request):
+    """
+    Display the utilities page, allowing a user to perform various functions.
+    
+    **Context**
+    
+    ``bureaucodes_form``
+        An instance of the **form**:`cataloger.forms.UploadBureauCodesCSVFileForm` class/object.
+
+    ``datasets_form``
+        An instance of the **form**:`cataloger.forms.UploadDatasetsCSVFileForm` class/object.
+        
+    **Template:**
+
+    :template:`cataloger/templates/utilities.html`
+    """
     if request.method == "POST":
         # this is a POST request
         if 'import-bureaus' in request.POST:
@@ -119,19 +140,67 @@ def utilities(request):
 
 
 def load_divisions(request):
+    """
+    Used to load divisions for the registration Division select field.
+    
+    This page is used via AJAX calls to retrieve a list of filtered Division objects,
+    based on the current BureauCode selection on the registration page.
+
+    **Context**
+    
+    ``divisions``
+        A filtered list of :model:`cataloger.divisions` .
+
+    **Template:**
+
+    :template:`cataloger/templates/divisions_dropdown_list_options.html`
+    """
     bureau_id = request.GET.get('bureau')
     divisions = Division.objects.filter(bureau=bureau_id).order_by('description')
     return render(request, 'divisions_dropdown_list_options.html', {'divisions': divisions})
 
 
 def load_offices(request):
+    """
+    Used to load offices for the registration Office select field.
+    
+    This page is used via AJAX calls to retrieve a list of filtered Office objects,
+    based on the current Division selection on the registration page.
+
+    **Context**
+    
+    ``offices``
+        A filtered list of :model:`cataloger.offices` .
+
+    **Template:**
+
+    :template:`cataloger/templates/offices_dropdown_list_options.html`
+    """
     division_id = request.GET.get('division')
     offices = Office.objects.filter(division=division_id).order_by('description')
     return render(request, 'offices_dropdown_list_options.html', {'offices': offices})
 
 
 def new_dataset(request):
+    """
+    Display the new_dataset page, allowing a user to create a dataset from various sources.
+    
+    This page is based on the **form**:`cataloger.forms.NewDatasetURLForm` and **form**:'cataloger.forms.NewDatasetFileForm` forms.
+
+    **Context**
+    
+    ``url_form``
+        An instance of the **form**:`cataloger.forms.NewDatasetURLForm` class.
+
+    ``file_form``
+        An instance of the **form**:`cataloger.forms.NewDatasetFileForm` class.
+        
+    **Template:**
+
+    :template:`cataloger/templates/new_dataset.html`
+    """
     valid_extensions = schema_generator.SchemaGenerator.valid_extensions
+
     if request.method == "POST":
         created_schema = None
         url = request.POST.get('url')  # None if not found
@@ -229,6 +298,23 @@ def new_dataset(request):
 
 
 def dataset(request, dataset_id=None):
+    """
+    Display the dataset ModelForm page, allowing a user to edit a dataset.
+    
+    This page is based off of the **form**:`cataloger.forms.DatasetForm`.
+
+    **Context**
+    
+    ``dataset_id``
+        An int value representing the ID of the current :model:`cataloger.Dataset` that is being edited.
+
+    ``dataset_form``
+        An instance of the **form**:`cataloger.forms.DatasetForm` class.
+        
+    **Template:**
+
+    :template:`cataloger/templates/dataset.html`
+    """
     ds = get_object_or_404(Dataset, id=dataset_id)
     if ds.publisher.id is not request.user.id:
         # the user doesn't own this distribution, don't allow access
@@ -251,6 +337,23 @@ def dataset(request, dataset_id=None):
 
 
 def distribution(request, distribution_id=None):
+    """
+    Display the distribution ModelForm page, allowing a user to edit a distribution.
+    
+    This page is based off of the **form**:`cataloger.forms.DistributionForm`.
+
+    **Context**
+    
+    ``distribution_id``
+        An int value representing the ID of the current :model:`cataloger.Distribution` that is being edited.
+
+    ``distribution_form``
+        An instance of the **form**:`cataloger.forms.DistributionForm` class.
+        
+    **Template:**
+
+    :template:`cataloger/templates/distribution.html`
+    """
     dn = get_object_or_404(Distribution, id=distribution_id)
     if dn.dataset.publisher.id is not request.user.id:
         # the user doesn't own this distribution, throw an HTTP unauthorized
@@ -270,12 +373,12 @@ def distribution(request, distribution_id=None):
         distribution_form = DistributionForm(instance=dn)
     return render(request, 'distribution.html', {'distribution_id':distribution_id, 'form':distribution_form})
 
-def schema(request, slug=None):
+def schema(request, schema_id=None):
     import json
 
     # validate that the slug exists and grab json blob
     try:
-        dataset = Dataset.objects.get(id=slug)
+        dataset = Dataset.objects.get(id=schema_id)
     except ObjectDoesNotExist:
         raise Http404("Schema does not exist")
     data = dataset.schema.data
@@ -306,4 +409,4 @@ def schema(request, slug=None):
     else:
         form = SchemaForm(property_data)
 
-    return render(request, 'schema.html', {'slug':slug, 'form':form})
+    return render(request, 'schema.html', {'schema_id':schema_id, 'form':form})
