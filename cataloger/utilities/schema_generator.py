@@ -73,8 +73,7 @@ class SchemaGenerator:
             # The first row on the first sheet is then added into a list.
             metadata_list = list()
             for cell in workbook[sheet_names[0]][1]:
-                metadata_list.append(str(cell))
-
+                metadata_list.append(str(cell.value))
             return SchemaGenerator.__build_schema(metadata_list)
         except Exception as e:
             logging.error('Failed to parse xlsx file into schema: ' + str(e))
