@@ -373,12 +373,12 @@ def distribution(request, distribution_id=None):
         distribution_form = DistributionForm(instance=dn)
     return render(request, 'distribution.html', {'distribution_id':distribution_id, 'form':distribution_form})
 
-def schema(request, slug=None):
+def schema(request, schema_id=None):
     import json
 
     # validate that the slug exists and grab json blob
     try:
-        dataset = Dataset.objects.get(id=slug)
+        dataset = Dataset.objects.get(id=schema_id)
     except ObjectDoesNotExist:
         raise Http404("Schema does not exist")
     data = dataset.schema.data
@@ -409,4 +409,4 @@ def schema(request, slug=None):
     else:
         form = SchemaForm(property_data)
 
-    return render(request, 'schema.html', {'slug':slug, 'form':form})
+    return render(request, 'schema.html', {'schema_id':schema_id, 'form':form})
