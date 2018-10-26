@@ -199,7 +199,7 @@ def new_dataset(request):
 
     :template:`cataloger/templates/new_dataset.html`
     """
-    valid_extensions = schema_generator.schema_generator.valid_extensions
+    valid_extensions = schema_generator.SchemaGenerator.valid_extensions
 
     if request.method == "POST":
         created_schema = None
