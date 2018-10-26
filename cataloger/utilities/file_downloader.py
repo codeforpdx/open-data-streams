@@ -24,6 +24,7 @@ class FailedDownloadingFileException(Exception):
 class FileDownloader:
     """This class functionality is to read supported file types into temporary files."""
 
+    @staticmethod
     def download_temp(url, sftp_username=None, sftp_password=None):
         """Parses the url and downloads the file into a temporary file."""
         try:
@@ -43,6 +44,7 @@ class FileDownloader:
         else:
             raise FailedDownloadingFileException('The provided URL does not use a https nor a sftp schema.')
 
+    @staticmethod
     def __https_file_downloader(url):
         """Takes in a given https url and downloads the file into a temporary file."""
         try:
@@ -60,6 +62,7 @@ class FileDownloader:
             # if there is any errors in the above process, an exception is raised.
             raise FailedDownloadingFileException('An error occurred while downloading the file from a https url.')
 
+    @staticmethod
     def __sftp_file_downloader(parsed_url, sftp_username, sftp_password):
         """Takes in a given sftp url and downloads the file into a temporary file."""
         # Assumes sftp if sftp_* inputs into the method aren't None.

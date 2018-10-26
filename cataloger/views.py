@@ -225,7 +225,7 @@ def new_dataset(request):
         url_form = NewDatasetURLForm()
         file_form = NewDatasetFileForm()
 
-    return render(request, 'new_dataset.html', {'url_form':url_form, 'file_form':file_form, 'extensions':valid_extensions})
+    return render(request, 'new_dataset.html', {'url_form': url_form, 'file_form': file_form, 'extensions': valid_extensions})
 
 
 def dataset(request, dataset_id=None):
