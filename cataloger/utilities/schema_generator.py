@@ -33,7 +33,7 @@ class SchemaGenerator:
         headers for the sections."""
         try:
             # Parses the first line of the file to get all the headers.
-            metadata = str(file.readline()).split(',')
+            metadata = str(file.readline().decode('utf-8')).split(',')
             # Will be further implemented in phase 3.
             return SchemaGenerator.__build_schema(metadata)
         except Exception as e:
