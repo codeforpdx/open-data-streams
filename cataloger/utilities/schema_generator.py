@@ -1,5 +1,4 @@
 from cataloger.models import Schema
-from tempfile import TemporaryFile
 import openpyxl
 import json
 import logging
@@ -14,7 +13,8 @@ class FailedCreatingSchemaException(Exception):
 class SchemaGenerator:
     """Takes in a file and parses it and generates a schema."""
     valid_extensions = ('.csv', '.xlsx', '.json')
-    
+
+    @staticmethod
     def build(file, file_name):
         """Depending on the type of the file, it uses a different function to generate the schema."""
         if file_name.lower().endswith('.csv'):
@@ -28,6 +28,7 @@ class SchemaGenerator:
         logging.error('Non-support file type inputted into schema generator: ' + file_name.lower())
         raise FailedCreatingSchemaException("The file isn't a supported type to generate a schema.")
 
+    @staticmethod
     def __csv_schema_generator(file):
         """Takes in a given csv file and returns the schema for it. We are assuming that the top row contains the
         headers for the sections."""
@@ -39,7 +40,8 @@ class SchemaGenerator:
         except Exception as e:
             logging.error('Failed to parse csv file into schema: ' + str(e))
             raise FailedCreatingSchemaException("Failed to create schema from csv file.")
- 
+
+    @staticmethod
     def __json_schema_generator(file):
         """Takes in a given json file and returns the schema for it."""
         try:
@@ -60,6 +62,7 @@ class SchemaGenerator:
             logging.error('Failed to parse json file into schema: ' + str(e))
             raise FailedCreatingSchemaException("Failed to create schema from json file.")
 
+    @staticmethod
     def __xlsx_schema_generator(file):
         """Takes in a given json file and returns the schema for it. We are assuming that the top row of the first
         worksheet contains the headers for the sections."""
@@ -79,6 +82,7 @@ class SchemaGenerator:
             logging.error('Failed to parse xlsx file into schema: ' + str(e))
             raise FailedCreatingSchemaException("Failed to create schema from xlsx file.")
 
+    @staticmethod
     def __build_schema(meta_data):
         """Takes in a list words and creates a new schema."""
         
