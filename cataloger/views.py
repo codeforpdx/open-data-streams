@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from urllib.parse import urlparse
 import os, logging
 
-from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
+from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office, Catalog
 from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm, SchemaForm
 from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages
 
@@ -410,3 +410,52 @@ def schema(request, schema_id=None):
         form = SchemaForm(property_data)
 
     return render(request, 'schema.html', {'schema_id':schema_id, 'form':form})
+
+
+# REST Framework
+from rest_framework import routers, serializers, viewsets
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework import permissions
+
+from .serializers import DatasetSerializer
+
+@api_view(['GET'])
+@permission_classes((permissions.AllowAny,))
+def api_root(request, format=None):
+    """
+    View to list the catalog
+    """
+    if request.method == 'GET':
+        _context = serializers.URLField(label='@context', initial='https://project-open-data.cio.gov/v1.1/schema/catalog.jsonld')
+        _id = serializers.URLField(label='@id')
+        _type = serializers.CharField(label='@type', initial='dcat:Catalog')
+        _conformsTo = serializers.URLField(label='@conformsTo', initial='https://project-open-data.cio.gov/v1.1/schema')
+        describedBy = serializers.URLField(initial='https://project-open-data.cio.gov/v1.1/schema/catalog.json')
+        dataset = serializers.PrimaryKeyRelatedField(queryset=Dataset.objects.all())
+        
+        catalog = Catalog(_context=_context, _id=_id, _type=_type, _conformsTo=_conformsTo, describedBy=describedBy, dataset=dataset)
+
+#        fields = [_context, _id, _type, _conformsTo, describedBy, dataset]
+        serializer = CatalogSerializer(catalog)
+    return Response(serializer.data)
+
+@permission_classes((permissions.AllowAny,))
+class DatasetList(APIView):
+    def get(self, request, dataset_id=None, format=None):
+        datasets = Dataset.objects.all()
+        serializer = DatasetSerializer(datasets, many=True)
+        return Response(serializer.data)
+
+@permission_classes((permissions.AllowAny,))
+class DatasetDetail(APIView):
+
+    def get(self, request, dataset_id=None, format=None):
+        dataset = get_object_or_404(Dataset, id=dataset_id)
+        serializer = DatasetSerializer(dataset)
+        return Response(serializer.data)
+
+class DatasetViewSet(viewsets.ModelViewSet):
+    queryset = Dataset.objects.all()
+    serializer_class = DatasetSerializer

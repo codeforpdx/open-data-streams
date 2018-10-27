@@ -290,3 +290,11 @@ class Dataset(models.Model):
     references = models.TextField(blank=True)
     systemOfRecords = models.TextField(blank=True)
     theme = models.TextField(blank=True)
+
+class Catalog(models.Model):
+    _context = models.URLField(default='https://project-open-data.cio.gov/v1.1/schema/catalog.jsonld')
+    _id = models.URLField(default='https://opendatapdx.herokuapp.com/api/')
+    _type = models.CharField(default='dcat:Catalog', max_length=12)
+    _conformsTo = models.URLField(default='https://project-open-data.cio.gov/v1.1/schema')
+    describedBy = models.URLField(default='https://project-open-data.cio.gov/v1.1/schema/catalog.json')
+    dataset = models.ForeignKey(Dataset, on_delete=models.PROTECT)

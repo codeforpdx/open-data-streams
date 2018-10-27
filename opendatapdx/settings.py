@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'cataloger',
     'crispy_forms',
     'django.contrib.admindocs',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -137,3 +138,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 AUTH_USER_MODEL = 'cataloger.Profile'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}

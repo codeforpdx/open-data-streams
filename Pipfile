@@ -11,6 +11,9 @@ django-crispy-forms = "*"
 paramiko = "*"
 openpyxl = "*"
 django-docutils = "*"
+djangorestframework = "*"
+markdown = "*"
+django-filter = "*"
 
 [requires]
 python_version = "3.6"
