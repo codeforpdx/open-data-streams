@@ -399,7 +399,7 @@ def schema(request, schema_id=None):
             # the form is valid - save it
             schema.data = json.dumps(data)
             schema.save()
-            return HttpResponseRedirect('/dataset/' + str(schema_id))
+            return HttpResponseRedirect('/dataset/' + str(schema.dataset.id))
         else:
             # the return below will display form errors
             pass
