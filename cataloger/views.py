@@ -334,7 +334,7 @@ def dataset(request, dataset_id=None):
         dataset_form = DatasetForm(instance=ds)
         dataset_form.fields['distribution'].queryset = Distribution.objects.filter(dataset=ds)
 
-    return render(request, 'dataset.html', {'dataset_id':dataset_id, 'form':dataset_form})
+    return render(request, 'dataset.html', {'dataset_id':dataset_id, 'distribution_id':ds.distribution.id, 'schema_id':ds.schema.id, 'form':dataset_form})
 
 
 def distribution(request, distribution_id=None):
@@ -373,17 +373,15 @@ def distribution(request, distribution_id=None):
     else:
         # this is probably a GET request
         distribution_form = DistributionForm(instance=dn)
-    return render(request, 'distribution.html', {'distribution_id':distribution_id, 'form':distribution_form})
+    return render(request, 'distribution.html', {'form':distribution_form})
 
 def schema(request, schema_id=None):
     import json
 
     # validate that the slug exists and grab json blob
-    try:
-        dataset = Dataset.objects.get(id=schema_id)
-    except ObjectDoesNotExist:
-        raise Http404("Schema does not exist")
-    data = dataset.schema.data
+    schema = get_object_or_404(Schema, id=schema_id)
+
+    data = schema.data
     data = json.loads(data)
     property_data = json.dumps(data["properties"])
 
@@ -399,8 +397,8 @@ def schema(request, schema_id=None):
                 counter += 1
 
             # the form is valid - save it
-            dataset.schema.data = json.dumps(data)
-            dataset.schema.save()
+            schema.data = json.dumps(data)
+            schema.save()
             return HttpResponseRedirect('/dataset/' + str(schema_id))
         else:
             # the return below will display form errors
