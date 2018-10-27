@@ -324,11 +324,11 @@ def dataset(request, dataset_id=None):
         # this is a POST request
         if dataset_form.is_valid():
             # the form is valid - save it
-                dataset_form.save()
-                return HttpResponseRedirect('/dashboard/')
+            dataset_form.save()
+            return HttpResponseRedirect('/dashboard/')
         else:
-            # the return below will display form errors
-            pass
+            # add the errors to the form
+            dataset_form.add_error(None, str(dataset_form.errors))
     else:
         # this is probably a GET request
         dataset_form = DatasetForm(instance=ds)
