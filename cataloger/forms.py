@@ -125,6 +125,10 @@ class DatasetForm(forms.ModelForm):
         model = Dataset
         fields = ['publisher', 'distribution', 'schema', 'mtype', 'title', 'description', 'keywords', 'identifier', 'accessLevel', 'bureauCode', 'programCode', 'license', 'spatial', 'temporal', 'describedByType', 'describedBy', 'accrualPeriodicity', 'conformsTo', 'dataQuality', 'isPartOf', 'issued', 'language', 'landingPage', 'primaryITInvestment', 'references', 'systemOfRecords', 'theme',]
         widgets = {
+          'publisher': forms.HiddenInput(),
+          'distribution': forms.HiddenInput(),
+          'schema': forms.HiddenInput(),
+          'mtype': forms.HiddenInput(),
           'title': forms.Textarea(attrs={'rows':1, 'cols':15}),
           'description': forms.Textarea(attrs={'rows':4, 'cols':15}),
           'spatial': forms.Textarea(attrs={'rows':4, 'cols':15}),
@@ -147,6 +151,10 @@ class DatasetForm(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 '',
+                'publisher',
+                'distribution',
+                'schema',
+                'mtype',
                 'title',
                 'description',
                 ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:distribution' dataset_id %}" > Edit Distribution </a>""")),
@@ -178,10 +186,7 @@ class DatasetForm(forms.ModelForm):
                 Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block')
             )
         )
-        #if 'distribution' in self.fields:
-                #self.fields['distribution'].widget.attrs['disabled'] = True
-        #if 'schema' in self.fields:
-                #self.fields['schema'].widget.attrs['disabled'] = True
+
 
 class DistributionForm(forms.ModelForm):
     class Meta:
