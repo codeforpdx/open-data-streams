@@ -366,7 +366,7 @@ def distribution(request, distribution_id=None):
         if distribution_form.is_valid():
             # the form is valid - save it
             distribution_form.save()
-            return HttpResponseRedirect('/dataset/' + str(distribution_id))
+            return HttpResponseRedirect('/dataset/' + str(dn.dataset.id))
         else:
             # the return below will display form errors
             pass
