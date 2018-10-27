@@ -5,9 +5,7 @@
 <div class="container" style="max-width 80%; margin-top: 30px; margin-bottom: 130px">
     <div class="row justify-content-md-center">
         <div class="col-lg-8">
-            <form method="post" id="datasetForm" action="{% url 'cataloger:dataset' dataset_id %}">
-                {% crispy form %}
-            </form>
+            {% crispy form %}
         </div>
     </div>
 </div>
