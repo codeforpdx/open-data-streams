@@ -2,10 +2,10 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="container" style="max-width 80%; margin-top: 30px; margin-bottom: 130px">
+<div class="container" style="margin-top: 30px; margin-bottom: 130px">
     <div class="row justify-content-md-center">
         <div class="col-lg-8">
-            <p>Edit Distribution</p><br>  
+            <h2>Edit Distribution</h2>
             <form method="post" id="distributionForm" action="{% url 'cataloger:distribution' distribution_id %}">
                 {% crispy form %}
             </form>

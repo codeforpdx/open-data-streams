@@ -325,6 +325,7 @@ def dataset(request, dataset_id=None):
         if dataset_form.is_valid():
             # the form is valid - save it
             dataset_form.save()
+            return HttpResponseRedirect('/dashboard/')
         else:
             # add the errors to the form
             dataset_form.add_error(None, str(dataset_form.errors))
@@ -365,6 +366,7 @@ def distribution(request, distribution_id=None):
         if distribution_form.is_valid():
             # the form is valid - save it
             distribution_form.save()
+            return HttpResponseRedirect('/dataset/' + str(distribution_id))
         else:
             # the return below will display form errors
             pass
@@ -397,12 +399,9 @@ def schema(request, schema_id=None):
                 counter += 1
 
             # the form is valid - save it
-            schema = Schema()
-            schema.data = json.dumps(data)
-            schema.save()
-            dataset.schema = schema
-            dataset.save()
-            return HttpResponseRedirect('/dashboard/')
+            dataset.schema.data = json.dumps(data)
+            dataset.schema.save()
+            return HttpResponseRedirect('/dataset/' + str(schema_id))
         else:
             # the return below will display form errors
             pass
