@@ -17,7 +17,7 @@ from .utilities import bureau_import, dataset_import, file_downloader, schema_ge
 def index(request):
     """
     Display the main site page.
-    
+
     **Template:**
 
     :template:`cataloger/templates/index.html`
@@ -31,7 +31,7 @@ def dashboard(request):
     Display a dashboard interface, allowing the user to select from a list of :model:`cataloger.Dataset` objects.
 
     **Context**
-    
+
     ``datasets``
         A list of :model:`cataloger.Dataset` instances affiliated with this user.
 
@@ -47,11 +47,11 @@ def dashboard(request):
 def register(request):
     """
     Display the registration page, allowing a user to register for an account.
-    
+
     This page is based off of the **form**:`cataloger.forms.RegistrationForm`.
 
     **Context**
-    
+
     ``form``
         An instance of the **form**:`cataloger.forms.RegistrationForm` instances.
 
@@ -88,15 +88,15 @@ def register(request):
 def utilities(request):
     """
     Display the utilities page, allowing a user to perform various functions.
-    
+
     **Context**
-    
+
     ``bureaucodes_form``
         An instance of the **form**:`cataloger.forms.UploadBureauCodesCSVFileForm` class/object.
 
     ``datasets_form``
         An instance of the **form**:`cataloger.forms.UploadDatasetsCSVFileForm` class/object.
-        
+
     **Template:**
 
     :template:`cataloger/templates/utilities.html`
@@ -142,12 +142,12 @@ def utilities(request):
 def load_divisions(request):
     """
     Used to load divisions for the registration Division select field.
-    
+
     This page is used via AJAX calls to retrieve a list of filtered Division objects,
     based on the current BureauCode selection on the registration page.
 
     **Context**
-    
+
     ``divisions``
         A filtered list of :model:`cataloger.divisions` .
 
@@ -163,12 +163,12 @@ def load_divisions(request):
 def load_offices(request):
     """
     Used to load offices for the registration Office select field.
-    
+
     This page is used via AJAX calls to retrieve a list of filtered Office objects,
     based on the current Division selection on the registration page.
 
     **Context**
-    
+
     ``offices``
         A filtered list of :model:`cataloger.offices` .
 
@@ -180,21 +180,21 @@ def load_offices(request):
     offices = Office.objects.filter(division=division_id).order_by('description')
     return render(request, 'offices_dropdown_list_options.html', {'offices': offices})
 
-
+@user_passes_test(lambda u: u.is_authenticated)
 def new_dataset(request):
     """
     Display the new_dataset page, allowing a user to create a dataset from various sources.
-    
+
     This page is based on the **form**:`cataloger.forms.NewDatasetURLForm` and **form**:'cataloger.forms.NewDatasetFileForm` forms.
 
     **Context**
-    
+
     ``url_form``
         An instance of the **form**:`cataloger.forms.NewDatasetURLForm` class.
 
     ``file_form``
         An instance of the **form**:`cataloger.forms.NewDatasetFileForm` class.
-        
+
     **Template:**
 
     :template:`cataloger/templates/new_dataset.html`
@@ -296,21 +296,21 @@ def new_dataset(request):
 
     return render(request, 'new_dataset.html', {'url_form': url_form, 'file_form': file_form, 'extensions': valid_extensions})
 
-
+@user_passes_test(lambda u: u.is_authenticated)
 def dataset(request, dataset_id=None):
     """
     Display the dataset ModelForm page, allowing a user to edit a dataset.
-    
+
     This page is based off of the **form**:`cataloger.forms.DatasetForm`.
 
     **Context**
-    
+
     ``dataset_id``
         An int value representing the ID of the current :model:`cataloger.Dataset` that is being edited.
 
     ``dataset_form``
         An instance of the **form**:`cataloger.forms.DatasetForm` class.
-        
+
     **Template:**
 
     :template:`cataloger/templates/dataset.html`
@@ -336,21 +336,21 @@ def dataset(request, dataset_id=None):
 
     return render(request, 'dataset.html', {'dataset_id':dataset_id, 'form':dataset_form})
 
-
+@user_passes_test(lambda u: u.is_authenticated)
 def distribution(request, distribution_id=None):
     """
     Display the distribution ModelForm page, allowing a user to edit a distribution.
-    
+
     This page is based off of the **form**:`cataloger.forms.DistributionForm`.
 
     **Context**
-    
+
     ``distribution_id``
         An int value representing the ID of the current :model:`cataloger.Distribution` that is being edited.
 
     ``distribution_form``
         An instance of the **form**:`cataloger.forms.DistributionForm` class.
-        
+
     **Template:**
 
     :template:`cataloger/templates/distribution.html`
@@ -375,6 +375,7 @@ def distribution(request, distribution_id=None):
         distribution_form = DistributionForm(instance=dn)
     return render(request, 'distribution.html', {'distribution_id':distribution_id, 'form':distribution_form})
 
+@user_passes_test(lambda u: u.is_authenticated)
 def schema(request, schema_id=None):
     import json
 
