@@ -157,9 +157,9 @@ class DatasetForm(forms.ModelForm):
                 'mtype',
                 'title',
                 'description',
-                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:distribution' dataset_id %}" > Edit Distribution </a>""")),
+                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:distribution' distribution_id %}" > Edit Distribution </a>""")),
                 HTML("<br>"), #TODO quick fix spacing the buttons for now
-                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:schema' dataset_id %}" > Edit Schema </a>""")),
+                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:schema' schema_id %}" > Edit Schema </a>""")),
                 'keywords',
                 'identifier',
                 'accessLevel',
