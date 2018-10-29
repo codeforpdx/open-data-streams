@@ -28,7 +28,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 # Views and ViewSets define the view behavior.
 from cataloger.views import api_root, DatasetList, DatasetDetail
 
-# Wire up our API using automatic URL routing.
+# Manual URL configuration for REST API is currently being used.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns += format_suffix_patterns([
     path('api/', api_root),

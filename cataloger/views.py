@@ -419,7 +419,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import permissions
 
-from .serializers import DatasetSerializer
+from .serializers import DatasetSerializer, CatalogSerializer
 
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
@@ -433,11 +433,10 @@ def api_root(request, format=None):
         _type = serializers.CharField(label='@type', initial='dcat:Catalog')
         _conformsTo = serializers.URLField(label='@conformsTo', initial='https://project-open-data.cio.gov/v1.1/schema')
         describedBy = serializers.URLField(initial='https://project-open-data.cio.gov/v1.1/schema/catalog.json')
-        dataset = serializers.PrimaryKeyRelatedField(queryset=Dataset.objects.all())
+        dataset = Dataset.objects.all().first()
         
         catalog = Catalog(_context=_context, _id=_id, _type=_type, _conformsTo=_conformsTo, describedBy=describedBy, dataset=dataset)
 
-#        fields = [_context, _id, _type, _conformsTo, describedBy, dataset]
         serializer = CatalogSerializer(catalog)
     return Response(serializer.data)
 
