@@ -273,6 +273,13 @@ def new_dataset(request):
                 elif distribution.title.endswith('xlsx'):
                     distribution.mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             distribution.save()
+            # get the catalog if it exists, otherwise, create it
+            # there should be only 1 catalog
+            try:
+                catalog = Catalog.objects.get(id=1)
+            except Catalog.DoesNotExist:
+                catalog = Catalog()
+                catalog.save()
             # create and saves a dataset.
             dataset = Dataset()
             dataset.schema = created_schema
@@ -280,6 +287,7 @@ def new_dataset(request):
             profile = Profile.objects.get(id=request.user.id)
             dataset.publisher = profile
             dataset.save()
+            catalog.dataset.add(dataset)
             # save in order to cross link to other models and populate the identifier
             if profile.bureau:
                 dataset.bureauCode.add(profile.bureau)
@@ -428,15 +436,9 @@ def api_root(request, format=None):
     View to list the catalog
     """
     if request.method == 'GET':
-        _context = serializers.URLField(label='@context', initial='https://project-open-data.cio.gov/v1.1/schema/catalog.jsonld')
-        _id = serializers.URLField(label='@id')
-        _type = serializers.CharField(label='@type', initial='dcat:Catalog')
-        _conformsTo = serializers.URLField(label='@conformsTo', initial='https://project-open-data.cio.gov/v1.1/schema')
-        describedBy = serializers.URLField(initial='https://project-open-data.cio.gov/v1.1/schema/catalog.json')
-        dataset = Dataset.objects.all().first()
+        # there should only be 1 catalog
+        catalog = Catalog.objects.all().first()
         
-        catalog = Catalog(_context=_context, _id=_id, _type=_type, _conformsTo=_conformsTo, describedBy=describedBy, dataset=dataset)
-
         serializer = CatalogSerializer(catalog)
     return Response(serializer.data)
 

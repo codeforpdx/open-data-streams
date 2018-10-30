@@ -254,11 +254,11 @@ class Dataset(models.Model):
 
     # ---------- DATASET FIELDS ----------
     # @type field (renamed since type is a reserved Python keyword)
-    mtype = models.TextField(default='dcat:Dataset',)
+    mtype = models.TextField(default='dcat:Dataset')
     title = models.TextField()
     description = models.TextField()
     # Could be a string that is a comma separated list.
-    keywords = models.ManyToManyField(Keyword)
+    keyword = models.ManyToManyField(Keyword)
     modified = models.DateTimeField(auto_now_add=True)
     # Will store the URL to this dataset.
     identifier = models.URLField()
@@ -267,12 +267,13 @@ class Dataset(models.Model):
     programCode = models.ManyToManyField(Division)
     license = models.ForeignKey(License, on_delete=models.PROTECT, default=3)
 
+    rights = models.TextField(blank=True)
+    
     # If applicable.
     spatial = models.TextField(blank=True)
     temporal = models.TextField(blank=True)
 
-    # contactPoint -- doesn't exist as a field of Dataset. Instead, use the publisher's info.
-    # (although we might decide to include this as a field or do this differently)
+    contactPoint = models.TextField(blank=True)
 
     describedByType = models.TextField(blank=True)
     # Will store an API url for this dataset's schema.
@@ -297,4 +298,4 @@ class Catalog(models.Model):
     _type = models.CharField(default='dcat:Catalog', max_length=12)
     _conformsTo = models.URLField(default='https://project-open-data.cio.gov/v1.1/schema')
     describedBy = models.URLField(default='https://project-open-data.cio.gov/v1.1/schema/catalog.json')
-    dataset = models.ForeignKey(Dataset, on_delete=models.PROTECT)
+    dataset = models.ManyToManyField(Dataset)
