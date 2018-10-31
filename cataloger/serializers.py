@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Dataset, Catalog, Profile
+from .models import Dataset, Catalog, Profile, Keyword
 
 class PublisherField(serializers.ModelSerializer):
     profile = serializers.CharField()
@@ -11,11 +11,27 @@ class PublisherField(serializers.ModelSerializer):
     
     def to_representation(self, value):
         profile = Profile.objects.get(username=value)
-        publisher = {"@type":"org.Organization", "name": str(profile.office), "subOrganizationOf":{"@type":"org.Organization", "name": str(profile.division), "subOrganizationOf": {"@type":"org.Organization", "name": str(profile.bureau), "subOrganizationOf": {"@type":"org:Organization", "name":"City"}}}}
+        publisher = {"@type":"org:Organization", "name": str(profile.office), "subOrganizationOf":{"@type":"org:Organization", "name": str(profile.division), "subOrganizationOf": {"@type":"org:Organization", "name": str(profile.bureau), "subOrganizationOf": {"@type":"org:Organization", "name":"City"}}}}
         return publisher
 
+
+class KeywordField(serializers.ModelSerializer):
+    keyword = serializers.CharField()
+    
+    class Meta:
+        model = Keyword
+        fields = ('keyword',)
+    
+    def to_representation(self, value):
+        return str(value)
+
+
 class DatasetSerializer(serializers.ModelSerializer):
+    title  = serializers.CharField()
+    description  = serializers.CharField()
+    keyword = KeywordField(many=True)
     publisher = PublisherField()
+    
     class Meta:
         model = Dataset
         fields = ('@type', 'title', 'description', 'keyword', 'modified', 'publisher', 'contactPoint', 'identifier', 'accessLevel', 'bureauCode', 'programCode', 'license', 'rights', 'spatial', 'temporal', 'distribution', 'accrualPeriodicity', 'conformsTo', 'dataQuality', 'dataQuality', 'describedBy', 'describedByType', 'isPartOf', 'issued', 'language', 'landingPage', 'primaryITInvestment', 'references', 'systemOfRecords', 'theme')
