@@ -446,7 +446,8 @@ def api_root(request, format=None):
 class DatasetList(APIView):
     def get(self, request, dataset_id=None, format=None):
         datasets = Dataset.objects.all()
-        serializer = DatasetSerializer(datasets, many=True)
+        context = {'request':request}
+        serializer = DatasetSerializer(datasets, many=True, context=context)
         return Response(serializer.data)
 
 @permission_classes((permissions.AllowAny,))

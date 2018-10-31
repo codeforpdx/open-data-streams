@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.fields import CurrentUserDefault
 
 from .models import Dataset, Catalog, Profile, Keyword
 
@@ -26,11 +27,24 @@ class KeywordField(serializers.ModelSerializer):
         return str(value)
 
 
+class ContactPointSerializer(serializers.Serializer):
+    contactPoint = serializers.CharField()
+
+    def to_representation(self, instance):
+        user = None
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            user = request.user
+        contactPoint = {'@type': 'vcard:Contact',
+                        'fn': user.username,
+                        'hasEmail': 'mailto:'+user.email}
+        return contactPoint
+
+
 class DatasetSerializer(serializers.ModelSerializer):
-    title  = serializers.CharField()
-    description  = serializers.CharField()
     keyword = KeywordField(many=True)
     publisher = PublisherField()
+    contactPoint = ContactPointSerializer()
     
     class Meta:
         model = Dataset
@@ -38,7 +52,7 @@ class DatasetSerializer(serializers.ModelSerializer):
         depth = 2
 
 # rename the "mtype" field to "@type" in the serializer's _declared_fields
-DatasetSerializer._declared_fields["@type"] = serializers.CharField(source="mtype")
+DatasetSerializer._declared_fields['@type'] = serializers.CharField(source='mtype')
 
 
 class CatalogSerializer(serializers.ModelSerializer):
@@ -50,8 +64,7 @@ class CatalogSerializer(serializers.ModelSerializer):
         depth = 2
 
 # rename the "_context", "_id", "_type", and "_conformsTo" fields to have the '@' prefix rather than a '_' in the serializer's _declared_fields
-CatalogSerializer._declared_fields["@context"] = serializers.URLField(source="_context")
-CatalogSerializer._declared_fields["@id"] = serializers.URLField(source="_id")
-CatalogSerializer._declared_fields["@type"] = serializers.URLField(source="_type")
-CatalogSerializer._declared_fields["@conformsTo"] = serializers.URLField(source="_conformsTo")
-
+CatalogSerializer._declared_fields['@context'] = serializers.URLField(source='_context')
+CatalogSerializer._declared_fields['@id'] = serializers.URLField(source='_id')
+CatalogSerializer._declared_fields['@type'] = serializers.URLField(source='_type')
+CatalogSerializer._declared_fields['@conformsTo'] = serializers.URLField(source='_conformsTo')
