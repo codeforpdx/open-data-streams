@@ -1,8 +1,21 @@
 from rest_framework import serializers
 
-from .models import Dataset, Catalog
+from .models import Dataset, Catalog, Profile
+
+class PublisherField(serializers.ModelSerializer):
+    profile = serializers.CharField()
+    
+    class Meta:
+        model = Profile
+        fields = ('profile',)
+    
+    def to_representation(self, value):
+        profile = Profile.objects.get(username=value)
+        publisher = {"@type":"org.Organization", "name": str(profile.office), "subOrganizationOf":{"@type":"org.Organization", "name": str(profile.division), "subOrganizationOf": {"@type":"org.Organization", "name": str(profile.bureau), "subOrganizationOf": {"@type":"org:Organization", "name":"City"}}}}
+        return publisher
 
 class DatasetSerializer(serializers.ModelSerializer):
+    publisher = PublisherField()
     class Meta:
         model = Dataset
         fields = ('@type', 'title', 'description', 'keyword', 'modified', 'publisher', 'contactPoint', 'identifier', 'accessLevel', 'bureauCode', 'programCode', 'license', 'rights', 'spatial', 'temporal', 'distribution', 'accrualPeriodicity', 'conformsTo', 'dataQuality', 'dataQuality', 'describedBy', 'describedByType', 'isPartOf', 'issued', 'language', 'landingPage', 'primaryITInvestment', 'references', 'systemOfRecords', 'theme')
