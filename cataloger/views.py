@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 import os, logging
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office, Keyword
-from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm, SchemaForm
+from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm, SchemaForm, UploadFileForm
 from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages, keyword_import
 
 def index(request):
