@@ -12,27 +12,10 @@ urlpatterns = [
     path('', include('cataloger.urls')),
     path('admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
+    path('api/', include('api.urls')),
 ]
 
 # Add Django site authentication urls (for login, logout, password management)
 urlpatterns += [
     path('accounts/', include('django.contrib.auth.urls')),
 ]
-
-#
-# API implementation using Django REST framework
-#
-from rest_framework.decorators import api_view
-from rest_framework.urlpatterns import format_suffix_patterns
-
-# Views and ViewSets define the view behavior.
-from cataloger.views import api_root, DatasetList, DatasetDetail
-
-# Manual URL configuration for REST API is currently being used.
-# Additionally, we include login URLs for the browsable API.
-urlpatterns += format_suffix_patterns([
-    path('api/', api_root),
-    path('api/dataset/', DatasetList.as_view()),
-    path('api/dataset/<int:dataset_id>/', DatasetDetail.as_view()),
-    path('api/auth/', include('rest_framework.urls', namespace='rest_framework'))
-])

@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
-from .models import Dataset, Catalog, Profile, Keyword
+from cataloger.models import Dataset, Catalog, Profile, Keyword
 
-class PublisherField(serializers.ModelSerializer):
+class PublisherSerializer(serializers.ModelSerializer):
     profile = serializers.CharField()
     
     class Meta:
@@ -16,7 +16,7 @@ class PublisherField(serializers.ModelSerializer):
         return publisher
 
 
-class KeywordField(serializers.ModelSerializer):
+class KeywordSerializer(serializers.ModelSerializer):
     keyword = serializers.CharField()
     
     class Meta:
@@ -41,8 +41,8 @@ class ContactPointSerializer(serializers.Serializer):
 
 
 class DatasetSerializer(serializers.ModelSerializer):
-    keyword = KeywordField(many=True)
-    publisher = PublisherField()
+    keyword = KeywordSerializer(many=True)
+    publisher = PublisherSerializer()
     contactPoint = ContactPointSerializer(source='publisher')
     
     class Meta:
