@@ -10,9 +10,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from urllib.parse import urlparse
 import os, logging
 
-from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office
+from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office, Keyword
 from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm, SchemaForm
-from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages
+from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages, keyword_import
 
 def index(request):
     """
@@ -107,6 +107,7 @@ def utilities(request):
             # Bureau import form submission
             bureaucodes_form = UploadBureauCodesCSVFileForm(request.POST, request.FILES)
             datasets_form = UploadDatasetsCSVFileForm()
+            keywords_form = UploadFileForm()
             if bureaucodes_form.is_valid():
                 if len(BureauCode.objects.all()) == 0:
                     bureau_import.bureau_import(request.FILES['file'])
@@ -123,8 +124,9 @@ def utilities(request):
             # Dataset import form submission
             datasets_form = UploadDatasetsCSVFileForm(request.POST, request.FILES)
             bureaucodes_form = UploadBureauCodesCSVFileForm()
+            keywords_form = UploadFileForm()
             if datasets_form.is_valid():
-                    dataset_import.dataset_import(request.FILES['file'])
+                dataset_import.dataset_import(request.FILES['file'])
             else:
                 # invalid form - this should pass back through to the page (with errors attached?)
                 pass
@@ -132,11 +134,29 @@ def utilities(request):
             # Languages import
             import_languages.import_languages()
             return HttpResponseRedirect('/utilities/')
+        elif 'import-keywords' in request.POST:
+            print("Import keywords...")
+            # Keyword import form submission
+            bureaucodes_form = UploadBureauCodesCSVFileForm()
+            datasets_form = UploadDatasetsCSVFileForm()
+            keywords_form = UploadFileForm(request.POST, request.FILES)
+            if keywords_form.is_valid():
+                print("Keywords form is valid...")
+                if len(Keyword.objects.all()) == 0:
+                    print("No keywords exist - proceeding...")
+                    keyword_import.keyword_import_excel(request.FILES['file'])
+                else:
+                    print("Error keywords exist - you must remove them before importing")
+                    keywords_form.add_error(None, 'Keywords codes already exist. You must remove them before importing new keywords')
+            else:
+                # invalid form - this should pass back through to the page (with errors attached?)
+                pass
     else:
         # this is a GET request
         bureaucodes_form = UploadBureauCodesCSVFileForm()
         datasets_form = UploadDatasetsCSVFileForm()
-    return render(request, 'utilities.html', {'bureaucodes_form': bureaucodes_form, 'datasets_form': datasets_form})
+        keywords_form = UploadFileForm()
+    return render(request, 'utilities.html', {'bureaucodes_form': bureaucodes_form, 'datasets_form': datasets_form, 'keywords_form': keywords_form})
 
 
 def load_divisions(request):
