@@ -32,8 +32,8 @@ class ContactPointSerializer(serializers.Serializer):
 
     def to_representation(self, instance):
         user = None
-        request = self.context.get("dataset")
-        if request and hasattr(request, "user"):
+        dataset = self.context.get("dataset")
+        if dataset and hasattr(dataset, "publisher"):
             user = dataset.publisher
         if user:
             contactPoint = {'@type': 'vcard:Contact',
