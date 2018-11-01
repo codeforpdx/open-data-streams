@@ -31,15 +31,11 @@ class ContactPointSerializer(serializers.Serializer):
     contactPoint = serializers.CharField()
 
     def to_representation(self, instance):
-        user = None
-        dataset = self.context.get("dataset")
-        if dataset and hasattr(dataset, "publisher"):
-            user = dataset.publisher
-        if user:
+        try:
             contactPoint = {'@type': 'vcard:Contact',
-                            'fn': user.username,
-                            'hasEmail': 'mailto:'+user.email}
-        else:
+                            'fn': instance.username,
+                            'hasEmail': 'mailto:'+instance.email}
+        except:
             contactPoint = {}
         return contactPoint
 
@@ -47,7 +43,7 @@ class ContactPointSerializer(serializers.Serializer):
 class DatasetSerializer(serializers.ModelSerializer):
     keyword = KeywordField(many=True)
     publisher = PublisherField()
-    contactPoint = ContactPointSerializer()
+    contactPoint = ContactPointSerializer(source='publisher')
     
     class Meta:
         model = Dataset
