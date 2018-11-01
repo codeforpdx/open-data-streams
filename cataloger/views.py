@@ -438,24 +438,25 @@ def api_root(request, format=None):
     if request.method == 'GET':
         # there should only be 1 catalog
         catalog = Catalog.objects.all().first()
-        
-        serializer = CatalogSerializer(catalog)
+        context = {'request':request}
+        serializer = CatalogSerializer(catalog, context=context)
     return Response(serializer.data)
 
 @permission_classes((permissions.AllowAny,))
 class DatasetList(APIView):
     def get(self, request, dataset_id=None, format=None):
-        datasets = Dataset.objects.all()
-        context = {'request':request}
-        serializer = DatasetSerializer(datasets, many=True, context=context)
+        dataset = Dataset.objects.filter(publisher=Profile(id=request.user.id))
+        context = {'request':request, 'dataset':dataset}
+        serializer = DatasetSerializer(dataset, many=True, context=context)
         return Response(serializer.data)
 
 @permission_classes((permissions.AllowAny,))
 class DatasetDetail(APIView):
 
     def get(self, request, dataset_id=None, format=None):
-        dataset = get_object_or_404(Dataset, id=dataset_id)
-        serializer = DatasetSerializer(dataset)
+        dataset = get_object_or_404(Dataset, id=dataset_id, publisher=Profile(id=request.user.id))
+        context = {'request':request, 'dataset':dataset}
+        serializer = DatasetSerializer(dataset, context=context)
         return Response(serializer.data)
 
 class DatasetViewSet(viewsets.ModelViewSet):

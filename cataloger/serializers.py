@@ -32,12 +32,15 @@ class ContactPointSerializer(serializers.Serializer):
 
     def to_representation(self, instance):
         user = None
-        request = self.context.get("request")
+        request = self.context.get("dataset")
         if request and hasattr(request, "user"):
-            user = request.user
-        contactPoint = {'@type': 'vcard:Contact',
-                        'fn': user.username,
-                        'hasEmail': 'mailto:'+user.email}
+            user = dataset.publisher
+        if user:
+            contactPoint = {'@type': 'vcard:Contact',
+                            'fn': user.username,
+                            'hasEmail': 'mailto:'+user.email}
+        else:
+            contactPoint = {}
         return contactPoint
 
 
