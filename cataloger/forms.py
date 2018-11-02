@@ -76,7 +76,7 @@ class RegistrationForm(forms.ModelForm):
         password_confirm = cleaned_data.get("password_confirm")
 
         if password != password_confirm:
-            raise forms.ValidationError("Passwords do not match")
+            self._errors["password_confirm"] = self.error_class(["Passwords do not match"])
 
 class UploadBureauCodesCSVFileForm(forms.Form):
     """
@@ -109,7 +109,7 @@ class UploadDatasetsCSVFileForm(forms.Form):
 class UploadFileForm(forms.Form):
     """
     UploadFileForm is a standard Django Form
-    
+
     This form is used on the /utilities page, and is rendered by the utilities() function in views.py
 
     Purpose:
