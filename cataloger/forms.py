@@ -106,6 +106,20 @@ class UploadDatasetsCSVFileForm(forms.Form):
     """
     file = forms.FileField()
 
+class UploadFileForm(forms.Form):
+    """
+    UploadFileForm is a standard Django Form
+    
+    This form is used on the /utilities page, and is rendered by the utilities() function in views.py
+
+    Purpose:
+        The form is used to import different models from a file
+
+    Accepted Values:
+        None (this form only displays a new/blank form)
+    """
+    file = forms.FileField()
+
 class NewDatasetURLForm(forms.Form):
     url = forms.CharField(label="", required=True, widget=forms.TextInput(attrs={'placeholder': 'URL'}))
     username = forms.CharField(label="Username", required=False)
