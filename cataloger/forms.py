@@ -14,12 +14,14 @@ from .models import BureauCode, Division, Office, Dataset, Distribution
 class RegistrationForm(forms.ModelForm):
     """
     RegistrationForm is a Django ModelForm
-    
+
     This form is used for the /registration page, and is rendered by the registration() fuction in views.py. The ModelForm is based off of the :model:`cataloger.models.Profile` class.
-    
+
     Accepted Values:
         A request.POST dictionary (when filling existing form data), or None (when displaying a new/blank form)
     """
+    password_confirm = forms.CharField(label="Confirm Password", widget=forms.PasswordInput(), required=True)
+
     class Meta:
         model = Profile
         widgets = {
@@ -35,6 +37,7 @@ class RegistrationForm(forms.ModelForm):
                 'Create your OpenDataPDX Account',
                 'username',
                 'password',
+                'password_confirm',
                 'email',
                 'bureau',
                 'division',
@@ -66,15 +69,24 @@ class RegistrationForm(forms.ModelForm):
         elif self.instance.pk:
             self.fields['office'].queryset = self.instance.division.office_set.order_by('description')
 
+    # confirm passwords are the same
+    def clean(self):
+        cleaned_data = super(RegistrationForm, self).clean()
+        password = cleaned_data.get("password")
+        password_confirm = cleaned_data.get("password_confirm")
+
+        if password != password_confirm:
+            raise forms.ValidationError("Passwords do not match")
+
 class UploadBureauCodesCSVFileForm(forms.Form):
     """
     UploadBureauCodesCSVFileForm is a standard Django Form
-    
+
     This form is used on the /utilities page, and is rendered by the utilities() function in views.py
-    
+
     Purpose:
         The form is used to import :model:`cataloger.models.BureauCode`, :model:`cataloger.models.Division`, and :model:`cataloger.models.Office` objects from a CSV file
-    
+
     Accepted Values:
         None (this form only displays a new/blank form)
     """
@@ -83,7 +95,7 @@ class UploadBureauCodesCSVFileForm(forms.Form):
 class UploadDatasetsCSVFileForm(forms.Form):
     """
     UploadDatasetsCSVFileForm is a standard Django Form
-    
+
     This form is used on the /utilities page, and is rendered by the utilities() function in views.py
 
     Purpose:
