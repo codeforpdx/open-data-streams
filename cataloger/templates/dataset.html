@@ -6,6 +6,11 @@
     <div class="row justify-content-md-center">
         <div class="col-lg-8">
             <h2>Edit Dataset</h2>
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-warning" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
             <form method="post" id="datasetForm" action="{% url 'cataloger:dataset' dataset_id %}">
                 {% crispy form %}
             </form>
