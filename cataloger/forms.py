@@ -8,7 +8,7 @@ from django import forms
 from django.core import validators
 from .models import Profile
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div, HTML
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div, HTML, Field
 from .models import BureauCode, Division, Office, Dataset, Distribution
 
 class RegistrationForm(forms.ModelForm):
@@ -181,7 +181,7 @@ class DatasetForm(forms.ModelForm):
                 'distribution',
                 'schema',
                 'mtype',
-                'title',
+                Field('title', css_class="form-control-lg"),
                 'description',
                 ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:distribution' distribution_id %}" > Edit Distribution </a>""")),
                 HTML("<br>"), #TODO quick fix spacing the buttons for now
@@ -235,15 +235,15 @@ class DistributionForm(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 '',
+                Field('title', css_class="form-control-lg"),
+                'description',
+                'downloadURL',
+                'mediaType',
                 'accessURL',
                 'conformsTo',
                 'describedBy',
                 'describedByType',
-                'description',
-                'downloadURL',
                 'dformat',
-                'mediaType',
-                'title',
                 ),
             ButtonHolder(
                 Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block')

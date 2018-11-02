@@ -262,7 +262,7 @@ class Dataset(models.Model):
     modified = models.DateTimeField(auto_now_add=True)
     # Will store the URL to this dataset.
     identifier = models.URLField()
-    accessLevel = models.ForeignKey(AccessLevel, on_delete=models.PROTECT, default=2)
+    accessLevel = models.ForeignKey(AccessLevel, on_delete=models.PROTECT, default=3)
     bureauCode = models.ManyToManyField(BureauCode)
     programCode = models.ManyToManyField(Division)
     license = models.ForeignKey(License, on_delete=models.PROTECT, default=3)
@@ -290,3 +290,7 @@ class Dataset(models.Model):
     references = models.TextField(blank=True)
     systemOfRecords = models.TextField(blank=True)
     theme = models.TextField(blank=True)
+
+    # This flag indicates whether or not the dataset is complete,
+    # and should be set to True when the Dataset is saved for the first time
+    complete = models.BooleanField(blank=True, default=False)

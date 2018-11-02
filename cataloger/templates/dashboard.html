@@ -36,7 +36,7 @@
                 </thead>
                 <tbody>
                 {% for ds in datasets %}
-                    <tr>
+                    {% if ds.complete %}<tr>{% else %}<tr class="table-warning">{% endif %}
                         <td><a href="/dataset/{{ ds.id }}">{{ ds.id }}</a></td>
                         <td>{{ ds.title }}</td>
                         <td>{{ ds.description }}</td>

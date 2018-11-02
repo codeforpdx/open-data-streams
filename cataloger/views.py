@@ -6,6 +6,7 @@ import django.db, random, string
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 
 from urllib.parse import urlparse
 import os, logging
@@ -346,6 +347,9 @@ def dataset(request, dataset_id=None):
         if dataset_form.is_valid():
             # the form is valid - save it
             dataset_form.save()
+            # mark the Dataset as complete, save it, and redirect to the dashboard
+            ds.complete = True
+            ds.save()
             return HttpResponseRedirect('/dashboard/')
         else:
             # add the errors to the form
@@ -354,6 +358,8 @@ def dataset(request, dataset_id=None):
         # this is probably a GET request
         dataset_form = DatasetForm(instance=ds)
         dataset_form.fields['distribution'].queryset = Distribution.objects.filter(dataset=ds)
+        if not ds.complete:
+            messages.warning(request, 'Dataset incomplete - please fill out all required fields.')
 
     return render(request, 'dataset.html', {'dataset_id':dataset_id, 'distribution_id':ds.distribution.id, 'schema_id':ds.schema.id, 'form':dataset_form})
 
