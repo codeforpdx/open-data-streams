@@ -51,16 +51,14 @@ class SchemaGenerator:
                 for datum in data['meta']['view']['columns']:
                     metadata_set.add(datum['fieldName'])
             except Exception as e:
-                logging.error("json not assumed structure: " + str(e))
                 metadata_set.clear()
                 for datum in data:
                     if isinstance(datum, str):
                         metadata_set.add(datum)
-                    elif isinstance(datum, list):
-                        for datum_property in datum:
-                            metadata_set.add(datum_property)
                     else:
-                        raise Exception('Type in dictionary is not supported:' + type(datum))
+                        for datum_property in datum:
+                            metadata_set.add(str(datum_property))
+
             metadata_list = list(metadata_set)
             # assumes list of objects with sparsse data
             # OR
