@@ -301,6 +301,10 @@ def new_dataset(request):
             dataset.distribution = distribution
             profile = Profile.objects.get(id=request.user.id)
             dataset.publisher = profile
+            # prepare path for schema (describedBy)
+            dataset_schema_path = '/api/schema/' + str(dataset.schema.id)
+            dataset.describedBy = request.build_absolute_uri(dataset_schema_path)
+            dataset.describedByType = "application/json"
             dataset.save()
             # save in order to cross link to other models and populate the identifier
             if profile.bureau:
@@ -308,7 +312,7 @@ def new_dataset(request):
             if profile.division:
                 dataset.programCode.add(profile.division)
             # prepare path for dataset
-            dataset_identifier_path = '/dataset/' + str(dataset.id)
+            dataset_identifier_path = '/api/dataset/' + str(dataset.id)
             dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
             dataset.save()
             return HttpResponseRedirect('/schema/'+str(dataset.id))
