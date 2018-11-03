@@ -49,7 +49,7 @@ class SchemaGenerator:
             metadata_set = set()
             try:
                 for datum in data['meta']['view']['columns']:
-                    metadata_set.add(datum['fieldName'])
+                    metadata_set.add(datum['name'])
             except Exception as e:
                 metadata_set.clear()
                 for datum in data:
