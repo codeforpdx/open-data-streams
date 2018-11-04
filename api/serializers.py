@@ -49,11 +49,6 @@ class AccessLevelSerializer(serializers.ModelSerializer):
         return str(value)
 
 
-class CodeSerializer(serializers.ModelSerializer):
-    def to_representation(self, code):
-        return str(code)
-
-
 class ContactPointSerializer(serializers.Serializer):
     contactPoint = serializers.CharField()
 
