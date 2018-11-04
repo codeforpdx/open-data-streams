@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
-from cataloger.models import Dataset, Catalog, Profile, Keyword, License, AccessLevel
+from cataloger.models import Dataset, Catalog, Profile, Keyword, License, AccessLevel, Division
 
 class PublisherSerializer(serializers.ModelSerializer):
     profile = serializers.CharField()
@@ -25,6 +25,17 @@ class KeywordSerializer(serializers.ModelSerializer):
     
     def to_representation(self, value):
         return str(value)
+
+
+class ProgramCodeSerializer(serializers.ModelSerializer):
+    programCode = serializers.CharField()
+
+    class Meta:
+        model = Division
+        fields = ('programCode',)
+
+    def to_representation(self, value):
+        return str(value.bureau.code) + ":" + str(value.division)
 
 
 class LicenseSerializer(serializers.ModelSerializer):
@@ -68,6 +79,8 @@ class DatasetSerializer(serializers.ModelSerializer):
     contactPoint = ContactPointSerializer(source='publisher')
     license = LicenseSerializer()
     accessLevel = AccessLevelSerializer()
+    programCode = ProgramCodeSerializer(many=True)
+
 
     class Meta:
         model = Dataset
