@@ -31,10 +31,13 @@ class LicenseSerializer(serializers.ModelSerializer):
     license = serializers.CharField()
 
     def to_representation(self, value):
-        try:
-            license = {'license'}
-        except:
-            licemse = {}
+        return str(value)
+
+
+class AccessLevelSerializer(serializers.ModelSerializer):
+    access_level = serializers.CharField()
+
+    def to_representation(self, value):
         return str(value)
 
 
@@ -56,6 +59,7 @@ class DatasetSerializer(serializers.ModelSerializer):
     publisher = PublisherSerializer()
     contactPoint = ContactPointSerializer(source='publisher')
     license = LicenseSerializer()
+    accessLevel = AccessLevelSerializer()
 
     class Meta:
         model = Dataset
