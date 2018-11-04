@@ -27,6 +27,17 @@ class KeywordSerializer(serializers.ModelSerializer):
         return str(value)
 
 
+class LicenseSerializer(serializers.ModelSerializer):
+    license = serializers.CharField()
+
+    def to_representation(self, value):
+        try:
+            license = {'license'}
+        except:
+            licemse = {}
+        return str(value)
+
+
 class ContactPointSerializer(serializers.Serializer):
     contactPoint = serializers.CharField()
 
@@ -44,7 +55,8 @@ class DatasetSerializer(serializers.ModelSerializer):
     keyword = KeywordSerializer(many=True)
     publisher = PublisherSerializer()
     contactPoint = ContactPointSerializer(source='publisher')
-    
+    license = LicenseSerializer()
+
     class Meta:
         model = Dataset
         fields = ('@type', 'title', 'description', 'keyword', 'modified', 'publisher', 'contactPoint', 'identifier', 'accessLevel', 'bureauCode', 'programCode', 'license', 'rights', 'spatial', 'temporal', 'distribution', 'accrualPeriodicity', 'conformsTo', 'dataQuality', 'dataQuality', 'describedBy', 'describedByType', 'isPartOf', 'issued', 'language', 'landingPage', 'primaryITInvestment', 'references', 'systemOfRecords', 'theme')
