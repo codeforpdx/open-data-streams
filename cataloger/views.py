@@ -277,7 +277,7 @@ def new_dataset(request):
                         file_form.add_error(None, str(e))
         elif 'blank_submit' in request.POST:
             created_schema = Schema()
-            created_schema.data = ''
+            created_schema.data = '{"title": null, "type": null, "properties": []}'
 
         # if a schema was created, we create a new dataset with the schema and a new distribution (blank or url)
         if created_schema is not None:
@@ -411,6 +411,11 @@ def schema(request, schema_id=None):
 
     data = schema.data
     data = json.loads(data)
+
+    # empty dataset was uploaded, redirect to dataset
+    if data["properties"] == []:
+        return HttpResponseRedirect('/dataset/'+ str(schema.dataset.id))
+
     property_data = json.dumps(data["properties"])
 
     if request.method == 'POST':
