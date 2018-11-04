@@ -60,6 +60,7 @@ class License(models.Model):
     """
     license = models.CharField(max_length=12, default=3)
     description = models.TextField()
+    url = models.URLField()
 
     def __str__(self):
         return self.description
