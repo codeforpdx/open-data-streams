@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
-from cataloger.models import Dataset, Catalog, Profile, Keyword
+from cataloger.models import Dataset, Catalog, Profile, Keyword, Distribution
 
 class PublisherSerializer(serializers.ModelSerializer):
     profile = serializers.CharField()
@@ -40,10 +40,23 @@ class ContactPointSerializer(serializers.Serializer):
         return contactPoint
 
 
+class DistributionSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Distribution
+        fields = ('@type', 'title', 'description', 'downloadURL', 'format', 'accessURL', 'describedBy', 'describedByType', 'conformsTo', 'mediaType',)
+
+# rename the "mtype" field to "@type" in the serializer's _declared_fields
+DistributionSerializer._declared_fields['@type'] = serializers.CharField(source='mtype')
+# rename the "dformat" field to "format" in the serializer's _declared_fields
+DistributionSerializer._declared_fields['format'] = serializers.CharField(source='dformat')
+
+
 class DatasetSerializer(serializers.ModelSerializer):
     keyword = KeywordSerializer(many=True)
     publisher = PublisherSerializer()
     contactPoint = ContactPointSerializer(source='publisher')
+    distribution = DistributionSerializer()
     
     class Meta:
         model = Dataset
