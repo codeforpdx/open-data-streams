@@ -35,7 +35,7 @@ class ProgramCodeSerializer(serializers.ModelSerializer):
         fields = ('programCode',)
 
     def to_representation(self, value):
-        return str(value.bureau.code) + ":" + str(value.division)
+        return str(value.division)
 
 
 class LicenseSerializer(serializers.ModelSerializer):
