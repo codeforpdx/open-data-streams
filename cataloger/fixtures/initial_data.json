@@ -36,7 +36,8 @@
     "pk": 1,
     "fields": {
       "license": "CC0",
-      "description": "Creative Commons CCZero"
+      "description": "Creative Commons CCZero",
+      "url": "https://opendefinition.org/licenses/cc-zero"
     }
   },
   {
@@ -44,7 +45,8 @@
     "pk": 2,
     "fields": {
       "license": "PDDL",
-      "description": "Open Data Commons Public Domain Dedication and License"
+      "description": "Open Data Commons Public Domain Dedication and License",
+      "url": "https://opendefinition.org/licenses/odc-pddl"
     }
   },
   {
@@ -52,7 +54,8 @@
     "pk": 3,
     "fields": {
       "license": "CC-BY-4.0",
-      "description": "Creative Commons Attribution 4.0"
+      "description": "Creative Commons Attribution 4.0",
+      "url": "https://opendefinition.org/licenses/cc-by"
     }
   },
   {
@@ -60,7 +63,8 @@
     "pk": 4,
     "fields": {
       "license": "ODC-BY",
-      "description": "Open Data Commons Attribution License"
+      "description": "Open Data Commons Attribution License",
+      "url": "https://opendefinition.org/licenses/odc-by"
     }
   },
   {
@@ -68,7 +72,8 @@
     "pk": 5,
     "fields": {
       "license": "CC-BY-SA-4.0",
-      "description": "Creative Commons Attribution Share-Alike 4.0"
+      "description": "Creative Commons Attribution Share-Alike 4.0",
+      "url": "https://opendefinition.org/licenses/cc-by-sa"
     }
   },
   {
@@ -76,7 +81,8 @@
     "pk": 6,
     "fields": {
       "license": "ODbL",
-      "description": "Open Data Commons Open Database License"
+      "description": "Open Data Commons Open Database License",
+      "url": "https://opendefinition.org/licenses/odc-odbl"
     }
   },
   {
