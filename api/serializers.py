@@ -27,16 +27,7 @@ class KeywordSerializer(serializers.ModelSerializer):
         return str(value)
 
 
-class LicenseSerializer(serializers.ModelSerializer):
-    license = serializers.CharField()
-
-    def to_representation(self, value):
-        return str(value)
-
-
-class AccessLevelSerializer(serializers.ModelSerializer):
-    access_level = serializers.CharField()
-
+class SimpleSerializer(serializers.ModelSerializer):
     def to_representation(self, value):
         return str(value)
 
@@ -58,8 +49,8 @@ class DatasetSerializer(serializers.ModelSerializer):
     keyword = KeywordSerializer(many=True)
     publisher = PublisherSerializer()
     contactPoint = ContactPointSerializer(source='publisher')
-    license = LicenseSerializer()
-    accessLevel = AccessLevelSerializer()
+    license = SimpleSerializer()
+    accessLevel = SimpleSerializer()
 
     class Meta:
         model = Dataset
