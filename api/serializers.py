@@ -39,14 +39,14 @@ class ProgramCodeSerializer(serializers.ModelSerializer):
 
 
 class LicenseSerializer(serializers.ModelSerializer):
-    keyword = serializers.CharField()
+    license = serializers.URLField(source='url')
 
     class Meta:
         model = License
         fields = ('license',)
 
     def to_representation(self, value):
-        return str(value)
+        return str(value.url)
 
 
 class AccessLevelSerializer(serializers.ModelSerializer):
