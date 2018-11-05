@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
-from cataloger.models import Dataset, Catalog, Profile, Keyword, BureauCode
+from cataloger.models import Dataset, Catalog, Profile, Keyword, BureauCode, Distribution, License, AccessLevel, Division
 
 class PublisherSerializer(serializers.ModelSerializer):
     profile = serializers.CharField()
@@ -27,6 +27,39 @@ class KeywordSerializer(serializers.ModelSerializer):
         return str(value)
 
 
+class ProgramCodeSerializer(serializers.ModelSerializer):
+    programCode = serializers.CharField()
+
+    class Meta:
+        model = Division
+        fields = ('programCode',)
+
+    def to_representation(self, value):
+        return str(value.division)
+
+
+class LicenseSerializer(serializers.ModelSerializer):
+    license = serializers.URLField(source='url')
+
+    class Meta:
+        model = License
+        fields = ('license',)
+
+    def to_representation(self, value):
+        return str(value.url)
+
+
+class AccessLevelSerializer(serializers.ModelSerializer):
+    accessLevel = serializers.CharField()
+
+    class Meta:
+        model = AccessLevel
+        fields = ('accessLevel',)
+
+    def to_representation(self, value):
+        return str(value)
+
+
 class ContactPointSerializer(serializers.Serializer):
     contactPoint = serializers.CharField()
 
@@ -44,16 +77,32 @@ class BureauCodeSerializer(serializers.Serializer):
 
     class Meta:
         model = BureauCode
-        fields = ("code",)
+        fields = ("bureauCode",)
 
     def to_representation(self, value):
-        return str(value)
+        return str(value.code)
+
+class DistributionSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Distribution
+        fields = ('@type', 'title', 'description', 'downloadURL', 'format', 'accessURL', 'describedBy', 'describedByType', 'conformsTo', 'mediaType',)
+
+# rename the "mtype" field to "@type" in the serializer's _declared_fields
+DistributionSerializer._declared_fields['@type'] = serializers.CharField(source='mtype')
+# rename the "dformat" field to "format" in the serializer's _declared_fields
+DistributionSerializer._declared_fields['format'] = serializers.CharField(source='dformat')
+
 
 class DatasetSerializer(serializers.ModelSerializer):
     keyword = KeywordSerializer(many=True)
     publisher = PublisherSerializer()
     contactPoint = ContactPointSerializer(source='publisher')
     bureauCode = BureauCodeSerializer(many=True)
+    distribution = DistributionSerializer()
+    license = LicenseSerializer()
+    accessLevel = AccessLevelSerializer()
+    programCode = ProgramCodeSerializer(many=True)
 
     class Meta:
         model = Dataset
