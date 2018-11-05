@@ -46,7 +46,7 @@ class LicenseSerializer(serializers.ModelSerializer):
         fields = ('license',)
 
     def to_representation(self, value):
-        return str(value)
+        return str(value.url)
 
 
 class AccessLevelSerializer(serializers.ModelSerializer):

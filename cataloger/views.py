@@ -369,11 +369,11 @@ def dataset(request, dataset_id=None):
     else:
         # this is probably a GET request
         dataset_form = DatasetForm(instance=ds)
-        dataset_form.fields['distribution'].queryset = Distribution.objects.filter(dataset=ds)
         if not ds.complete:
             messages.warning(request, 'Dataset incomplete - please fill out all required fields.')
 
-    return render(request, 'dataset.html', {'dataset_id':dataset_id, 'distribution_id':ds.distribution.id, 'schema_id':ds.schema.id, 'form':dataset_form})
+    distribution_id = ds.distribution_set.first().id
+    return render(request, 'dataset.html', {'dataset_id':dataset_id, 'distribution_id':distribution_id, 'schema_id':ds.schema.id, 'form':dataset_form})
 
 @user_passes_test(lambda u: u.is_authenticated)
 def distribution(request, distribution_id=None):

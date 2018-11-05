@@ -278,6 +278,9 @@ class Dataset(models.Model):
     references = models.TextField(blank=True)
     systemOfRecords = models.TextField(blank=True)
     theme = models.TextField(blank=True)
+    # This flag indicates whether or not the dataset is complete,
+    # and should be set to True when the Dataset is saved for the first time
+    complete = models.BooleanField(blank=True, default=False)
 
 
 class Distribution(models.Model):
@@ -301,6 +304,3 @@ class Distribution(models.Model):
     dformat = models.TextField(blank=True)
     mediaType = models.TextField(blank=True)
     title = models.TextField(blank=True)
-    # This flag indicates whether or not the dataset is complete,
-    # and should be set to True when the Dataset is saved for the first time
-    complete = models.BooleanField(blank=True, default=False)
