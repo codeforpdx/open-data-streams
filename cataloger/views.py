@@ -6,13 +6,14 @@ import django.db, random, string
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 
 from urllib.parse import urlparse
 import os, logging
 
-from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office, Catalog
-from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm, SchemaForm
-from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages
+from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office, Keyword, Catalog
+from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm, SchemaForm, UploadFileForm
+from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages, keyword_import
 
 def index(request):
     """
@@ -63,6 +64,7 @@ def register(request):
         # this is a POST request
         form = RegistrationForm(request.POST)
         if form.is_valid():
+            form.clean()
             profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], BureauCode.objects.filter(id = request.POST['bureau']).first(), Division.objects.filter(id = request.POST['division']).first(), Office.objects.filter(id = request.POST['office']).first())
             profile.save()
 
@@ -107,6 +109,7 @@ def utilities(request):
             # Bureau import form submission
             bureaucodes_form = UploadBureauCodesCSVFileForm(request.POST, request.FILES)
             datasets_form = UploadDatasetsCSVFileForm()
+            keywords_form = UploadFileForm()
             if bureaucodes_form.is_valid():
                 if len(BureauCode.objects.all()) == 0:
                     bureau_import.bureau_import(request.FILES['file'])
@@ -123,8 +126,9 @@ def utilities(request):
             # Dataset import form submission
             datasets_form = UploadDatasetsCSVFileForm(request.POST, request.FILES)
             bureaucodes_form = UploadBureauCodesCSVFileForm()
+            keywords_form = UploadFileForm()
             if datasets_form.is_valid():
-                    dataset_import.dataset_import(request.FILES['file'])
+                dataset_import.dataset_import(request.FILES['file'])
             else:
                 # invalid form - this should pass back through to the page (with errors attached?)
                 pass
@@ -132,11 +136,29 @@ def utilities(request):
             # Languages import
             import_languages.import_languages()
             return HttpResponseRedirect('/utilities/')
+        elif 'import-keywords' in request.POST:
+            print("Import keywords...")
+            # Keyword import form submission
+            bureaucodes_form = UploadBureauCodesCSVFileForm()
+            datasets_form = UploadDatasetsCSVFileForm()
+            keywords_form = UploadFileForm(request.POST, request.FILES)
+            if keywords_form.is_valid():
+                print("Keywords form is valid...")
+                if len(Keyword.objects.all()) == 0:
+                    print("No keywords exist - proceeding...")
+                    keyword_import.keyword_import_excel(request.FILES['file'])
+                else:
+                    print("Error keywords exist - you must remove them before importing")
+                    keywords_form.add_error(None, 'Keywords codes already exist. You must remove them before importing new keywords')
+            else:
+                # invalid form - this should pass back through to the page (with errors attached?)
+                pass
     else:
         # this is a GET request
         bureaucodes_form = UploadBureauCodesCSVFileForm()
         datasets_form = UploadDatasetsCSVFileForm()
-    return render(request, 'utilities.html', {'bureaucodes_form': bureaucodes_form, 'datasets_form': datasets_form})
+        keywords_form = UploadFileForm()
+    return render(request, 'utilities.html', {'bureaucodes_form': bureaucodes_form, 'datasets_form': datasets_form, 'keywords_form': keywords_form})
 
 
 def load_divisions(request):
@@ -255,7 +277,7 @@ def new_dataset(request):
                         file_form.add_error(None, str(e))
         elif 'blank_submit' in request.POST:
             created_schema = Schema()
-            created_schema.data = ''
+            created_schema.data = '{"title": null, "type": null, "properties": []}'
 
         # if a schema was created, we create a new dataset with the schema and a new distribution (blank or url)
         if created_schema is not None:
@@ -274,6 +296,10 @@ def new_dataset(request):
             profile = Profile.objects.get(id=request.user.id)
             dataset.publisher = profile
             dataset.catalog = catalog
+            # prepare path for schema (describedBy)
+            dataset_schema_path = '/api/schema/' + str(dataset.schema.id)
+            dataset.describedBy = request.build_absolute_uri(dataset_schema_path)
+            dataset.describedByType = "application/json"
             dataset.save()
             # save in order to cross link to other models and populate the identifier
             if profile.bureau:
@@ -281,7 +307,7 @@ def new_dataset(request):
             if profile.division:
                 dataset.programCode.add(profile.division)
             # prepare path for dataset
-            dataset_identifier_path = '/dataset/' + str(dataset.id)
+            dataset_identifier_path = '/api/dataset/' + str(dataset.id)
             dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
             dataset.save()
             # create and save distribution
@@ -333,6 +359,9 @@ def dataset(request, dataset_id=None):
         if dataset_form.is_valid():
             # the form is valid - save it
             dataset_form.save()
+            # mark the Dataset as complete, save it, and redirect to the dashboard
+            ds.complete = True
+            ds.save()
             return HttpResponseRedirect('/dashboard/')
         else:
             # add the errors to the form
@@ -340,8 +369,11 @@ def dataset(request, dataset_id=None):
     else:
         # this is probably a GET request
         dataset_form = DatasetForm(instance=ds)
+        dataset_form.fields['distribution'].queryset = Distribution.objects.filter(dataset=ds)
+        if not ds.complete:
+            messages.warning(request, 'Dataset incomplete - please fill out all required fields.')
 
-    return render(request, 'dataset.html', {'dataset_id':dataset_id, 'form':dataset_form})
+    return render(request, 'dataset.html', {'dataset_id':dataset_id, 'distribution_id':ds.distribution.id, 'schema_id':ds.schema.id, 'form':dataset_form})
 
 @user_passes_test(lambda u: u.is_authenticated)
 def distribution(request, distribution_id=None):
@@ -373,26 +405,29 @@ def distribution(request, distribution_id=None):
         if distribution_form.is_valid():
             # the form is valid - save it
             distribution_form.save()
-            return HttpResponseRedirect('/dataset/' + str(distribution_id))
+            return HttpResponseRedirect('/dataset/' + str(dn.dataset.id))
         else:
             # the return below will display form errors
             pass
     else:
         # this is probably a GET request
         distribution_form = DistributionForm(instance=dn)
-    return render(request, 'distribution.html', {'distribution_id':distribution_id, 'form':distribution_form})
+    return render(request, 'distribution.html', {'form':distribution_form})
 
 @user_passes_test(lambda u: u.is_authenticated)
 def schema(request, schema_id=None):
     import json
 
     # validate that the slug exists and grab json blob
-    try:
-        dataset = Dataset.objects.get(id=schema_id)
-    except ObjectDoesNotExist:
-        raise Http404("Schema does not exist")
-    data = dataset.schema.data
+    schema = get_object_or_404(Schema, id=schema_id)
+
+    data = schema.data
     data = json.loads(data)
+
+    # empty dataset was uploaded, redirect to dataset
+    if data["properties"] == []:
+        return HttpResponseRedirect('/dataset/'+ str(schema.dataset.id))
+
     property_data = json.dumps(data["properties"])
 
     if request.method == 'POST':
@@ -407,9 +442,9 @@ def schema(request, schema_id=None):
                 counter += 1
 
             # the form is valid - save it
-            dataset.schema.data = json.dumps(data)
-            dataset.schema.save()
-            return HttpResponseRedirect('/dataset/' + str(schema_id))
+            schema.data = json.dumps(data)
+            schema.save()
+            return HttpResponseRedirect('/dataset/' + str(schema.dataset.id))
         else:
             # the return below will display form errors
             pass

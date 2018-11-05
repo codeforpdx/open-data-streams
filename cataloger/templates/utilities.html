@@ -53,6 +53,20 @@
             <input type="submit" name="import-languages" class="btn btn-success" value="Import">
           </form>
         </div>
+        <div class="row align-items-center">
+        <div class="p-5">
+          <h2 class="display-4">Import Keywords/Taxonomies</h2>
+          <p>Import keywords into the database</p>
+          <p>This utility expects keywords to be in an Excel file like the one defined here: https://data.nist.gov/od/id/691DDF3315711C14E0532457068146BE1907</p>
+          {% if bureaucodes_form.errors %}
+          <p> {{ keywords_form.errors.file }}</p>
+          {% endif %}
+          <form method="post" action="/utilities/" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ keywords_form|crispy }}
+            <input type="submit" name="import-keywords" class="btn btn-success" value="Import">
+          </form>
+        </div>
       </div>
     </div>
   </section>

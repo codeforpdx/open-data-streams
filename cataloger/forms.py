@@ -8,18 +8,20 @@ from django import forms
 from django.core import validators
 from .models import Profile
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div, HTML
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div, HTML, Field
 from .models import BureauCode, Division, Office, Dataset, Distribution
 
 class RegistrationForm(forms.ModelForm):
     """
     RegistrationForm is a Django ModelForm
-    
+
     This form is used for the /registration page, and is rendered by the registration() fuction in views.py. The ModelForm is based off of the :model:`cataloger.models.Profile` class.
-    
+
     Accepted Values:
         A request.POST dictionary (when filling existing form data), or None (when displaying a new/blank form)
     """
+    password_confirm = forms.CharField(label="Confirm Password", widget=forms.PasswordInput(), required=True)
+
     class Meta:
         model = Profile
         widgets = {
@@ -35,6 +37,7 @@ class RegistrationForm(forms.ModelForm):
                 'Create your OpenDataPDX Account',
                 'username',
                 'password',
+                'password_confirm',
                 'email',
                 'bureau',
                 'division',
@@ -66,15 +69,24 @@ class RegistrationForm(forms.ModelForm):
         elif self.instance.pk:
             self.fields['office'].queryset = self.instance.division.office_set.order_by('description')
 
+    # confirm passwords are the same
+    def clean(self):
+        cleaned_data = super(RegistrationForm, self).clean()
+        password = cleaned_data.get("password")
+        password_confirm = cleaned_data.get("password_confirm")
+
+        if password != password_confirm:
+            self._errors["password_confirm"] = self.error_class(["Passwords do not match"])
+
 class UploadBureauCodesCSVFileForm(forms.Form):
     """
     UploadBureauCodesCSVFileForm is a standard Django Form
-    
+
     This form is used on the /utilities page, and is rendered by the utilities() function in views.py
-    
+
     Purpose:
         The form is used to import :model:`cataloger.models.BureauCode`, :model:`cataloger.models.Division`, and :model:`cataloger.models.Office` objects from a CSV file
-    
+
     Accepted Values:
         None (this form only displays a new/blank form)
     """
@@ -83,11 +95,25 @@ class UploadBureauCodesCSVFileForm(forms.Form):
 class UploadDatasetsCSVFileForm(forms.Form):
     """
     UploadDatasetsCSVFileForm is a standard Django Form
-    
+
     This form is used on the /utilities page, and is rendered by the utilities() function in views.py
 
     Purpose:
         The form is used to import :model:`cataloger.models.Dataset` objects from a CSV file
+
+    Accepted Values:
+        None (this form only displays a new/blank form)
+    """
+    file = forms.FileField()
+
+class UploadFileForm(forms.Form):
+    """
+    UploadFileForm is a standard Django Form
+
+    This form is used on the /utilities page, and is rendered by the utilities() function in views.py
+
+    Purpose:
+        The form is used to import different models from a file
 
     Accepted Values:
         None (this form only displays a new/blank form)
@@ -154,11 +180,11 @@ class DatasetForm(forms.ModelForm):
                 'distribution',
                 'schema',
                 'mtype',
-                'title',
+                Field('title', css_class="form-control-lg"),
                 'description',
-                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:distribution' dataset_id %}" > Edit Distribution </a>""")),
+                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:distribution' distribution_id %}" > Edit Distribution </a>""")),
                 HTML("<br>"), #TODO quick fix spacing the buttons for now
-                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:schema' dataset_id %}" > Edit Schema </a>""")),
+                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:schema' schema_id %}" > Edit Schema </a>""")),
                 'keyword',
                 'identifier',
                 'accessLevel',
@@ -208,15 +234,15 @@ class DistributionForm(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 '',
+                Field('title', css_class="form-control-lg"),
+                'description',
+                'downloadURL',
+                'mediaType',
                 'accessURL',
                 'conformsTo',
                 'describedBy',
                 'describedByType',
-                'description',
-                'downloadURL',
                 'dformat',
-                'mediaType',
-                'title',
                 ),
             ButtonHolder(
                 Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block')

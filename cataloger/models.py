@@ -60,6 +60,7 @@ class License(models.Model):
     """
     license = models.CharField(max_length=12, default=3)
     description = models.TextField()
+    url = models.URLField()
 
     def __str__(self):
         return self.description
@@ -248,7 +249,7 @@ class Dataset(models.Model):
     modified = models.DateTimeField(auto_now_add=True)
     # Will store the URL to this dataset.
     identifier = models.URLField()
-    accessLevel = models.ForeignKey(AccessLevel, on_delete=models.PROTECT, default=2)
+    accessLevel = models.ForeignKey(AccessLevel, on_delete=models.PROTECT, default=3)
     bureauCode = models.ManyToManyField(BureauCode)
     programCode = models.ManyToManyField(Division)
     license = models.ForeignKey(License, on_delete=models.PROTECT, default=3)
@@ -300,3 +301,6 @@ class Distribution(models.Model):
     dformat = models.TextField(blank=True)
     mediaType = models.TextField(blank=True)
     title = models.TextField(blank=True)
+    # This flag indicates whether or not the dataset is complete,
+    # and should be set to True when the Dataset is saved for the first time
+    complete = models.BooleanField(blank=True, default=False)

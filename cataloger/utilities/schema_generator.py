@@ -34,7 +34,7 @@ class SchemaGenerator:
         headers for the sections."""
         try:
             # Parses the first line of the file to get all the headers.
-            metadata = str(file.readline().decode('utf-8')).split(',')
+            metadata = str(file.readline().decode('utf-8')).strip().split(',')
             # Will be further implemented in phase 3.
             return SchemaGenerator.__build_schema(metadata)
         except Exception as e:
@@ -47,9 +47,18 @@ class SchemaGenerator:
         try:
             data = json.load(file)
             metadata_set = set()
-            for datum in data:
-                for datum_property in datum:
-                    metadata_set.add(datum_property)
+            try:
+                for datum in data['meta']['view']['columns']:
+                    metadata_set.add(datum['name'])
+            except Exception as e:
+                metadata_set.clear()
+                for datum in data:
+                    if isinstance(datum, str):
+                        metadata_set.add(datum)
+                    else:
+                        for datum_property in datum:
+                            metadata_set.add(str(datum_property))
+
             metadata_list = list(metadata_set)
             # assumes list of objects with sparsse data
             # OR
