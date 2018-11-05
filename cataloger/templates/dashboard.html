@@ -40,7 +40,7 @@
                         <td><a href="/dataset/{{ ds.id }}">{{ ds.id }}</a></td>
                         <td>{{ ds.title }}</td>
                         <td>{{ ds.description }}</td>
-                        <td>{% for keyword in ds.keywords.all %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                        <td>{% for keyword in ds.keyword.all %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                         <td>{{ ds.modified }}</td>
                         <td>{{ ds.publisher }}</td>
                         <td>{{ ds.publisher.email }}</td>

@@ -149,10 +149,9 @@ class NewDatasetFileForm(forms.Form):
 class DatasetForm(forms.ModelForm):
     class Meta:
         model = Dataset
-        fields = ['publisher', 'distribution', 'schema', 'mtype', 'title', 'description', 'keywords', 'identifier', 'accessLevel', 'bureauCode', 'programCode', 'license', 'spatial', 'temporal', 'describedByType', 'describedBy', 'accrualPeriodicity', 'conformsTo', 'dataQuality', 'isPartOf', 'issued', 'language', 'landingPage', 'primaryITInvestment', 'references', 'systemOfRecords', 'theme',]
+        fields = ['publisher', 'schema', 'mtype', 'title', 'description', 'keyword', 'identifier', 'accessLevel', 'bureauCode', 'programCode', 'license', 'spatial', 'temporal', 'describedByType', 'describedBy', 'accrualPeriodicity', 'conformsTo', 'dataQuality', 'isPartOf', 'issued', 'language', 'landingPage', 'primaryITInvestment', 'references', 'systemOfRecords', 'theme',]
         widgets = {
           'publisher': forms.HiddenInput(),
-          'distribution': forms.HiddenInput(),
           'schema': forms.HiddenInput(),
           'mtype': forms.HiddenInput(),
           'title': forms.Textarea(attrs={'rows':1, 'cols':15}),
@@ -186,7 +185,7 @@ class DatasetForm(forms.ModelForm):
                 ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:distribution' distribution_id %}" > Edit Distribution </a>""")),
                 HTML("<br>"), #TODO quick fix spacing the buttons for now
                 ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:schema' schema_id %}" > Edit Schema </a>""")),
-                'keywords',
+                'keyword',
                 'identifier',
                 'accessLevel',
                 'bureauCode',

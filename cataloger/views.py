@@ -11,7 +11,7 @@ from django.contrib import messages
 from urllib.parse import urlparse
 import os, logging
 
-from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office, Keyword
+from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office, Keyword, Catalog
 from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm, SchemaForm, UploadFileForm
 from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages, keyword_import
 
@@ -283,24 +283,19 @@ def new_dataset(request):
         if created_schema is not None:
             # save the created schema
             created_schema.save()
-            # create and save distribution
-            distribution = Distribution()
-            if url is not None:
-                distribution.downloadURL = url
-                distribution.title = os.path.basename(urlparse(url).path.split('?')[0])
-                if distribution.title.endswith('json'):
-                    distribution.mediaType = "application/json"
-                elif distribution.title.endswith('csv'):
-                    distribution.mediaType = "text/csv"
-                elif distribution.title.endswith('xlsx'):
-                    distribution.mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            distribution.save()
+            # get the catalog if it exists, otherwise, create it
+            # there should be only 1 catalog
+            try:
+                catalog = Catalog.objects.get(id=1)
+            except Catalog.DoesNotExist:
+                catalog = Catalog()
+                catalog.save()
             # create and saves a dataset.
             dataset = Dataset()
             dataset.schema = created_schema
-            dataset.distribution = distribution
             profile = Profile.objects.get(id=request.user.id)
             dataset.publisher = profile
+            dataset.catalog = catalog
             # prepare path for schema (describedBy)
             dataset_schema_path = '/api/schema/' + str(dataset.schema.id)
             dataset.describedBy = request.build_absolute_uri(dataset_schema_path)
@@ -315,6 +310,19 @@ def new_dataset(request):
             dataset_identifier_path = '/api/dataset/' + str(dataset.id)
             dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
             dataset.save()
+            # create and save distribution
+            distribution = Distribution()
+            if url is not None:
+                distribution.downloadURL = url
+                distribution.title = os.path.basename(urlparse(url).path.split('?')[0])
+                if distribution.title.endswith('json'):
+                    distribution.mediaType = "application/json"
+                elif distribution.title.endswith('csv'):
+                    distribution.mediaType = "text/csv"
+                elif distribution.title.endswith('xlsx'):
+                    distribution.mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            distribution.dataset = dataset
+            distribution.save()
             return HttpResponseRedirect('/schema/'+str(dataset.id))
     else:
         url_form = NewDatasetURLForm()
@@ -361,11 +369,11 @@ def dataset(request, dataset_id=None):
     else:
         # this is probably a GET request
         dataset_form = DatasetForm(instance=ds)
-        dataset_form.fields['distribution'].queryset = Distribution.objects.filter(dataset=ds)
         if not ds.complete:
             messages.warning(request, 'Dataset incomplete - please fill out all required fields.')
 
-    return render(request, 'dataset.html', {'dataset_id':dataset_id, 'distribution_id':ds.distribution.id, 'schema_id':ds.schema.id, 'form':dataset_form})
+    distribution_id = ds.distribution_set.first().id
+    return render(request, 'dataset.html', {'dataset_id':dataset_id, 'distribution_id':distribution_id, 'schema_id':ds.schema.id, 'form':dataset_form})
 
 @user_passes_test(lambda u: u.is_authenticated)
 def distribution(request, distribution_id=None):

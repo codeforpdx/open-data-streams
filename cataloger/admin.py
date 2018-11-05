@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Profile, BureauCode, Division, Office, Dataset, Distribution, Schema, AccessLevel, License, Keyword, Language
+from .models import Profile, BureauCode, Division, Office, Dataset, Distribution, Schema, AccessLevel, License, Keyword, Language, Catalog
 
 # Register your models here.
 admin.site.register(Profile, UserAdmin)
@@ -14,3 +14,4 @@ admin.site.register(AccessLevel)
 admin.site.register(License)
 admin.site.register(Keyword)
 admin.site.register(Language)
+admin.site.register(Catalog)
