@@ -3,7 +3,6 @@
 #
 from django.conf.urls import include
 from django.urls import path
-from rest_framework.decorators import api_view
 from rest_framework.urlpatterns import format_suffix_patterns
 
 # Views and ViewSets define the view behavior.

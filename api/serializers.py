@@ -1,14 +1,13 @@
 from rest_framework import serializers
-from rest_framework.fields import CurrentUserDefault
 
 from cataloger.models import Dataset, Catalog, Profile, Keyword, BureauCode, Distribution, License, AccessLevel, Division
 
 class PublisherSerializer(serializers.ModelSerializer):
-    profile = serializers.CharField()
+    publisher = serializers.CharField()
 
     class Meta:
         model = Profile
-        fields = ('profile',)
+        fields = ('publisher',)
 
     def to_representation(self, value):
         profile = Profile.objects.get(username=value)

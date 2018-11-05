@@ -1,7 +1,7 @@
 # REST Framework
 from django.shortcuts import get_object_or_404
 
-from rest_framework import routers, serializers, viewsets
+from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -39,8 +39,3 @@ class DatasetDetail(APIView):
         context = {'request':request, 'dataset':dataset}
         serializer = DatasetSerializer(dataset, context=context)
         return Response(serializer.data)
-
-class DatasetViewSet(viewsets.ModelViewSet):
-    queryset = Dataset.objects.all()
-    serializer_class = DatasetSerializer
-
