@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
-from cataloger.models import Dataset, Catalog, Profile, Keyword, Distribution
+from cataloger.models import Dataset, Catalog, Profile, Keyword, Distribution, License, AccessLevel, Division
 
 class PublisherSerializer(serializers.ModelSerializer):
     profile = serializers.CharField()
@@ -23,6 +23,39 @@ class KeywordSerializer(serializers.ModelSerializer):
         model = Keyword
         fields = ('keyword',)
     
+    def to_representation(self, value):
+        return str(value)
+
+
+class ProgramCodeSerializer(serializers.ModelSerializer):
+    programCode = serializers.CharField()
+
+    class Meta:
+        model = Division
+        fields = ('programCode',)
+
+    def to_representation(self, value):
+        return str(value.division)
+
+
+class LicenseSerializer(serializers.ModelSerializer):
+    license = serializers.URLField(source='url')
+
+    class Meta:
+        model = License
+        fields = ('license',)
+
+    def to_representation(self, value):
+        return str(value.url)
+
+
+class AccessLevelSerializer(serializers.ModelSerializer):
+    accessLevel = serializers.CharField()
+
+    class Meta:
+        model = AccessLevel
+        fields = ('accessLevel',)
+
     def to_representation(self, value):
         return str(value)
 
@@ -57,7 +90,10 @@ class DatasetSerializer(serializers.ModelSerializer):
     publisher = PublisherSerializer()
     contactPoint = ContactPointSerializer(source='publisher')
     distribution = DistributionSerializer()
-    
+    license = LicenseSerializer()
+    accessLevel = AccessLevelSerializer()
+    programCode = ProgramCodeSerializer(many=True)
+
     class Meta:
         model = Dataset
         fields = ('@type', 'title', 'description', 'keyword', 'modified', 'publisher', 'contactPoint', 'identifier', 'accessLevel', 'bureauCode', 'programCode', 'license', 'rights', 'spatial', 'temporal', 'distribution', 'accrualPeriodicity', 'conformsTo', 'dataQuality', 'dataQuality', 'describedBy', 'describedByType', 'isPartOf', 'issued', 'language', 'landingPage', 'primaryITInvestment', 'references', 'systemOfRecords', 'theme')
