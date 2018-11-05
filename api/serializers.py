@@ -1,15 +1,15 @@
 from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 
-from cataloger.models import Dataset, Catalog, Profile, Keyword, Distribution, License, AccessLevel, Division
+from cataloger.models import Dataset, Catalog, Profile, Keyword, BureauCode, Distribution, License, AccessLevel, Division
 
 class PublisherSerializer(serializers.ModelSerializer):
     profile = serializers.CharField()
-    
+
     class Meta:
         model = Profile
         fields = ('profile',)
-    
+
     def to_representation(self, value):
         profile = Profile.objects.get(username=value)
         publisher = {"@type":"org:Organization", "name": str(profile.office), "subOrganizationOf":{"@type":"org:Organization", "name": str(profile.division), "subOrganizationOf": {"@type":"org:Organization", "name": str(profile.bureau), "subOrganizationOf": {"@type":"org:Organization", "name":"City"}}}}
@@ -18,11 +18,11 @@ class PublisherSerializer(serializers.ModelSerializer):
 
 class KeywordSerializer(serializers.ModelSerializer):
     keyword = serializers.CharField()
-    
+
     class Meta:
         model = Keyword
         fields = ('keyword',)
-    
+
     def to_representation(self, value):
         return str(value)
 
@@ -72,6 +72,15 @@ class ContactPointSerializer(serializers.Serializer):
             contactPoint = {}
         return contactPoint
 
+class BureauCodeSerializer(serializers.Serializer):
+    bureauCode = serializers.CharField()
+
+    class Meta:
+        model = BureauCode
+        fields = ("bureauCode",)
+
+    def to_representation(self, value):
+        return str(value.code)
 
 class DistributionSerializer(serializers.ModelSerializer):
     
@@ -89,6 +98,7 @@ class DatasetSerializer(serializers.ModelSerializer):
     keyword = KeywordSerializer(many=True)
     publisher = PublisherSerializer()
     contactPoint = ContactPointSerializer(source='publisher')
+    bureauCode = BureauCodeSerializer(many=True)
     distribution = DistributionSerializer()
     license = LicenseSerializer()
     accessLevel = AccessLevelSerializer()
@@ -105,7 +115,7 @@ DatasetSerializer._declared_fields['@type'] = serializers.CharField(source='mtyp
 
 class CatalogSerializer(serializers.ModelSerializer):
     dataset = DatasetSerializer(many=True)
-    
+
     class Meta:
         model = Catalog
         fields = ('@context', '@id', '@type', '@conformsTo', 'describedBy', 'dataset')
