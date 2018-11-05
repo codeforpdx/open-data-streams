@@ -123,10 +123,9 @@ class NewDatasetFileForm(forms.Form):
 class DatasetForm(forms.ModelForm):
     class Meta:
         model = Dataset
-        fields = ['publisher', 'distribution', 'schema', 'mtype', 'title', 'description', 'keyword', 'identifier', 'accessLevel', 'bureauCode', 'programCode', 'license', 'spatial', 'temporal', 'describedByType', 'describedBy', 'accrualPeriodicity', 'conformsTo', 'dataQuality', 'isPartOf', 'issued', 'language', 'landingPage', 'primaryITInvestment', 'references', 'systemOfRecords', 'theme',]
+        fields = ['publisher', 'schema', 'mtype', 'title', 'description', 'keyword', 'identifier', 'accessLevel', 'bureauCode', 'programCode', 'license', 'spatial', 'temporal', 'describedByType', 'describedBy', 'accrualPeriodicity', 'conformsTo', 'dataQuality', 'isPartOf', 'issued', 'language', 'landingPage', 'primaryITInvestment', 'references', 'systemOfRecords', 'theme',]
         widgets = {
           'publisher': forms.HiddenInput(),
-          'distribution': forms.HiddenInput(),
           'schema': forms.HiddenInput(),
           'mtype': forms.HiddenInput(),
           'title': forms.Textarea(attrs={'rows':1, 'cols':15}),

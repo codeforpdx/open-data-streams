@@ -261,6 +261,29 @@ def new_dataset(request):
         if created_schema is not None:
             # save the created schema
             created_schema.save()
+            # get the catalog if it exists, otherwise, create it
+            # there should be only 1 catalog
+            try:
+                catalog = Catalog.objects.get(id=1)
+            except Catalog.DoesNotExist:
+                catalog = Catalog()
+                catalog.save()
+            # create and saves a dataset.
+            dataset = Dataset()
+            dataset.schema = created_schema
+            profile = Profile.objects.get(id=request.user.id)
+            dataset.publisher = profile
+            dataset.catalog = catalog
+            dataset.save()
+            # save in order to cross link to other models and populate the identifier
+            if profile.bureau:
+                dataset.bureauCode.add(profile.bureau)
+            if profile.division:
+                dataset.programCode.add(profile.division)
+            # prepare path for dataset
+            dataset_identifier_path = '/dataset/' + str(dataset.id)
+            dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
+            dataset.save()
             # create and save distribution
             distribution = Distribution()
             if url is not None:
@@ -272,31 +295,8 @@ def new_dataset(request):
                     distribution.mediaType = "text/csv"
                 elif distribution.title.endswith('xlsx'):
                     distribution.mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            distribution.dataset = dataset
             distribution.save()
-            # get the catalog if it exists, otherwise, create it
-            # there should be only 1 catalog
-            try:
-                catalog = Catalog.objects.get(id=1)
-            except Catalog.DoesNotExist:
-                catalog = Catalog()
-                catalog.save()
-            # create and saves a dataset.
-            dataset = Dataset()
-            dataset.schema = created_schema
-            dataset.distribution = distribution
-            profile = Profile.objects.get(id=request.user.id)
-            dataset.publisher = profile
-            dataset.save()
-            catalog.dataset.add(dataset)
-            # save in order to cross link to other models and populate the identifier
-            if profile.bureau:
-                dataset.bureauCode.add(profile.bureau)
-            if profile.division:
-                dataset.programCode.add(profile.division)
-            # prepare path for dataset
-            dataset_identifier_path = '/dataset/' + str(dataset.id)
-            dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
-            dataset.save()
             return HttpResponseRedirect('/schema/'+str(dataset.id))
     else:
         url_form = NewDatasetURLForm()
@@ -340,7 +340,6 @@ def dataset(request, dataset_id=None):
     else:
         # this is probably a GET request
         dataset_form = DatasetForm(instance=ds)
-        dataset_form.fields['distribution'].queryset = Distribution.objects.filter(dataset=ds)
 
     return render(request, 'dataset.html', {'dataset_id':dataset_id, 'form':dataset_form})
 

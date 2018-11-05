@@ -46,7 +46,7 @@ class LicenseSerializer(serializers.ModelSerializer):
         fields = ('license',)
 
     def to_representation(self, value):
-        return str(value.url)
+        return str(value)
 
 
 class AccessLevelSerializer(serializers.ModelSerializer):
@@ -99,7 +99,7 @@ class DatasetSerializer(serializers.ModelSerializer):
     publisher = PublisherSerializer()
     contactPoint = ContactPointSerializer(source='publisher')
     bureauCode = BureauCodeSerializer(many=True)
-    distribution = DistributionSerializer()
+    distribution = DistributionSerializer(many=True, source='distribution_set')
     license = LicenseSerializer()
     accessLevel = AccessLevelSerializer()
     programCode = ProgramCodeSerializer(many=True)
@@ -114,7 +114,7 @@ DatasetSerializer._declared_fields['@type'] = serializers.CharField(source='mtyp
 
 
 class CatalogSerializer(serializers.ModelSerializer):
-    dataset = DatasetSerializer(many=True)
+    dataset = DatasetSerializer(many=True, source='dataset_set')
 
     class Meta:
         model = Catalog

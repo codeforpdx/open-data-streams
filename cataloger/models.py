@@ -208,28 +208,14 @@ class Schema(models.Model):
     """
     data = JSONField()
 
-class Distribution(models.Model):
-    """
-    Distribution represent a single distribution within a POD 1.1 dataset
-    
-    These objects are related to a unique :model:`cataloger.Dataset` instance.
-    
-    Note:
-        The POD 1.1 definition of the `distribution`_ field specifies that it should be an array of `distribution`_ objects, but this implementation uses a OneToOneField to relate those objects. This implies that the current implementation is not fully POD 1.1 compliant.
 
-    .. _distribution: https://project-open-data.cio.gov/v1.1/schema/#distribution
-    """
-    mtype = models.TextField(default='dcat:Distribution',blank=True)
-    accessURL = models.TextField(blank=True)
-    conformsTo = models.TextField(blank=True)
-    describedBy = models.TextField(blank=True)
-    describedByType = models.TextField(blank=True)
-    description = models.TextField(blank=True)
-    downloadURL = models.TextField(blank=True)
-    # format field (renamed since format is a reserved Python keyword)
-    dformat = models.TextField(blank=True)
-    mediaType = models.TextField(blank=True)
-    title = models.TextField(blank=True)
+class Catalog(models.Model):
+    _context = models.URLField(default='https://project-open-data.cio.gov/v1.1/schema/catalog.jsonld')
+    _id = models.URLField(default='https://opendatapdx.herokuapp.com/api/')
+    _type = models.CharField(default='dcat:Catalog', max_length=12)
+    _conformsTo = models.URLField(default='https://project-open-data.cio.gov/v1.1/schema')
+    describedBy = models.URLField(default='https://project-open-data.cio.gov/v1.1/schema/catalog.json')
+
 
 class Dataset(models.Model):
     """
@@ -247,8 +233,8 @@ class Dataset(models.Model):
     # ---------- FOREIGN KEYS ----------
     # Relates a dataset to the user that published it.
     publisher = models.ForeignKey(Profile, on_delete=models.PROTECT)
-    # Relates a dataset to its distribution.
-    distribution = models.OneToOneField(Distribution, on_delete=models.CASCADE)
+    # Relates a dataset to its catalog.
+    catalog = models.ForeignKey(Catalog, on_delete=models.CASCADE,null=True)
     # Relates a dataset to its schema.
     schema = models.OneToOneField(Schema, on_delete=models.CASCADE)
 
@@ -292,10 +278,25 @@ class Dataset(models.Model):
     systemOfRecords = models.TextField(blank=True)
     theme = models.TextField(blank=True)
 
-class Catalog(models.Model):
-    _context = models.URLField(default='https://project-open-data.cio.gov/v1.1/schema/catalog.jsonld')
-    _id = models.URLField(default='https://opendatapdx.herokuapp.com/api/')
-    _type = models.CharField(default='dcat:Catalog', max_length=12)
-    _conformsTo = models.URLField(default='https://project-open-data.cio.gov/v1.1/schema')
-    describedBy = models.URLField(default='https://project-open-data.cio.gov/v1.1/schema/catalog.json')
-    dataset = models.ManyToManyField(Dataset)
+
+class Distribution(models.Model):
+    """
+    Distribution represent a single distribution within a POD 1.1 dataset
+    
+    These objects are related to a unique :model:`cataloger.Dataset` instance.
+
+    .. _distribution: https://project-open-data.cio.gov/v1.1/schema/#distribution
+    """
+    # Relates a distribution to its dataset.
+    dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE,null=True)
+    mtype = models.TextField(default='dcat:Distribution',blank=True)
+    accessURL = models.TextField(blank=True)
+    conformsTo = models.TextField(blank=True)
+    describedBy = models.TextField(blank=True)
+    describedByType = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    downloadURL = models.TextField(blank=True)
+    # format field (renamed since format is a reserved Python keyword)
+    dformat = models.TextField(blank=True)
+    mediaType = models.TextField(blank=True)
+    title = models.TextField(blank=True)
