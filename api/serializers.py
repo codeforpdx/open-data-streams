@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from cataloger.models import Dataset, Catalog, Profile, Keyword, BureauCode, Distribution, License, AccessLevel, Division
+from cataloger.models import Dataset, Catalog, Profile, Keyword, BureauCode, Distribution, License, AccessLevel, Division, Schema
 
 class PublisherSerializer(serializers.ModelSerializer):
     publisher = serializers.CharField()
@@ -110,6 +110,13 @@ class DatasetSerializer(serializers.ModelSerializer):
 
 # rename the "mtype" field to "@type" in the serializer's _declared_fields
 DatasetSerializer._declared_fields['@type'] = serializers.CharField(source='mtype')
+
+
+class SchemaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Schema
+        fields = ('data',)
+        depth = 2
 
 
 class CatalogSerializer(serializers.ModelSerializer):
