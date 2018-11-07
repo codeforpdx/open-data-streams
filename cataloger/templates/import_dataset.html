@@ -6,7 +6,7 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-sm">
-              <h2>Upload a new dataset</h2>
+              <h2>Import a new dataset</h2>
               <p>supported filetypes are: {% for ext in extensions %}{% if forloop.last %}and {% endif %}{{ ext }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
               <h5>Upload with a URL</h5>
               <form action="/import_dataset/" method="post">
