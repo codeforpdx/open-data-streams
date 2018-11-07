@@ -1,0 +1,16 @@
+{% extends "rest_framework/base.html" %}
+
+<!-- Use our selected bootstrap theme -->
+{% block bootstrap_theme %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" type="text/css">
+{% endblock %}
+
+<!-- Change title of page -->
+{% block branding %}
+    <a class="navbar-brand" rel="nofollow" href="/">
+        {% block title %}OpenDataPDX{% endblock %}
+    </a>
+{% endblock %}
+
+<!-- Override breadcrumbs so that they don't display -->
+{% block breadcrumbs %}{% endblock %}
