@@ -378,8 +378,8 @@ def import_dataset(request):
         if json_catalog is not None:
             try:
                 for created_dataset in serializers.deserialize("catalog", json.dumps(json_catalog),ignorenonexistent=True):
-                    if object_should_be_saved(created_dataset):
-                        created_dataset.save()
+                    #if object_should_be_saved(created_dataset):
+                    created_dataset.save()
                 return HttpResponseRedirect('/dashboard/')
             except Exception as e:
                 if 'url_submit' in request.POST:
