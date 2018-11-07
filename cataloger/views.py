@@ -65,7 +65,7 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             form.clean()
-            profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], BureauCode.objects.filter(id = request.POST['bureau']).first(), Division.objects.filter(id = request.POST['division']).first(), Office.objects.filter(id = request.POST['office']).first())
+            profile = Profile.objects.create_user(request.POST['username'], request.POST['first_name'], request.POST['last_name'], request.POST['email'], request.POST['password'], BureauCode.objects.filter(id = request.POST['bureau']).first(), Division.objects.filter(id = request.POST['division']).first(), Office.objects.filter(id = request.POST['office']).first())
             profile.save()
 
             user = authenticate(request, username=request.POST['username'], password=request.POST['password'])

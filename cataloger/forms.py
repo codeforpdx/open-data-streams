@@ -27,7 +27,7 @@ class RegistrationForm(forms.ModelForm):
         widgets = {
             'password': forms.PasswordInput(),
         }
-        fields = ['username', 'password', 'email', 'bureau', 'division', 'office']
+        fields = ['username','first_name', 'last_name', 'password', 'email', 'bureau', 'division', 'office']
 
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
@@ -36,6 +36,8 @@ class RegistrationForm(forms.ModelForm):
             Fieldset(
                 'Create your OpenDataPDX Account',
                 'username',
+                'first_name',
+                'last_name',
                 'password',
                 'password_confirm',
                 'email',
