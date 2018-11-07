@@ -228,6 +228,9 @@ class DistributionForm(forms.ModelForm):
           'mediaType': forms.Textarea(attrs={'rows':1, 'cols':15}),
           'title': forms.Textarea(attrs={'rows':1, 'cols':15}),
         }
+        labels = {
+            'dformat': 'Format',
+        }
     def __init__(self, *args, **kwargs):
         super(DistributionForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
