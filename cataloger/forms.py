@@ -143,7 +143,35 @@ class NewDatasetURLForm(forms.Form):
             )
         )
 
+class ImportDatasetURLForm(forms.Form):
+    url = forms.CharField(label="", required=True, widget=forms.TextInput(attrs={'placeholder': 'URL'}))
+    username = forms.CharField(label="Username", required=False)
+    password = forms.CharField(label="Password", widget=forms.PasswordInput(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(ImportDatasetURLForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'url',
+                Div(
+                    Div('username',css_class='col-md-6',),
+                    Div('password',css_class='col-md-6',),
+                    css_class='row'
+                ),
+            ),
+            ButtonHolder(
+                Submit('url_submit', 'Submit', css_class='btn btn-primary')
+            )
+        )
+
+
 class NewDatasetFileForm(forms.Form):
+    file = forms.FileField(label="",required=True)
+
+
+class ImportDatasetFileForm(forms.Form):
     file = forms.FileField(label="",required=True)
 
 class DatasetForm(forms.ModelForm):

@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 import os, logging
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office, Keyword, Catalog
-from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm, SchemaForm, UploadFileForm
+from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, ImportDatasetFileForm, ImportDatasetURLForm, DatasetForm, DistributionForm, SchemaForm, UploadFileForm
 from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages, keyword_import
 
 def index(request):
@@ -329,6 +329,70 @@ def new_dataset(request):
         file_form = NewDatasetFileForm()
 
     return render(request, 'new_dataset.html', {'url_form': url_form, 'file_form': file_form, 'extensions': valid_extensions})
+
+@user_passes_test(lambda u: u.is_authenticated)
+def import_dataset(request):
+    from django.core import serializers
+    import json
+    if request.method == "POST":
+        url = request.POST.get('url')  # None if not found
+        json_catalog = None
+        if 'url_submit' in request.POST:
+            # creates the form from the request.
+            url_form = ImportDatasetURLForm(request.POST)
+            file_form = ImportDatasetFileForm()
+
+            # Checks if the form is valid.
+            if url_form.is_valid():
+                if urlparse(url).path.split('?')[0].endswith('.json'):
+                    # Grabs the url, username, and password.
+                    username = request.POST['username']
+                    password = request.POST['password']
+                    # Attempts to download the file using the URL.
+                    try:
+                        json_catalog = json.load(file_downloader.FileDownloader.download_temp(url, username, password))
+                    # If it raises an exception, it attached the exception as an error on the form.
+                    except file_downloader.FailedDownloadingFileException as e:
+                        url_form.add_error('url', str(e))
+                    # All of other exceptions are caught and handled.
+                    except Exception as e:
+                        url_form.add_error('url', 'An error occurred while downloading the file.')
+                        # log the error to console so that it can be found somewhere
+                        logging.error("url_form Exception:" + str(e))
+                    finally:
+                        if json_catalog is not None:
+                            json_catalog = None
+                else:
+                    url_form.add_error('url', 'The url does not point to a JSON file.')
+        # File form was submitted
+        elif 'file_submit' in request.POST:
+            url_form = ImportDatasetURLForm()
+            file_form = ImportDatasetFileForm(request.POST, request.FILES)
+            if file_form.is_valid():
+                # If a file was submitted, it grabs the file and stores a reference.
+                file = request.FILES['file']
+                if not file.name.lower().endswith('.json'):
+                    file_form.add_error(None, 'The provided file is not a JSON file.')
+                else:
+                    json_catalog = json.load(file)
+        if json_catalog is not None:
+            try:
+                for created_dataset in serializers.deserialize("catalog", json.dumps(json_catalog),ignorenonexistent=True):
+                    if object_should_be_saved(created_dataset):
+                        created_dataset.save()
+                return HttpResponseRedirect('/dashboard/')
+            except Exception as e:
+                if 'url_submit' in request.POST:
+                    url_form.add_error('url', 'The provided file is not formatted as JSON catalog.')
+                else:
+                    file_form.add_error(None, 'The provided file is not formatted as JSON catalog.')
+                logging.error("Failed to parse JSON file: " + str(e))
+    else:
+        url_form = ImportDatasetURLForm()
+        file_form = ImportDatasetFileForm()
+
+    return render(request, 'import_dataset.html', {'url_form': url_form, 'file_form': file_form, 'extensions': {'.json'}})
+
 
 @user_passes_test(lambda u: u.is_authenticated)
 def dataset(request, dataset_id=None):
