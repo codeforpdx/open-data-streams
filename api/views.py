@@ -7,8 +7,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import permissions
 
-from .serializers import DatasetSerializer, CatalogSerializer, SchemaSerializer
+from .serializers import DatasetSerializer, CatalogSerializer
 from cataloger.models import Dataset, Catalog, Profile, Schema
+import json
 
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
@@ -45,6 +46,4 @@ class SchemaDetail(APIView):
 
     def get(self, request, schema_id=None, format=None):
         schema = get_object_or_404(Schema, id=schema_id)
-        context = {'request':request, 'schema':schema}
-        serializer = SchemaSerializer(schema, context=context)
-        return Response(serializer.data)
+        return Response(json.loads(schema.data))
