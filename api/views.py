@@ -8,7 +8,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework import permissions
 
 from .serializers import DatasetSerializer, CatalogSerializer
-from cataloger.models import Dataset, Catalog, Profile
+from cataloger.models import Dataset, Catalog, Profile, Schema
+import json
 
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
@@ -39,3 +40,10 @@ class DatasetDetail(APIView):
         context = {'request':request, 'dataset':dataset}
         serializer = DatasetSerializer(dataset, context=context)
         return Response(serializer.data)
+
+@permission_classes((permissions.AllowAny,))
+class SchemaDetail(APIView):
+
+    def get(self, request, schema_id=None, format=None):
+        schema = get_object_or_404(Schema, id=schema_id)
+        return Response(json.loads(schema.data))

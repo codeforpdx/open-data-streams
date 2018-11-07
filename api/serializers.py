@@ -112,6 +112,7 @@ class DatasetSerializer(serializers.ModelSerializer):
 DatasetSerializer._declared_fields['@type'] = serializers.CharField(source='mtype')
 
 
+
 class CatalogSerializer(serializers.ModelSerializer):
     dataset = DatasetSerializer(many=True, source='dataset_set')
 

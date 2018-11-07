@@ -442,7 +442,11 @@ def schema(request, schema_id=None):
                 counter += 1
 
             # the form is valid - save it
-            schema.data = json.dumps(data)
+            json_schema_url = 'http://json-schema.org/draft-07/schema #'
+            schema_identifier = request.build_absolute_uri('/api/schema/' + str(schema.id))
+            temporary_dictionary = {'$schema': json_schema_url, '$id': schema_identifier}
+            temporary_dictionary.update(data)
+            schema.data = json.dumps(temporary_dictionary)
             schema.save()
             return HttpResponseRedirect('/dataset/' + str(schema.dataset.id))
         else:
