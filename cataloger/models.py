@@ -245,7 +245,7 @@ class Dataset(models.Model):
     title = models.TextField()
     description = models.TextField()
     # Could be a string that is a comma separated list.
-    keyword = models.ManyToManyField(Keyword)
+    keyword = models.ManyToManyField(Keyword, help_text='To select multiple keywords, use <b>CTRL + Click</b> on Windows or <b>CMD + Click</b> on MacOS.')
     modified = models.DateTimeField(auto_now_add=True)
     # Will store the URL to this dataset.
     identifier = models.URLField()
