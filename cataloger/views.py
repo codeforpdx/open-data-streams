@@ -309,7 +309,7 @@ def new_dataset(request):
             # prepare path for dataset
             dataset_identifier_path = '/api/dataset/' + str(dataset.id)
             dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
-            dataset.language.set(Language.objects.filter(id=57))
+            dataset.language.set(Language.objects.filter(language='en-US'))
             dataset.save()
             # create and save distribution
             distribution = Distribution()
