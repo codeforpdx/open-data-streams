@@ -144,3 +144,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
+
+# Force SSL connections
+SECURE_SSL_REDIRECT = True
