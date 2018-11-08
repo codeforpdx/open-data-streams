@@ -11,7 +11,7 @@ from django.contrib import messages
 from urllib.parse import urlparse
 import os, logging
 
-from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office, Keyword, Catalog
+from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office, Keyword, Catalog, Language
 from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, DatasetForm, DistributionForm, SchemaForm, UploadFileForm
 from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages, keyword_import
 
@@ -309,6 +309,7 @@ def new_dataset(request):
             # prepare path for dataset
             dataset_identifier_path = '/api/dataset/' + str(dataset.id)
             dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
+            dataset.language.set(Language.objects.filter(language='en-US'))
             dataset.save()
             # create and save distribution
             distribution = Distribution()

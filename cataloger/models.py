@@ -272,7 +272,7 @@ class Dataset(models.Model):
     dataQuality = models.BooleanField(blank=True, default=False)
     isPartOf = models.TextField(blank=True)
     issued = models.TextField(blank=True)
-    language = models.ManyToManyField(Language, blank=True, default=57, help_text='To select multiple languages, use <b>CTRL + Click</b> on Windows or <b>CMD + Click</b> on MacOS.')
+    language = models.ManyToManyField(Language, blank=True, help_text='To select multiple languages, use <b>CTRL + Click</b> on Windows or <b>CMD + Click</b> on MacOS.')
     landingPage = models.TextField(blank=True)
     primaryITInvestment = models.TextField(blank=True)
     references = models.TextField(blank=True)

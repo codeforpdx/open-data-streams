@@ -32,13 +32,13 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'cataloger',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cataloger',
     'crispy_forms',
     'django.contrib.admindocs',
     'rest_framework',
@@ -131,8 +131,6 @@ django_heroku.settings(locals())
 
 # Redirect to dashboard URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = '/dashboard/'
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Use the app's Profile class as the AUTH_USER_MODEL default
 AUTH_USER_MODEL = 'cataloger.Profile'
