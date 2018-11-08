@@ -43,7 +43,7 @@
                 {% if user.is_authenticated %}
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item dropdown">
-                  <a class ="nav-link dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false"> Welcome  {{ user.get_username|title }} </a>
+                  <a class ="nav-link dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false"> Welcome  {{ user.get_short_name|title }} </a>
                   <div class="dropdown-menu dropdown-menu-right">
                     <a class="dropdown-item" href="{% url 'logout'%}?next=/">Logout</a>
                   </div>
