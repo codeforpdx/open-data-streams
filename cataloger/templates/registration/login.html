@@ -3,34 +3,34 @@
 
 {% block content %}
 <section style="margin-top: 3% !important; margin-bottom: 2.2% !important">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-sm">
-                <h2 class="display-4">Welcome to OpenDataPDX!</h2>
-                <p>Please log in or create an account to get started!</p>
-            </div>
-            <div class="col-sm">
-                {% if user.is_authenticated %}
-                <div class="alert alert-warning">
-                        Your account doesn't have access to this page. To proceed,
-                        please login with an account that has access.
-                </div>
-                {% elif next != '' %}
-                <div class="alert alert-warning">
-                    Please login to see this page.
-                </div>
-                {% endif %}
-                <form method="post" action="{% url 'login' %}">
-                    {% csrf_token %}
-                    {{ form|crispy }}
-                    <p>Forgot your password? Click<a href="{% url 'password_reset' %}"> Here</a></p>
-                    <input type="submit" class="btn btn-primary btn-sm btn-block" value="Log In" />
-                    <input type="hidden" name="next" value="{{ next }}" /><br>
-                    <p>Need an account?<a href="{% url 'cataloger:register' %}"> Register</a></p>
-                </form>
-            </div>
-        </div>
+	<div class="container">
+		<div class="row align-items-center">
+			<div class="col-sm">
+				<h2 class="display-4">Welcome to OpenDataPDX!</h2>
+          <p>Please log in or create an account to get started!</p>
+			</div>
+      <div class="col-sm">
+        {% if user.is_authenticated %}
+      		<div class="alert alert-warning">
+            Your account doesn't have access to this page. To proceed,
+            please login with an account that has access.
+          </div>
+        {% elif next != '' %}
+          <div class="alert alert-warning">
+            Please login to see this page.
+          </div>
+        {% endif %}
+          <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+              {{ form|crispy }}
+                <p>Forgot your password? Click<a href="{% url 'password_reset' %}"> Here</a></p>
+                <input type="submit" class="btn btn-primary btn-sm btn-block" value="Log In" />
+                <input type="hidden" name="next" value="{{ next }}" /><br>
+                <p>Need an account?<a href="{% url 'cataloger:register' %}"> Register</a></p>
+          </form>
+      </div>
     </div>
+  </div>
 </section>
 {% endblock %}
 

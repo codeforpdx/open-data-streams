@@ -245,13 +245,13 @@ class Dataset(models.Model):
     title = models.TextField()
     description = models.TextField()
     # Could be a string that is a comma separated list.
-    keyword = models.ManyToManyField(Keyword)
+    keyword = models.ManyToManyField(Keyword, help_text='To select multiple keywords, use <b>CTRL + Click</b> on Windows or <b>CMD + Click</b> on MacOS.')
     modified = models.DateTimeField(auto_now_add=True)
     # Will store the URL to this dataset.
     identifier = models.URLField()
     accessLevel = models.ForeignKey(AccessLevel, on_delete=models.PROTECT, default=3)
-    bureauCode = models.ManyToManyField(BureauCode)
-    programCode = models.ManyToManyField(Division)
+    bureauCode = models.ManyToManyField(BureauCode, help_text='To select multiple bureau codes, use <b>CTRL + Click</b> on Windows or <b>CMD + Click</b> on MacOS.')
+    programCode = models.ManyToManyField(Division, help_text='To select multiple program codes, use <b>CTRL + Click</b> on Windows or <b>CMD + Click</b> on MacOS.')
     license = models.ForeignKey(License, on_delete=models.PROTECT, default=3)
 
     rights = models.TextField(blank=True)
@@ -272,7 +272,7 @@ class Dataset(models.Model):
     dataQuality = models.BooleanField(blank=True, default=False)
     isPartOf = models.TextField(blank=True)
     issued = models.TextField(blank=True)
-    language = models.ManyToManyField(Language, blank=True)
+    language = models.ManyToManyField(Language, blank=True, help_text='To select multiple languages, use <b>CTRL + Click</b> on Windows or <b>CMD + Click</b> on MacOS.')
     landingPage = models.TextField(blank=True)
     primaryITInvestment = models.TextField(blank=True)
     references = models.TextField(blank=True)

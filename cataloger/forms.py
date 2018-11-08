@@ -27,7 +27,7 @@ class RegistrationForm(forms.ModelForm):
         widgets = {
             'password': forms.PasswordInput(),
         }
-        fields = ['username', 'password', 'email', 'bureau', 'division', 'office']
+        fields = ['username','first_name', 'last_name', 'password', 'email', 'bureau', 'division', 'office']
 
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
@@ -36,6 +36,8 @@ class RegistrationForm(forms.ModelForm):
             Fieldset(
                 'Create your OpenDataPDX Account',
                 'username',
+                'first_name',
+                'last_name',
                 'password',
                 'password_confirm',
                 'email',
@@ -133,8 +135,8 @@ class NewDatasetURLForm(forms.Form):
                 '',
                 'url',
                 Div(
-                    Div('username',css_class='col-md-6',),
-                    Div('password',css_class='col-md-6',),
+                    Div('username', css_class='col-md-6'),
+                    Div('password', css_class='col-md-6'),
                     css_class='row'
                 ),
             ),
@@ -180,32 +182,32 @@ class DatasetForm(forms.ModelForm):
                 'distribution',
                 'schema',
                 'mtype',
-                Field('title', css_class="form-control-lg"),
-                'description',
+                Field('title', css_class='form-control-lg', title='Human-readable name of the asset. Should be in plain English and include sufficient detail to facilitate search and discovery.'),
+                Field('description', title='Human-readable description (e.g., an abstract) with sufficient detail to enable a user to quickly understand whether the asset is of interest.'),
                 ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:distribution' distribution_id %}" > Edit Distribution </a>""")),
                 HTML("<br>"), #TODO quick fix spacing the buttons for now
                 ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:schema' schema_id %}" > Edit Schema </a>""")),
-                'keyword',
-                'identifier',
-                'accessLevel',
-                'bureauCode',
-                'programCode',
-                'license',
-                'language',
-                'spatial',
-                'temporal',
-                'describedByType',
-                'describedBy',
-                'accrualPeriodicity',
-                'conformsTo',
-                'dataQuality',
-                'isPartOf',
-                'issued',
-                'landingPage',
-                'primaryITInvestment',
-                'references',
-                'systemOfRecords',
-                'theme',
+                Field('keyword', title='Tags (or keywords) help users discover your dataset; please include terms that would be used by technical and non-technical users.'),
+                Field('identifier', title='A unique identifier for the dataset or API as maintained within an Agency catalog or database.'),
+                Field('accessLevel', title='The degree to which this dataset could be made publicly-available, regardless of whether it has been made available'),
+                Field('bureauCode', title=''),
+                Field('programCode', title=''),
+                Field('license', title='The license or non-license (i.e. Public Domain) status with which the dataset or API has been published.'),
+                Field('language', title=''),
+                Field('spatial', title='The range of spatial applicability of a dataset. Could include a spatial region like a bounding box or a named place.'),
+                Field('temporal', title='The range of temporal applicability of a dataset (i.e., a start and end date of applicability for the data).'),
+                Field('describedByType', title='The machine-readable file format (IANA Media Type also known as MIME Type) of the dataset’s Data Dictionary (describedBy).'),
+                Field('describedBy', title='URL to the data dictionary for the dataset (taxonomies and ontologies).'),
+                Field('accrualPeriodicity', title='The frequency with which dataset is published.'),
+                Field('conformsTo', title='URI used to identify a standardized specification the distribution conforms to.'),
+                Field('dataQuality', title='Whether the dataset meets the agency’s Information Quality Guidelines.'),
+                Field('isPartOf', title='The collection of which the dataset is a subset.'),
+                Field('issued', title='Date of formal issuance.'),
+                Field('landingPage', title='This field is not intended for an agency’s homepage (e.g. www.agency.gov), but rather if a dataset has a human-friendly hub or landing page that users can be directed to for all resources tied to the dataset.'),
+                Field('primaryITInvestment', title='For linking a dataset with an IT Unique Investment Identifier (UII).'),
+                Field('references', title='Related documents such as technical information about a dataset, developer documentation, etc.'),
+                Field('systemOfRecords', title='If the system is designated as a system of records under the Privacy Act of 1974, provide the URL to the System of Records Notice related to this dataset.'),
+                Field('theme', title='Main thematic category of the dataset.'),
                 ),
             ButtonHolder(
                 Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block')
