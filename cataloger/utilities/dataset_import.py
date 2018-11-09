@@ -93,7 +93,7 @@ def dataset_import_json(jsonfile):
         
         # Create an empty schema (we aren't hosting the schemas for imported datasets)
         schema = Schema()
-        schema.data = {}
+        schema.data = '{"title": null, "type": null, "properties": []}'
         schema.save()
         # Assign the schema to this dataset
         dataset.schema = schema
@@ -122,10 +122,28 @@ def dataset_import_json(jsonfile):
         if 'distribution' in ds.keys():
             for dn in ds['distribution']:
                 distribution = Distribution()
-                for field in dn:
-                    distribution.field = dn[field]
-                distribution.save()
+                if '@type' in dn.keys():
+                    distribution.mtype = dn['@type']
+                if 'accessURL' in dn.keys():
+                    distribution.accessURL = dn['accessURL']
+                if 'conformsTo' in dn.keys():
+                    distribution.conformsTo = dn['conformsTo']
+                if 'describedBy' in dn.keys():
+                    distribution.describedBy = dn['describedBy']
+                if 'describedByType' in dn.keys():
+                    distribution.describedByType = dn['describedByType']
+                if 'description' in dn.keys():
+                    distribution.description = dn['description']
+                if 'downloadURL' in dn.keys():
+                    distribution.downloadURL = dn['downloadURL']
+                if 'format' in dn.keys():
+                    distribution.format = dn['format']
+                if 'mediaType' in dn.keys():
+                    distribution.mediaType = dn['mediaType']
+                if 'title' in dn.keys():
+                    distribution.title = dn['title']
                 distribution.dataset = dataset
+                distribution.save()
         
         # Set the rest of the fields of the dataset
         
@@ -217,10 +235,8 @@ def dataset_import_json(jsonfile):
         if 'references' in ds.keys():
             for rf in ds['references']:
                 try:
-                    print("Got reference:"+str(rf))
                     reference = References.objects.get(reference=rf)
                 except ObjectDoesNotExist:
-                    print("Creating reference...")
                     reference = References()
                     reference.reference = rf
                     reference.save()

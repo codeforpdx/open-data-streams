@@ -438,7 +438,7 @@ def dataset(request, dataset_id=None):
     if ds.distribution_set.count() > 0:
         distribution_id = ds.distribution_set.first().id
     else:
-        distribution_id = 1
+        distribution_id = -1
     return render(request, 'dataset.html', {'dataset_id':dataset_id, 'distribution_id':distribution_id, 'schema_id':ds.schema.id, 'form':dataset_form})
 
 @user_passes_test(lambda u: u.is_authenticated)
@@ -461,7 +461,7 @@ def distribution(request, distribution_id=None):
     :template:`cataloger/templates/distribution.html`
     """
     dn = get_object_or_404(Distribution, id=distribution_id)
-    if dn.dataset.publisher.id is not request.user.id:
+    if not request.user.is_superuser and dn.dataset.publisher.id is not request.user.id:
         # the user doesn't own this distribution, throw an HTTP unauthorized
         return HttpResponse('Unauthorized', status=401)
 

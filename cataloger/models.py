@@ -183,7 +183,7 @@ class References(models.Model):
 
 class Theme(models.Model):
     """
-    References represents the POD 1.1 **theme** field
+    Theme represents the POD 1.1 **theme** field
     
     Accepted Values:
         String
