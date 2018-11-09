@@ -45,6 +45,23 @@ def dashboard(request):
     return render(request, 'dashboard.html', {'datasets' : datasets})
 
 
+@user_passes_test(lambda u: u.is_authenticated)
+def export_datasets(request):
+    import csv
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="datasets.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'Title', 'Description', 'Tags', 'Last Modified', 'Publisher', 'Contact Point',
+                     'Access Level', 'Bureau Code', 'Program Code', 'License'])
+    for current_dataset in list(Dataset.objects.filter(publisher=request.user.id)):
+        writer.writerow([str(current_dataset.id), str(current_dataset.title), str(current_dataset.description),
+                         str(current_dataset.keyword), str(current_dataset.modified), str(current_dataset.publisher),
+                         str(current_dataset.publisher.email), str(current_dataset.accessLevel),
+                         str(current_dataset.bureau.description),  str(current_dataset.division.description),
+                         str(current_dataset.license)])
+    return response
+
+
 def register(request):
     """
     Display the registration page, allowing a user to register for an account.
