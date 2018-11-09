@@ -179,7 +179,6 @@ class DatasetForm(forms.ModelForm):
             Fieldset(
                 '',
                 'publisher',
-                'distribution',
                 'schema',
                 'mtype',
                 Field('title', css_class='form-control-lg', title='Human-readable name of the asset. Should be in plain English and include sufficient detail to facilitate search and discovery.'),
