@@ -308,6 +308,7 @@ class Dataset(models.Model):
     # This flag indicates whether or not the dataset is complete,
     # and should be set to True when the Dataset is saved for the first time
     complete = models.BooleanField(blank=True, default=False)
+    published = models.BooleanField(blank=True, default=False)
 
 
 class Distribution(models.Model):
