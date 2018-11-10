@@ -40,7 +40,10 @@ def dashboard(request):
 
     :template:`cataloger/templates/dashboard.html`
     """
-    datasets = list(Dataset.objects.filter(publisher = request.user.id))
+    if request.user.is_superuser:
+        datasets = list(Dataset.objects.all())
+    else:
+        datasets = list(Dataset.objects.filter(publisher = request.user.id))
 
     return render(request, 'dashboard.html', {'datasets' : datasets})
 
@@ -128,7 +131,7 @@ def utilities(request):
             bureaucodes_form = UploadBureauCodesCSVFileForm()
             keywords_form = UploadFileForm()
             if datasets_form.is_valid():
-                dataset_import.dataset_import(request.FILES['file'])
+                dataset_import.dataset_import_json(request.FILES['file'])
             else:
                 # invalid form - this should pass back through to the page (with errors attached?)
                 pass
@@ -332,11 +335,10 @@ def new_dataset(request):
 
 @user_passes_test(lambda u: u.is_authenticated)
 def import_dataset(request):
-    from django.core import serializers
     import json
     if request.method == "POST":
         url = request.POST.get('url')  # None if not found
-        json_catalog = None
+        json_file = None
         if 'url_submit' in request.POST:
             # creates the form from the request.
             url_form = ImportDatasetURLForm(request.POST)
@@ -350,7 +352,7 @@ def import_dataset(request):
                     password = request.POST['password']
                     # Attempts to download the file using the URL.
                     try:
-                        json_catalog = json.load(file_downloader.FileDownloader.download_temp(url, username, password))
+                        json_file = file_downloader.FileDownloader.download_temp(url, username, password)
                     # If it raises an exception, it attached the exception as an error on the form.
                     except file_downloader.FailedDownloadingFileException as e:
                         url_form.add_error('url', str(e))
@@ -359,9 +361,6 @@ def import_dataset(request):
                         url_form.add_error('url', 'An error occurred while downloading the file.')
                         # log the error to console so that it can be found somewhere
                         logging.error("url_form Exception:" + str(e))
-                    finally:
-                        if json_catalog is not None:
-                            json_catalog = None
                 else:
                     url_form.add_error('url', 'The url does not point to a JSON file.')
         # File form was submitted
@@ -374,18 +373,17 @@ def import_dataset(request):
                 if not file.name.lower().endswith('.json'):
                     file_form.add_error(None, 'The provided file is not a JSON file.')
                 else:
-                    json_catalog = json.load(file)
-        if json_catalog is not None:
+                    json_file = file
+
+        if json_file is not None:
             try:
-                for created_dataset in serializers.deserialize("catalog", json.dumps(json_catalog),ignorenonexistent=True):
-                    #if object_should_be_saved(created_dataset):
-                    created_dataset.save()
+                dataset_import.dataset_import_json(json_file)
                 return HttpResponseRedirect('/dashboard/')
             except Exception as e:
                 if 'url_submit' in request.POST:
-                    url_form.add_error('url', 'The provided file is not formatted as JSON catalog.')
+                    url_form.add_error('url', 'The provided URL does not point to a valid POD 1.1 catalog.')
                 else:
-                    file_form.add_error(None, 'The provided file is not formatted as JSON catalog.')
+                    file_form.add_error(None, 'The provided file is not a valid POD 1.1 catalog.')
                 logging.error("Failed to parse JSON file: " + str(e))
     else:
         url_form = ImportDatasetURLForm()
@@ -414,7 +412,8 @@ def dataset(request, dataset_id=None):
     :template:`cataloger/templates/dataset.html`
     """
     ds = get_object_or_404(Dataset, id=dataset_id)
-    if ds.publisher.id is not request.user.id:
+
+    if not request.user.is_superuser and ds.publisher.id is not request.user.id:
         # the user doesn't own this distribution, don't allow access
         return HttpResponse('Forbidden', status=403)
     if request.method == "POST":
@@ -436,7 +435,10 @@ def dataset(request, dataset_id=None):
         if not ds.complete:
             messages.warning(request, 'Dataset incomplete - please fill out all required fields.')
 
-    distribution_id = ds.distribution_set.first().id
+    if ds.distribution_set.count() > 0:
+        distribution_id = ds.distribution_set.first().id
+    else:
+        distribution_id = -1
     return render(request, 'dataset.html', {'dataset_id':dataset_id, 'distribution_id':distribution_id, 'schema_id':ds.schema.id, 'form':dataset_form})
 
 @user_passes_test(lambda u: u.is_authenticated)
@@ -459,7 +461,7 @@ def distribution(request, distribution_id=None):
     :template:`cataloger/templates/distribution.html`
     """
     dn = get_object_or_404(Distribution, id=distribution_id)
-    if dn.dataset.publisher.id is not request.user.id:
+    if not request.user.is_superuser and dn.dataset.publisher.id is not request.user.id:
         # the user doesn't own this distribution, throw an HTTP unauthorized
         return HttpResponse('Unauthorized', status=401)
 

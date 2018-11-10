@@ -194,9 +194,7 @@ class DatasetForm(forms.ModelForm):
           'issued': forms.Textarea(attrs={'rows':4, 'cols':15}),
           'landingPage': forms.Textarea(attrs={'rows':4, 'cols':15}),
           'primaryITInvestment': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'references': forms.Textarea(attrs={'rows':4, 'cols':15}),
           'systemOfRecords': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'theme': forms.Textarea(attrs={'rows':4, 'cols':15}),
         }
     def __init__(self, *args, **kwargs):
         super(DatasetForm, self).__init__(*args, **kwargs)
@@ -210,7 +208,7 @@ class DatasetForm(forms.ModelForm):
                 'mtype',
                 Field('title', css_class="form-control-lg"),
                 'description',
-                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:distribution' distribution_id %}" > Edit Distribution </a>""")),
+                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% if distribution_id != -1 %}{% url 'cataloger:distribution' distribution_id %}{% endif %}" > Edit Distribution </a>""")),
                 HTML("<br>"), #TODO quick fix spacing the buttons for now
                 ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:schema' schema_id %}" > Edit Schema </a>""")),
                 'keyword',
