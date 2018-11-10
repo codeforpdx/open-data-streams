@@ -437,11 +437,18 @@ def dataset(request, dataset_id=None):
         if not ds.complete:
             messages.warning(request, 'Dataset incomplete - please fill out all required fields.')
 
+    # if there aren't any distributions for this dataset, disable the Edit Dataset button
     if ds.distribution_set.count() > 0:
         distribution_id = ds.distribution_set.first().id
     else:
         distribution_id = -1
-    return render(request, 'dataset.html', {'dataset_id':dataset_id, 'distribution_id':distribution_id, 'schema_id':ds.schema.id, 'form':dataset_form})
+
+    # if we aren't hosting the schema for this dataset, disable the Edit Schema button
+    if '$schema' in ds.schema.data:
+        schema_id = ds.schema.id
+    else:
+        schema_id = -1
+    return render(request, 'dataset.html', {'dataset_id':dataset_id, 'distribution_id':distribution_id, 'schema_id':schema_id, 'form':dataset_form})
 
 @user_passes_test(lambda u: u.is_authenticated)
 def distribution(request, distribution_id=None):

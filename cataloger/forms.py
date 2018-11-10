@@ -9,6 +9,7 @@ from django.core import validators
 from .models import Profile
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div, HTML, Field
+from crispy_forms.bootstrap import FormActions
 from .models import BureauCode, Division, Office, Dataset, Distribution
 
 class RegistrationForm(forms.ModelForm):
@@ -209,9 +210,8 @@ class DatasetForm(forms.ModelForm):
                 'mtype',
                 Field('title', css_class='form-control-lg', title='Human-readable name of the asset. Should be in plain English and include sufficient detail to facilitate search and discovery.'),
                 Field('description', title='Human-readable description (e.g., an abstract) with sufficient detail to enable a user to quickly understand whether the asset is of interest.'),
-                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:distribution' distribution_id %}" > Edit Distribution </a>""")),
-                HTML("<br>"), #TODO quick fix spacing the buttons for now
-                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:schema' schema_id %}" > Edit Schema </a>""")),
+                FormActions(HTML("""<a role="button" class="btn btn-primary m-3{% if distribution_id == -1 %} d-none{% endif %}" href= "{% if distribution_id != -1 %}{% url 'cataloger:distribution' distribution_id %}{% endif %}" > Edit Distribution </a>"""),
+                            HTML("""<a role="button" class="btn btn-primary m-3{% if schema_id == -1 %} d-none{% endif %}" href= "{% if schema_id != -1 %}{% url 'cataloger:schema' schema_id %}{% endif %}" > Edit Schema </a>""")),
                 Field('keyword', title='Tags (or keywords) help users discover your dataset; please include terms that would be used by technical and non-technical users.'),
                 Field('identifier', title='A unique identifier for the dataset or API as maintained within an Agency catalog or database.'),
                 Field('accessLevel', title='The degree to which this dataset could be made publicly-available, regardless of whether it has been made available'),
@@ -234,8 +234,9 @@ class DatasetForm(forms.ModelForm):
                 Field('systemOfRecords', title='If the system is designated as a system of records under the Privacy Act of 1974, provide the URL to the System of Records Notice related to this dataset.'),
                 Field('theme', title='Main thematic category of the dataset.'),
                 ),
-            ButtonHolder(
-                Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block')
+             ButtonHolder(
+                Submit('submit', 'Save', css_class='btn btn-primary btn-block'),
+                HTML("""<a role="button" class="btn btn-block" href="{% url 'cataloger:dashboard' %}"> Cancel </a>""")
             )
         )
 
