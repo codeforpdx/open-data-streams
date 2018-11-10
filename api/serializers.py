@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from cataloger.models import Dataset, Catalog, Profile, Keyword, BureauCode, Distribution, License, AccessLevel, Division
+from cataloger.models import Dataset, Catalog, Profile, Keyword, BureauCode, Distribution, License, AccessLevel, Division, Language
 
 class PublisherSerializer(serializers.ModelSerializer):
     publisher = serializers.CharField()
@@ -82,10 +82,20 @@ class BureauCodeSerializer(serializers.Serializer):
         return str(value.code)
 
 class DistributionSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = Distribution
         fields = ('@type', 'title', 'description', 'downloadURL', 'format', 'accessURL', 'describedBy', 'describedByType', 'conformsTo', 'mediaType',)
+
+class LanguageSerializer(serializers.Serializer):
+    Language = serializers.CharField()
+
+    class Meta:
+        model = Language
+        fields = ("language",)
+
+    def to_representation(self, value):
+        return str(value.language)
 
 # rename the "mtype" field to "@type" in the serializer's _declared_fields
 DistributionSerializer._declared_fields['@type'] = serializers.CharField(source='mtype')
@@ -102,6 +112,7 @@ class DatasetSerializer(serializers.ModelSerializer):
     license = LicenseSerializer()
     accessLevel = AccessLevelSerializer()
     programCode = ProgramCodeSerializer(many=True)
+    language = LanguageSerializer(many=True)
 
     class Meta:
         model = Dataset
@@ -110,7 +121,6 @@ class DatasetSerializer(serializers.ModelSerializer):
 
 # rename the "mtype" field to "@type" in the serializer's _declared_fields
 DatasetSerializer._declared_fields['@type'] = serializers.CharField(source='mtype')
-
 
 
 class CatalogSerializer(serializers.ModelSerializer):

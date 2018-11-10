@@ -11,7 +11,8 @@ from django.contrib import messages
 from urllib.parse import urlparse
 import os, logging
 
-from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office, Keyword, Catalog
+
+from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office, Keyword, Catalog, Language
 from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, ImportDatasetFileForm, ImportDatasetURLForm, DatasetForm, DistributionForm, SchemaForm, UploadFileForm
 from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages, keyword_import
 
@@ -68,7 +69,7 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             form.clean()
-            profile = Profile.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'], BureauCode.objects.filter(id = request.POST['bureau']).first(), Division.objects.filter(id = request.POST['division']).first(), Office.objects.filter(id = request.POST['office']).first())
+            profile = Profile.objects.create_user(request.POST['username'], request.POST['first_name'], request.POST['last_name'], request.POST['email'], request.POST['password'], BureauCode.objects.filter(id = request.POST['bureau']).first(), Division.objects.filter(id = request.POST['division']).first(), Office.objects.filter(id = request.POST['office']).first())
             profile.save()
 
             user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
@@ -312,6 +313,7 @@ def new_dataset(request):
             # prepare path for dataset
             dataset_identifier_path = '/api/dataset/' + str(dataset.id)
             dataset.identifier = request.build_absolute_uri(dataset_identifier_path)
+            dataset.language.set(Language.objects.filter(language='en-US'))
             dataset.save()
             # create and save distribution
             distribution = Distribution()
