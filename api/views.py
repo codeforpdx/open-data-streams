@@ -45,7 +45,7 @@ class DatasetList(APIView):
 class DatasetDetail(APIView):
 
     def get(self, request, dataset_id=None, format=None):
-        dataset = get_object_or_404(filtered_datasets(request), id=dataset_id, publisher=Profile(id=request.user.id))
+        dataset = get_object_or_404(filtered_datasets(request), id=dataset_id)
         context = {'request': request, 'dataset': dataset}
         serializer = DatasetSerializer(dataset, context=context)
         return Response(serializer.data)
