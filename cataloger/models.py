@@ -168,6 +168,32 @@ class Office(models.Model):
     def __str__(self):
         return self.description
 
+class References(models.Model):
+    """
+    References represents the POD 1.1 **references** field
+    
+    Accepted Values:
+        URL
+        
+    """
+    reference = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.reference
+
+class Theme(models.Model):
+    """
+    Theme represents the POD 1.1 **theme** field
+    
+    Accepted Values:
+        String
+        
+    """
+    theme = models.TextField(blank=True)
+ 
+    def __str__(self):
+        return self.theme
+
 # Notice that first name, last name, and email are not columns here. That is
 # because Django includes them as columns in the AbstractUser object, which Profile extends.
 class Profile(AbstractUser):
@@ -275,9 +301,10 @@ class Dataset(models.Model):
     language = models.ManyToManyField(Language, blank=True, help_text='To select multiple languages, use <b>CTRL + Click</b> on Windows or <b>CMD + Click</b> on MacOS.')
     landingPage = models.TextField(blank=True)
     primaryITInvestment = models.TextField(blank=True)
-    references = models.TextField(blank=True)
+    references = models.ManyToManyField(References, blank=True)
+
     systemOfRecords = models.TextField(blank=True)
-    theme = models.TextField(blank=True)
+    theme = models.ManyToManyField(Theme, blank=True)
     # This flag indicates whether or not the dataset is complete,
     # and should be set to True when the Dataset is saved for the first time
     complete = models.BooleanField(blank=True, default=False)
