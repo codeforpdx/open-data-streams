@@ -1,6 +1,29 @@
 from rest_framework import serializers
 
-from cataloger.models import Dataset, Catalog, Profile, Keyword, BureauCode, Distribution, License, AccessLevel, Division, Language
+from cataloger.models import Dataset, Catalog, Profile, Keyword, BureauCode, Distribution, License, AccessLevel, Division, Language, References, Theme
+
+
+class ReferencesSerializer(serializers.Serializer):
+    References = serializers.URLField()
+
+    class Meta:
+        model = References
+        fields = ("references",)
+
+    def to_representation(self, value):
+        return str(value.reference)
+
+
+class ThemeSerializer(serializers.Serializer):
+    Theme = serializers.CharField()
+
+    class Meta:
+        model = Theme
+        fields = ("theme",)
+
+    def to_representation(self, value):
+        return str(value.theme)
+
 
 class PublisherSerializer(serializers.ModelSerializer):
     publisher = serializers.CharField()
@@ -113,6 +136,8 @@ class DatasetSerializer(serializers.ModelSerializer):
     accessLevel = AccessLevelSerializer()
     programCode = ProgramCodeSerializer(many=True)
     language = LanguageSerializer(many=True)
+    references = ReferencesSerializer(many=True)
+    theme = ThemeSerializer(many=True)
 
     class Meta:
         model = Dataset
