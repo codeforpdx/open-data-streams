@@ -205,9 +205,7 @@ class DatasetForm(forms.ModelForm):
             'issued': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
             'landingPage': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
             'primaryITInvestment': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
-            'references': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
             'systemOfRecords': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
-            'theme': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
             'published': forms.CheckboxInput()
         }
 
