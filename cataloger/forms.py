@@ -9,7 +9,9 @@ from django.core import validators
 from .models import Profile
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Div, HTML, Field
+from crispy_forms.bootstrap import FormActions
 from .models import BureauCode, Division, Office, Dataset, Distribution
+
 
 class RegistrationForm(forms.ModelForm):
     """
@@ -27,7 +29,7 @@ class RegistrationForm(forms.ModelForm):
         widgets = {
             'password': forms.PasswordInput(),
         }
-        fields = ['username','first_name', 'last_name', 'password', 'email', 'bureau', 'division', 'office']
+        fields = ['username', 'first_name', 'last_name', 'password', 'email', 'bureau', 'division', 'office']
 
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
@@ -44,7 +46,7 @@ class RegistrationForm(forms.ModelForm):
                 'bureau',
                 'division',
                 'office',
-                ),
+            ),
             ButtonHolder(
                 Submit('submit', 'Register', css_class='btn btn-primary btn-sm btn-block')
             )
@@ -80,6 +82,7 @@ class RegistrationForm(forms.ModelForm):
         if password != password_confirm:
             self._errors["password_confirm"] = self.error_class(["Passwords do not match"])
 
+
 class UploadBureauCodesCSVFileForm(forms.Form):
     """
     UploadBureauCodesCSVFileForm is a standard Django Form
@@ -94,6 +97,7 @@ class UploadBureauCodesCSVFileForm(forms.Form):
     """
     file = forms.FileField()
 
+
 class UploadDatasetsCSVFileForm(forms.Form):
     """
     UploadDatasetsCSVFileForm is a standard Django Form
@@ -107,6 +111,7 @@ class UploadDatasetsCSVFileForm(forms.Form):
         None (this form only displays a new/blank form)
     """
     file = forms.FileField()
+
 
 class UploadFileForm(forms.Form):
     """
@@ -145,33 +150,65 @@ class NewDatasetURLForm(forms.Form):
             )
         )
 
+class ImportDatasetURLForm(forms.Form):
+    url = forms.CharField(label="", required=True, widget=forms.TextInput(attrs={'placeholder': 'URL'}))
+    username = forms.CharField(label="Username", required=False)
+    password = forms.CharField(label="Password", widget=forms.PasswordInput(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(ImportDatasetURLForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                'url',
+                Div(
+                    Div('username',css_class='col-md-6',),
+                    Div('password',css_class='col-md-6',),
+                    css_class='row'
+                ),
+            ),
+            ButtonHolder(
+                Submit('url_submit', 'Submit', css_class='btn btn-primary')
+            )
+        )
+
+
 class NewDatasetFileForm(forms.Form):
+    file = forms.FileField(label="", required=True)
+
+
+
+class ImportDatasetFileForm(forms.Form):
     file = forms.FileField(label="",required=True)
 
 class DatasetForm(forms.ModelForm):
     class Meta:
         model = Dataset
-        fields = ['publisher', 'schema', 'mtype', 'title', 'description', 'keyword', 'identifier', 'accessLevel', 'bureauCode', 'programCode', 'license', 'spatial', 'temporal', 'describedByType', 'describedBy', 'accrualPeriodicity', 'conformsTo', 'dataQuality', 'isPartOf', 'issued', 'language', 'landingPage', 'primaryITInvestment', 'references', 'systemOfRecords', 'theme',]
+        fields = ['publisher', 'schema', 'mtype', 'title', 'description', 'keyword', 'identifier', 'accessLevel',
+                  'bureauCode', 'programCode', 'license', 'spatial', 'temporal', 'describedByType', 'describedBy',
+                  'accrualPeriodicity', 'conformsTo', 'dataQuality', 'isPartOf', 'issued', 'language', 'landingPage',
+                  'primaryITInvestment', 'references', 'systemOfRecords', 'theme', 'published', ]
         widgets = {
-          'publisher': forms.HiddenInput(),
-          'schema': forms.HiddenInput(),
-          'mtype': forms.HiddenInput(),
-          'title': forms.Textarea(attrs={'rows':1, 'cols':15}),
-          'description': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'spatial': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'temporal': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'describedByType': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'describedBy': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'accrualPeriodicity': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'conformsTo': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'isPartOf': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'issued': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'landingPage': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'primaryITInvestment': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'references': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'systemOfRecords': forms.Textarea(attrs={'rows':4, 'cols':15}),
-          'theme': forms.Textarea(attrs={'rows':4, 'cols':15}),
+            'publisher': forms.HiddenInput(),
+            'schema': forms.HiddenInput(),
+            'mtype': forms.HiddenInput(),
+            'title': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
+            'description': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+            'spatial': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+            'temporal': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+            'describedByType': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+            'describedBy': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+            'accrualPeriodicity': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+            'conformsTo': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+            'isPartOf': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+            'issued': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+            'landingPage': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+            'primaryITInvestment': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+            'systemOfRecords': forms.Textarea(attrs={'rows': 4, 'cols': 15}),
+            'published': forms.CheckboxInput()
         }
+
     def __init__(self, *args, **kwargs):
         super(DatasetForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -179,38 +216,47 @@ class DatasetForm(forms.ModelForm):
             Fieldset(
                 '',
                 'publisher',
-                'distribution',
                 'schema',
                 'mtype',
                 Field('title', css_class='form-control-lg', title='Human-readable name of the asset. Should be in plain English and include sufficient detail to facilitate search and discovery.'),
                 Field('description', title='Human-readable description (e.g., an abstract) with sufficient detail to enable a user to quickly understand whether the asset is of interest.'),
-                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:distribution' distribution_id %}" > Edit Distribution </a>""")),
-                HTML("<br>"), #TODO quick fix spacing the buttons for now
-                ButtonHolder(HTML("""<a role="button" class="btn btn-primary" href= "{% url 'cataloger:schema' schema_id %}" > Edit Schema </a>""")),
+                FormActions(HTML("""<a role="button" class="btn btn-primary m-3{% if distribution_id == -1 %} d-none{% endif %}" href= "{% if distribution_id != -1 %}{% url 'cataloger:distribution' distribution_id %}{% endif %}" > Edit Distribution </a>"""),
+                            HTML("""<a role="button" class="btn btn-primary m-3{% if schema_id == -1 %} d-none{% endif %}" href= "{% if schema_id != -1 %}{% url 'cataloger:schema' schema_id %}{% endif %}" > Edit Schema </a>""")),
                 Field('keyword', title='Tags (or keywords) help users discover your dataset; please include terms that would be used by technical and non-technical users.'),
                 Field('identifier', title='A unique identifier for the dataset or API as maintained within an Agency catalog or database.'),
                 Field('accessLevel', title='The degree to which this dataset could be made publicly-available, regardless of whether it has been made available'),
                 Field('bureauCode', title=''),
                 Field('programCode', title=''),
-                Field('license', title='The license or non-license (i.e. Public Domain) status with which the dataset or API has been published.'),
+                Field('license',
+                      title='The license or non-license (i.e. Public Domain) status with which the dataset or API has been published.'),
                 Field('language', title=''),
-                Field('spatial', title='The range of spatial applicability of a dataset. Could include a spatial region like a bounding box or a named place.'),
-                Field('temporal', title='The range of temporal applicability of a dataset (i.e., a start and end date of applicability for the data).'),
-                Field('describedByType', title='The machine-readable file format (IANA Media Type also known as MIME Type) of the dataset’s Data Dictionary (describedBy).'),
+                Field('spatial',
+                      title='The range of spatial applicability of a dataset. Could include a spatial region like a bounding box or a named place.'),
+                Field('temporal',
+                      title='The range of temporal applicability of a dataset (i.e., a start and end date of applicability for the data).'),
+                Field('describedByType',
+                      title='The machine-readable file format (IANA Media Type also known as MIME Type) of the dataset’s Data Dictionary (describedBy).'),
                 Field('describedBy', title='URL to the data dictionary for the dataset (taxonomies and ontologies).'),
                 Field('accrualPeriodicity', title='The frequency with which dataset is published.'),
-                Field('conformsTo', title='URI used to identify a standardized specification the distribution conforms to.'),
+                Field('conformsTo',
+                      title='URI used to identify a standardized specification the distribution conforms to.'),
                 Field('dataQuality', title='Whether the dataset meets the agency’s Information Quality Guidelines.'),
                 Field('isPartOf', title='The collection of which the dataset is a subset.'),
                 Field('issued', title='Date of formal issuance.'),
-                Field('landingPage', title='This field is not intended for an agency’s homepage (e.g. www.agency.gov), but rather if a dataset has a human-friendly hub or landing page that users can be directed to for all resources tied to the dataset.'),
-                Field('primaryITInvestment', title='For linking a dataset with an IT Unique Investment Identifier (UII).'),
-                Field('references', title='Related documents such as technical information about a dataset, developer documentation, etc.'),
-                Field('systemOfRecords', title='If the system is designated as a system of records under the Privacy Act of 1974, provide the URL to the System of Records Notice related to this dataset.'),
+                Field('landingPage',
+                      title='This field is not intended for an agency’s homepage (e.g. www.agency.gov), but rather if a dataset has a human-friendly hub or landing page that users can be directed to for all resources tied to the dataset.'),
+                Field('primaryITInvestment',
+                      title='For linking a dataset with an IT Unique Investment Identifier (UII).'),
+                Field('references',
+                      title='Related documents such as technical information about a dataset, developer documentation, etc.'),
+                Field('systemOfRecords',
+                      title='If the system is designated as a system of records under the Privacy Act of 1974, provide the URL to the System of Records Notice related to this dataset.'),
                 Field('theme', title='Main thematic category of the dataset.'),
-                ),
+                Field('published', title='Ticking this will make this asset visible to the public.'),
+            ),
             ButtonHolder(
-                Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block')
+                Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block'),
+                HTML("""<a role="button" class="btn btn-block" href="{% url 'cataloger:dashboard' %}"> Cancel </a>""")
             )
         )
 
@@ -218,21 +264,23 @@ class DatasetForm(forms.ModelForm):
 class DistributionForm(forms.ModelForm):
     class Meta:
         model = Distribution
-        fields = ['accessURL', 'conformsTo', 'describedBy', 'describedByType', 'description', 'downloadURL', 'dformat', 'mediaType', 'title',]
+        fields = ['accessURL', 'conformsTo', 'describedBy', 'describedByType', 'description', 'downloadURL', 'dformat',
+                  'mediaType', 'title', ]
         widgets = {
-          'accessURL': forms.Textarea(attrs={'rows':1, 'cols':15}),
-          'conformsTo': forms.Textarea(attrs={'rows':1, 'cols':15}),
-          'describedBy': forms.Textarea(attrs={'rows':1, 'cols':15}),
-          'describedByType': forms.Textarea(attrs={'rows':1, 'cols':15}),
-          'description': forms.Textarea(attrs={'rows':1, 'cols':15}),
-          'downloadURL': forms.Textarea(attrs={'rows':1, 'cols':15}),
-          'dformat': forms.Textarea(attrs={'rows':1, 'cols':15}),
-          'mediaType': forms.Textarea(attrs={'rows':1, 'cols':15}),
-          'title': forms.Textarea(attrs={'rows':1, 'cols':15}),
+            'accessURL': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
+            'conformsTo': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
+            'describedBy': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
+            'describedByType': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
+            'description': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
+            'downloadURL': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
+            'dformat': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
+            'mediaType': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
+            'title': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
         }
         labels = {
             'dformat': 'Format',
         }
+
     def __init__(self, *args, **kwargs):
         super(DistributionForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -248,11 +296,12 @@ class DistributionForm(forms.ModelForm):
                 'describedBy',
                 'describedByType',
                 'dformat',
-                ),
+            ),
             ButtonHolder(
                 Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block')
             )
         )
+
 
 class SchemaForm(forms.Form):
     def __init__(self, json_data, *args, **kwargs):
@@ -301,15 +350,15 @@ class SchemaForm(forms.Form):
         # loop through data and append forms to layout
         for fields in data:
             name = fields['name']
-            self.fields[name+"_description"] = forms.CharField(required=False, label='',
-                                                               initial=fields['description'])
-            self.fields[name+"_type"] = forms.ChoiceField(choices=type_choices,
-                                                          required=False, label='', initial=fields['type'])
+            self.fields[name + "_description"] = forms.CharField(required=False, label='',
+                                                                 initial=fields['description'])
+            self.fields[name + "_type"] = forms.ChoiceField(choices=type_choices,
+                                                            required=False, label='', initial=fields['type'])
             self.helper.layout[1].extend([
-                HTML("<tr> <td>"+name+"</td> <td>"),
-                Div(name+"_description"),
+                HTML("<tr> <td>" + name + "</td> <td>"),
+                Div(name + "_description"),
                 HTML("</td> <td>"),
-                Div(name+"_type"),
+                Div(name + "_type"),
                 HTML("</td> </tr>")
             ])
 

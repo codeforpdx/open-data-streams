@@ -33,6 +33,7 @@
             <ul class="navbar-nav ">
                 {% nav_item request "/" "Home" %}
                 {% nav_item request "/dashboard/" "Dashboard" %}
+                {% nav_item request "/api/" "API" %}
 
                 {% if user.is_superuser %}
                 {% nav_item request "/utilities/" "Utilities" %}

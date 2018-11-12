@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<section style="margin-top: 3% !important; margin-bottom: 2.2% !important">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-sm">
+              <h2>Import a new dataset</h2>
+              <p>supported filetypes are: {% for ext in extensions %}{% if forloop.last %}and {% endif %}{{ ext }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+              <h5>Upload with a URL</h5>
+              <form action="/import_dataset/" method="post">
+                {% crispy url_form %}
+              </form><br>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-sm">
+              <h5>Upload a file</h5>
+              <form action="/import_dataset/" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ file_form|crispy }}
+                <input type="submit" value="Upload" name="file_submit" class="btn btn-primary">
+              </form><br>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
