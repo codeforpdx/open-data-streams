@@ -255,7 +255,7 @@ class DistributionForm(forms.ModelForm):
         )
 
 class SchemaForm(forms.Form):
-    def __init__(self, json_data, *args, **kwargs):
+    def __init__(self, json_data, title=None, type=None, *args, **kwargs):
         import json
 
         data = json.loads(json_data)
@@ -266,13 +266,17 @@ class SchemaForm(forms.Form):
             ButtonHolder(
                 Submit('submit', 'Save', css_class='btn btn-primary')
             ),
+
             Fieldset(
+                'title',
+                'type',
                 '',
             ),
             ButtonHolder(
                 Submit('submit', 'Save', css_class='btn btn-primary')
             )
         )
+
 
         # choices for dropdown menu of types
         type_choices = [
@@ -283,6 +287,16 @@ class SchemaForm(forms.Form):
             ('number', 'number'),
             ('string', 'string')
         ]
+        #print("Got Schema data"+str(data))
+        print("Got Schema Type:"+str(type))   # *******FOR DEBUGING PURSPOSES**********************
+        print("Got Schema Title:"+str(title))   # *******FOR DEBUGING PURSPOSES**********************
+
+        self.fields['type'] = forms.ChoiceField(choices=type_choices, required=False, label='Type', initial=2)
+        self.initial['type'] = type
+
+        #self.fields['title'] = forms.Textarea(attrs={'rows':1, 'cols':15})
+        self.fields['title'] = forms.CharField(widget=forms.Textarea(), initial = title)
+        self.fields['title'].widget = forms.Textarea
 
         # Insert whole table here so that submit buttons can exist outside table
         self.helper.layout[1].extend([HTML("""
