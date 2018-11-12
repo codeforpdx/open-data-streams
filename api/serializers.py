@@ -1,6 +1,7 @@
-from rest_framework import serializers
+from rest_framework import serializers, generics
 
-from cataloger.models import Dataset, Catalog, Profile, Keyword, BureauCode, Distribution, License, AccessLevel, Division, Language, References, Theme
+from cataloger.models import Dataset, Catalog, Profile, Keyword, BureauCode, Distribution, License, AccessLevel, \
+    Division, Language, References, Theme
 
 
 class ReferencesSerializer(serializers.Serializer):
@@ -34,7 +35,12 @@ class PublisherSerializer(serializers.ModelSerializer):
 
     def to_representation(self, value):
         profile = Profile.objects.get(username=value)
-        publisher = {"@type":"org:Organization", "name": str(profile.office), "subOrganizationOf":{"@type":"org:Organization", "name": str(profile.division), "subOrganizationOf": {"@type":"org:Organization", "name": str(profile.bureau), "subOrganizationOf": {"@type":"org:Organization", "name":"City"}}}}
+        publisher = {"@type": "org:Organization", "name": str(profile.office),
+                     "subOrganizationOf": {"@type": "org:Organization", "name": str(profile.division),
+                                           "subOrganizationOf": {"@type": "org:Organization",
+                                                                 "name": str(profile.bureau),
+                                                                 "subOrganizationOf": {"@type": "org:Organization",
+                                                                                       "name": "City"}}}}
         return publisher
 
 
@@ -89,10 +95,11 @@ class ContactPointSerializer(serializers.Serializer):
         try:
             contactPoint = {'@type': 'vcard:Contact',
                             'fn': instance.username,
-                            'hasEmail': 'mailto:'+instance.email}
+                            'hasEmail': 'mailto:' + instance.email}
         except:
             contactPoint = {}
         return contactPoint
+
 
 class BureauCodeSerializer(serializers.Serializer):
     bureauCode = serializers.CharField()
@@ -104,11 +111,20 @@ class BureauCodeSerializer(serializers.Serializer):
     def to_representation(self, value):
         return str(value.code)
 
+
 class DistributionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Distribution
-        fields = ('@type', 'title', 'description', 'downloadURL', 'format', 'accessURL', 'describedBy', 'describedByType', 'conformsTo', 'mediaType',)
+        fields = (
+            '@type', 'title', 'description', 'downloadURL', 'format', 'accessURL', 'describedBy', 'describedByType',
+            'conformsTo', 'mediaType',)
+
+# rename the "mtype" field to "@type" in the serializer's _declared_fields
+DistributionSerializer._declared_fields['@type'] = serializers.CharField(source='mtype')
+# rename the "dformat" field to "format" in the serializer's _declared_fields
+DistributionSerializer._declared_fields['format'] = serializers.CharField(source='dformat')
+
 
 class LanguageSerializer(serializers.Serializer):
     Language = serializers.CharField()
@@ -119,11 +135,6 @@ class LanguageSerializer(serializers.Serializer):
 
     def to_representation(self, value):
         return str(value.language)
-
-# rename the "mtype" field to "@type" in the serializer's _declared_fields
-DistributionSerializer._declared_fields['@type'] = serializers.CharField(source='mtype')
-# rename the "dformat" field to "format" in the serializer's _declared_fields
-DistributionSerializer._declared_fields['format'] = serializers.CharField(source='dformat')
 
 
 class DatasetSerializer(serializers.ModelSerializer):
@@ -141,8 +152,13 @@ class DatasetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Dataset
-        fields = ('@type', 'title', 'description', 'keyword', 'modified', 'publisher', 'contactPoint', 'identifier', 'accessLevel', 'bureauCode', 'programCode', 'license', 'rights', 'spatial', 'temporal', 'distribution', 'accrualPeriodicity', 'conformsTo', 'dataQuality', 'dataQuality', 'describedBy', 'describedByType', 'isPartOf', 'issued', 'language', 'landingPage', 'primaryITInvestment', 'references', 'systemOfRecords', 'theme')
+        fields = ('@type', 'title', 'description', 'keyword', 'modified', 'publisher', 'contactPoint', 'identifier',
+                  'accessLevel', 'bureauCode', 'programCode', 'license', 'rights', 'spatial', 'temporal',
+                  'distribution', 'accrualPeriodicity', 'conformsTo', 'dataQuality', 'dataQuality', 'describedBy',
+                  'describedByType', 'isPartOf', 'issued', 'language', 'landingPage', 'primaryITInvestment',
+                  'references', 'systemOfRecords', 'theme')
         depth = 2
+
 
 # rename the "mtype" field to "@type" in the serializer's _declared_fields
 DatasetSerializer._declared_fields['@type'] = serializers.CharField(source='mtype')
@@ -156,7 +172,9 @@ class CatalogSerializer(serializers.ModelSerializer):
         fields = ('@context', '@id', '@type', '@conformsTo', 'describedBy', 'dataset')
         depth = 2
 
-# rename the "_context", "_id", "_type", and "_conformsTo" fields to have the '@' prefix rather than a '_' in the serializer's _declared_fields
+
+# rename the "_context", "_id", "_type", and "_conformsTo" fields
+# to have the '@' prefix rather than a '_' in the serializer's _declared_fields
 CatalogSerializer._declared_fields['@context'] = serializers.URLField(source='_context')
 CatalogSerializer._declared_fields['@id'] = serializers.URLField(source='_id')
 CatalogSerializer._declared_fields['@type'] = serializers.URLField(source='_type')
