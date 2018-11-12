@@ -14,8 +14,7 @@ import os, logging
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office, Keyword, Catalog, Language
 from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, ImportDatasetFileForm, ImportDatasetURLForm, DatasetForm, DistributionForm, SchemaForm, UploadFileForm
-from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages, keyword_import
-
+from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages, keyword_import, list_to_string
 def index(request):
     """
     Display the main site page.
@@ -29,6 +28,7 @@ def index(request):
 
 @user_passes_test(lambda u: u.is_authenticated)
 def dashboard(request):
+    import csv
     """
     Display a dashboard interface, allowing the user to select from a list of :model:`cataloger.Dataset` objects.
 
@@ -46,24 +46,22 @@ def dashboard(request):
     else:
         datasets = list(Dataset.objects.filter(publisher = request.user.id))
 
+    if request.GET.get('export'):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="datasets.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['ID', 'Title', 'Description', 'Tags', 'Last Modified', 'Publisher', 'Contact Point',
+                         'Access Level', 'Bureau Code', 'Program Code', 'License'])
+        for current_dataset in datasets:
+            writer.writerow([str(current_dataset.id), str(current_dataset.title), str(current_dataset.description),
+                             list_to_string.list_to_string(current_dataset.keyword.all()), str(current_dataset.modified),
+                             str(current_dataset.publisher),
+                             str(current_dataset.publisher.email), str(current_dataset.accessLevel),
+                             list_to_string.list_to_string(current_dataset.bureauCode.all()), list_to_string.list_to_string(current_dataset.programCode.all()),
+                             str(current_dataset.license)])
+        return response
+
     return render(request, 'dashboard.html', {'datasets' : datasets})
-
-
-@user_passes_test(lambda u: u.is_authenticated)
-def export_datasets(request):
-    import csv
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="datasets.csv"'
-    writer = csv.writer(response)
-    writer.writerow(['ID', 'Title', 'Description', 'Tags', 'Last Modified', 'Publisher', 'Contact Point',
-                     'Access Level', 'Bureau Code', 'Program Code', 'License'])
-    for current_dataset in list(Dataset.objects.filter(publisher=request.user.id)):
-        writer.writerow([str(current_dataset.id), str(current_dataset.title), str(current_dataset.description),
-                         str(current_dataset.keyword), str(current_dataset.modified), str(current_dataset.publisher),
-                         str(current_dataset.publisher.email), str(current_dataset.accessLevel),
-                         str(current_dataset.bureau.description),  str(current_dataset.division.description),
-                         str(current_dataset.license)])
-    return response
 
 
 def register(request):
