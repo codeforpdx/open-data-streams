@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.generic.edit import DeleteView
 
 from urllib.parse import urlparse
 import os, logging
@@ -41,6 +43,37 @@ def dashboard(request):
 
     :template:`cataloger/templates/dashboard.html`
     """
+    if request.method == "POST":
+        # this is a POST request
+        print("Got POST data:" + str(request.POST))
+        if 'action_type' in request.POST:
+            print("Performing " + request.POST['action_type'] + " of items:" + str(request.POST['selected']))
+            if request.POST['action_type'] == 'delete':
+                for selectedDataset in request.POST.getlist('selected'):
+                    print("Deleting item:" + str(selectedDataset))
+                    Dataset.objects.get(id=selectedDataset).delete()
+            elif request.POST['action_type'] == 'publish':
+                for selectedDataset in request.POST.getlist('selected'):
+                    print("Publishing item:" + str(selectedDataset))
+                    dataset = Dataset.objects.get(id=selectedDataset)
+                    dataset.published = True
+                    dataset.save()
+            elif request.POST['action_type'] == 'unpublish':
+                for selectedDataset in request.POST.getlist('selected'):
+                    print("Unpublishing item:" + str(selectedDataset))
+                    dataset = Dataset.objects.get(id=selectedDataset)
+                    dataset.published = False
+                    dataset.save()
+            elif request.POST['action_type'] == 'complete':
+                for selectedDataset in request.POST.getlist('selected'):
+                    print("Completing item:" + str(selectedDataset))
+                    dataset = Dataset.objects.get(id=selectedDataset)
+                    dataset.complete = True
+                    dataset.save()
+    else:
+        # this is a GET request
+        pass
+        
     if request.user.is_superuser:
         datasets = list(Dataset.objects.all())
     else:
@@ -531,3 +564,9 @@ def schema(request, schema_id=None):
         form = SchemaForm(property_data)
 
     return render(request, 'schema.html', {'schema_id':schema_id, 'form':form})
+
+
+@user_passes_test(lambda u: u.is_authenticated)
+class DatasetDelete(DeleteView):
+    model = Dataset
+    success_url = reverse_lazy('cataloger:dashboard')
