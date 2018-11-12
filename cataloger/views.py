@@ -14,7 +14,7 @@ import os, logging
 
 from .models import Dataset, Distribution, Schema, Profile, BureauCode, Division, Office, Keyword, Catalog, Language
 from .forms import RegistrationForm, UploadBureauCodesCSVFileForm, UploadDatasetsCSVFileForm, NewDatasetFileForm, NewDatasetURLForm, ImportDatasetFileForm, ImportDatasetURLForm, DatasetForm, DistributionForm, SchemaForm, UploadFileForm
-from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages, keyword_import, list_to_string
+from .utilities import bureau_import, dataset_import, file_downloader, schema_generator, import_languages, keyword_import
 def index(request):
     """
     Display the main site page.
@@ -52,13 +52,12 @@ def dashboard(request):
         writer = csv.writer(response)
         writer.writerow(['ID', 'Title', 'Description', 'Tags', 'Last Modified', 'Publisher', 'Contact Point',
                          'Access Level', 'Bureau Code', 'Program Code', 'License'])
-        for current_dataset in datasets:
+        for current_dataset in datasets: 
             writer.writerow([str(current_dataset.id), str(current_dataset.title), str(current_dataset.description),
-                             list_to_string.list_to_string(current_dataset.keyword.all()), str(current_dataset.modified),
-                             str(current_dataset.publisher),
-                             str(current_dataset.publisher.email), str(current_dataset.accessLevel),
-                             list_to_string.list_to_string(current_dataset.bureauCode.all()), list_to_string.list_to_string(current_dataset.programCode.all()),
-                             str(current_dataset.license)])
+                             ','.join(map(str, current_dataset.keyword.all())), str(current_dataset.modified),
+                             str(current_dataset.publisher), str(current_dataset.publisher.email),
+                             str(current_dataset.accessLevel), ','.join(map(str, current_dataset.bureauCode.all())),
+                             ','.join(map(str, current_dataset.programCode.all())), str(current_dataset.license)])
         return response
 
     return render(request, 'dashboard.html', {'datasets' : datasets})
