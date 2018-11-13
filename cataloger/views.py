@@ -560,9 +560,3 @@ def schema(request, schema_id=None):
         form = SchemaForm(property_data)
 
     return render(request, 'schema.html', {'schema_id':schema_id, 'form':form})
-
-
-@user_passes_test(lambda u: u.is_authenticated)
-class DatasetDelete(DeleteView):
-    model = Dataset
-    success_url = reverse_lazy('cataloger:dashboard')
