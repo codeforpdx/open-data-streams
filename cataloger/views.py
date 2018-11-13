@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.generic.edit import DeleteView
 
 from urllib.parse import urlparse
 import os, logging
@@ -41,6 +43,33 @@ def dashboard(request):
 
     :template:`cataloger/templates/dashboard.html`
     """
+    if request.method == "POST":
+        # this is a POST request
+        if 'action_type' in request.POST:
+            if 'selected' in request.POST:
+                # there are some datasets selected - proceed
+                if request.POST['action_type'] == 'delete':
+                    for selectedDataset in request.POST.getlist('selected'):
+                        Dataset.objects.get(id=selectedDataset).delete()
+                elif request.POST['action_type'] == 'publish':
+                    for selectedDataset in request.POST.getlist('selected'):
+                        dataset = Dataset.objects.get(id=selectedDataset)
+                        dataset.published = True
+                        dataset.save()
+                elif request.POST['action_type'] == 'unpublish':
+                    for selectedDataset in request.POST.getlist('selected'):
+                        dataset = Dataset.objects.get(id=selectedDataset)
+                        dataset.published = False
+                        dataset.save()
+                elif request.POST['action_type'] == 'complete':
+                    for selectedDataset in request.POST.getlist('selected'):
+                        dataset = Dataset.objects.get(id=selectedDataset)
+                        dataset.complete = True
+                        dataset.save()
+    else:
+        # this is a GET request
+        pass
+        
     if request.user.is_superuser:
         datasets = list(Dataset.objects.all())
     else:
