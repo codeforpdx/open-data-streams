@@ -21,6 +21,8 @@
                         <a class="dropdown-item" href="#" onclick="$('#action_type').val('unpublish'); $('#datasetForm').submit()">Unpublish</a>
                         <a class="dropdown-item" href="#" onclick="$('#action_type').val('complete'); $('#datasetForm').submit()">Mark complete</a>
                         <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/dashboard?export=export">Export as CSV</a>
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#" onclick="$('#action_type').val('delete'); $('#datasetForm').submit()">Delete</a>
                     </div>
                 </div>
@@ -72,6 +74,7 @@
         </div>
     </form>
 </div>
+
 <br>
 {% endblock %}
 

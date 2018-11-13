@@ -31,6 +31,7 @@ def index(request):
 
 @user_passes_test(lambda u: u.is_authenticated)
 def dashboard(request):
+    import csv
     """
     Display a dashboard interface, allowing the user to select from a list of :model:`cataloger.Dataset` objects.
 
@@ -74,6 +75,20 @@ def dashboard(request):
         datasets = list(Dataset.objects.all())
     else:
         datasets = list(Dataset.objects.filter(publisher = request.user.id))
+
+    if request.GET.get('export'):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="datasets.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['ID', 'Title', 'Description', 'Tags', 'Last Modified', 'Publisher', 'Contact Point',
+                         'Access Level', 'Bureau Code', 'Program Code', 'License'])
+        for current_dataset in datasets: 
+            writer.writerow([str(current_dataset.id), str(current_dataset.title), str(current_dataset.description),
+                             ','.join(map(str, current_dataset.keyword.all())), str(current_dataset.modified),
+                             str(current_dataset.publisher), str(current_dataset.publisher.email),
+                             str(current_dataset.accessLevel), ','.join(map(str, current_dataset.bureauCode.all())),
+                             ','.join(map(str, current_dataset.programCode.all())), str(current_dataset.license)])
+        return response
 
     return render(request, 'dashboard.html', {'datasets' : datasets})
 
