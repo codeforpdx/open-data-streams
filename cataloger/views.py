@@ -45,31 +45,27 @@ def dashboard(request):
     """
     if request.method == "POST":
         # this is a POST request
-        print("Got POST data:" + str(request.POST))
         if 'action_type' in request.POST:
-            print("Performing " + request.POST['action_type'] + " of items:" + str(request.POST['selected']))
-            if request.POST['action_type'] == 'delete':
-                for selectedDataset in request.POST.getlist('selected'):
-                    print("Deleting item:" + str(selectedDataset))
-                    Dataset.objects.get(id=selectedDataset).delete()
-            elif request.POST['action_type'] == 'publish':
-                for selectedDataset in request.POST.getlist('selected'):
-                    print("Publishing item:" + str(selectedDataset))
-                    dataset = Dataset.objects.get(id=selectedDataset)
-                    dataset.published = True
-                    dataset.save()
-            elif request.POST['action_type'] == 'unpublish':
-                for selectedDataset in request.POST.getlist('selected'):
-                    print("Unpublishing item:" + str(selectedDataset))
-                    dataset = Dataset.objects.get(id=selectedDataset)
-                    dataset.published = False
-                    dataset.save()
-            elif request.POST['action_type'] == 'complete':
-                for selectedDataset in request.POST.getlist('selected'):
-                    print("Completing item:" + str(selectedDataset))
-                    dataset = Dataset.objects.get(id=selectedDataset)
-                    dataset.complete = True
-                    dataset.save()
+            if 'selected' in request.POST:
+                # there are some datasets selected - proceed
+                if request.POST['action_type'] == 'delete':
+                    for selectedDataset in request.POST.getlist('selected'):
+                        Dataset.objects.get(id=selectedDataset).delete()
+                elif request.POST['action_type'] == 'publish':
+                    for selectedDataset in request.POST.getlist('selected'):
+                        dataset = Dataset.objects.get(id=selectedDataset)
+                        dataset.published = True
+                        dataset.save()
+                elif request.POST['action_type'] == 'unpublish':
+                    for selectedDataset in request.POST.getlist('selected'):
+                        dataset = Dataset.objects.get(id=selectedDataset)
+                        dataset.published = False
+                        dataset.save()
+                elif request.POST['action_type'] == 'complete':
+                    for selectedDataset in request.POST.getlist('selected'):
+                        dataset = Dataset.objects.get(id=selectedDataset)
+                        dataset.complete = True
+                        dataset.save()
     else:
         # this is a GET request
         pass

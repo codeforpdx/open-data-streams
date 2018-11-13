@@ -42,7 +42,6 @@ $(".checkboxSelection").change(function() {
 // Confirm deletion when deleting datasets
 $('#datasetForm').submit(function() {
     var action = $('#datasetForm :input[name=action_type]');
-    console.log("Action:" + action.val());
     if (action.val() == 'delete') {
         return confirm("Are you sure that you want to delete the selected items? This cannot be undone.");
     }
