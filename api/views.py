@@ -1,5 +1,7 @@
 # REST Framework
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponseNotFound
 
 from rest_framework import serializers, pagination
 from rest_framework.generics import ListAPIView, RetrieveAPIView
@@ -51,7 +53,10 @@ class DatasetDetail(RetrieveAPIView):
     permission_classes = (permissions.AllowAny)
     
     def retrieve(self, request, dataset_id=None, format=None):
-        queryset = filtered_datasets(request).get(id=dataset_id)
+        try:
+            queryset = filtered_datasets(request).get(id=dataset_id)
+        except ObjectDoesNotExist:
+            return HttpResponseNotFound("Not found")
         serializer = DatasetSerializer(queryset)
         return Response(serializer.data)
 
