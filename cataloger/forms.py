@@ -304,7 +304,7 @@ class DistributionForm(forms.ModelForm):
 
 
 class SchemaForm(forms.Form):
-    def __init__(self, json_data, *args, **kwargs):
+    def __init__(self, json_data, title=None, type=None, *args, **kwargs):
         import json
 
         data = json.loads(json_data)
@@ -315,13 +315,17 @@ class SchemaForm(forms.Form):
             ButtonHolder(
                 Submit('submit', 'Save', css_class='btn btn-primary')
             ),
+
             Fieldset(
                 '',
+                'title',
+                'type',
             ),
             ButtonHolder(
                 Submit('submit', 'Save', css_class='btn btn-primary')
             )
         )
+
 
         # choices for dropdown menu of types
         type_choices = [
@@ -332,6 +336,13 @@ class SchemaForm(forms.Form):
             ('number', 'number'),
             ('string', 'string')
         ]
+        #print("Got Schema data"+str(data))
+
+        self.fields['type'] = forms.ChoiceField(choices=type_choices, required=False, label='Type', initial=2)
+        self.initial['type'] = type
+
+        self.fields['title'] = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control-lg', 'rows':1, 'cols':15}), required=False, initial = title)
+        self.initial['title'] = title
 
         # Insert whole table here so that submit buttons can exist outside table
         self.helper.layout[1].extend([HTML("""

@@ -547,11 +547,18 @@ def schema(request, schema_id=None):
     if data["properties"] == []:
         return HttpResponseRedirect('/dataset/'+ str(schema.dataset.id))
 
+    # set property_data to the JSON blob's "properties" field
     property_data = json.dumps(data["properties"])
-
+    # set title to the JSON blob's "title" field
+    #title = data['title']
+    # set type to the JSON blob's "type" field
+    type = data['type']
+    title = data['title']
     if request.method == 'POST':
         form = SchemaForm(property_data, data=request.POST)
         if form.is_valid():
+            data['title'] = request.POST['title']
+            data['type'] = request.POST['type']
             # loop over the property fields and pull the submitted data
             counter = 0
             for fields in data['properties']:
@@ -572,6 +579,6 @@ def schema(request, schema_id=None):
             # the return below will display form errors
             pass
     else:
-        form = SchemaForm(property_data)
+        form = SchemaForm(property_data, title, type)
 
     return render(request, 'schema.html', {'schema_id':schema_id, 'form':form})
