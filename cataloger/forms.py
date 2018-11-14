@@ -271,7 +271,6 @@ class SchemaForm(forms.Form):
                 '',
                 'title',
                 'type',
-                '',
             ),
             ButtonHolder(
                 Submit('submit', 'Save', css_class='btn btn-primary')
@@ -293,7 +292,7 @@ class SchemaForm(forms.Form):
         self.fields['type'] = forms.ChoiceField(choices=type_choices, required=False, label='Type', initial=2)
         self.initial['type'] = type
 
-        self.fields['title'] = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control-lg', 'rows':1, 'cols':15}), required=False, initial = title)
+        self.fields['title'] = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control-lg', 'rows':1, 'cols':15}), required=False, initial = title)
         self.initial['title'] = title
 
         # Insert whole table here so that submit buttons can exist outside table
