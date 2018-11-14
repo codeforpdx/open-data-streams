@@ -424,7 +424,6 @@ def schema(request, schema_id=None):
 
     data = schema.data
     data = json.loads(data)
-    print("Schema 'data' dictionary:" + str(data))   # *******FOR DEBUGING PURSPOSES**********************
 
     # empty dataset was uploaded, redirect to dataset
     if data["properties"] == []:
@@ -438,11 +437,10 @@ def schema(request, schema_id=None):
     type = data['type']
     title = data['title']
     if request.method == 'POST':
-        #print("POST data:" + str(request.POST))
         form = SchemaForm(property_data, data=request.POST)
         if form.is_valid():
-            data['type'] = request.POST['type']
             data['title'] = request.POST['title']
+            data['type'] = request.POST['type']
             # loop over the property fields and pull the submitted data
             counter = 0
             for fields in data['properties']:

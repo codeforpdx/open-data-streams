@@ -268,6 +268,7 @@ class SchemaForm(forms.Form):
             ),
 
             Fieldset(
+                '',
                 'title',
                 'type',
                 '',
@@ -288,15 +289,12 @@ class SchemaForm(forms.Form):
             ('string', 'string')
         ]
         #print("Got Schema data"+str(data))
-        print("Got Schema Type:"+str(type))   # *******FOR DEBUGING PURSPOSES**********************
-        print("Got Schema Title:"+str(title))   # *******FOR DEBUGING PURSPOSES**********************
 
         self.fields['type'] = forms.ChoiceField(choices=type_choices, required=False, label='Type', initial=2)
         self.initial['type'] = type
 
-        #self.fields['title'] = forms.Textarea(attrs={'rows':1, 'cols':15})
-        self.fields['title'] = forms.CharField(widget=forms.Textarea(), initial = title)
-        self.fields['title'].widget = forms.Textarea
+        self.fields['title'] = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control-lg', 'rows':1, 'cols':15}), required=False, initial = title)
+        self.initial['title'] = title
 
         # Insert whole table here so that submit buttons can exist outside table
         self.helper.layout[1].extend([HTML("""
