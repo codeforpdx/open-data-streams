@@ -287,7 +287,7 @@ class DistributionForm(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 '',
-                Field('title', css_class="form-control-lg"),
+                Field('title', css_class="form-control-lg", title='Human-readable name of the distribution.'),
                 Field('description', title='Human-readable description of the distribution.'),
                 Field('downloadURL', title='URL providing direct access to a downloadable file of a dataset.'),
                 Field('mediaType', title='The machine-readable file format (IANA Media Type or MIME Type) of the distribution’s downloadURL.'),
