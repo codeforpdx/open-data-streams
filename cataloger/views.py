@@ -65,8 +65,10 @@ def dashboard(request):
                 elif request.POST['action_type'] == 'complete':
                     for selectedDataset in request.POST.getlist('selected'):
                         dataset = Dataset.objects.get(id=selectedDataset)
-                        dataset.complete = True
-                        dataset.save()
+                        form = DatasetForm(instance=dataset)
+                        if form.is_valid():
+                            dataset.complete = True
+                            dataset.save()
     else:
         # this is a GET request
         pass
