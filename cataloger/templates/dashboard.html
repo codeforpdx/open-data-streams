@@ -12,6 +12,11 @@
         <div class="row mb-3">
             <div class="col-lg-6 text-left pl-0">
                 <input class="span2" id="action_type" name="action_type" type="hidden">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-warning" role="alert">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
                 <div class="btn-group" id="action-button">
                     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Action

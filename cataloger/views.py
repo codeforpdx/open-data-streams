@@ -69,6 +69,9 @@ def dashboard(request):
                         if form.is_valid():
                             dataset.complete = True
                             dataset.save()
+                        else:
+                            messages.warning(request, 'Dataset with ID: ' + selectedDataset + ' is incomplete - please complete all required fields.')
+
     else:
         # this is a GET request
         pass
