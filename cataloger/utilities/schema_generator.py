@@ -96,7 +96,7 @@ class SchemaGenerator:
         """Takes in a list words and creates a new schema."""
         
         # Builds the dictionary that represents the schema.
-        temporary_dictionary = {'title': None, 'type': None, 'properties': []}
+        temporary_dictionary = {'$schema': None, '$id': None, 'title': None, 'type': None, 'properties': []}
         for x in meta_data:
             temporary_dictionary['properties'].append({
                 'name': x,
