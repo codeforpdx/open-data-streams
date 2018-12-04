@@ -9,6 +9,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic.edit import DeleteView
+from django.forms.models import model_to_dict
+from django.utils.safestring import mark_safe
 
 from urllib.parse import urlparse
 import os, logging
@@ -65,13 +67,12 @@ def dashboard(request):
                 elif request.POST['action_type'] == 'complete':
                     for selectedDataset in request.POST.getlist('selected'):
                         dataset = Dataset.objects.get(id=selectedDataset)
-                        form = DatasetForm(instance=dataset)
+                        form = DatasetForm(model_to_dict(dataset), instance=dataset)
                         if form.is_valid():
                             dataset.complete = True
                             dataset.save()
                         else:
-                            messages.warning(request, 'Dataset with ID: ' + selectedDataset + ' is incomplete - please complete all required fields.')
-
+                            messages.warning(request, mark_safe('Dataset with ID: ' + selectedDataset + ' is incomplete - please complete all required fields.<br/>' + str(form.errors)))
     else:
         # this is a GET request
         pass
