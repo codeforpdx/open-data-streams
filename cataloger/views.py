@@ -72,7 +72,7 @@ def dashboard(request):
                             dataset.complete = True
                             dataset.save()
                         else:
-                            messages.warning(request, mark_safe('Dataset with ID: ' + selectedDataset + ' is incomplete - please complete all required fields.<br/>' + str(form.errors)))
+                            messages.warning(request, mark_safe('Dataset with ID: ' + selectedDataset + ' is incomplete - please complete all required fields.'), extra_tags=str(form.errors))
     else:
         # this is a GET request
         pass
