@@ -267,15 +267,15 @@ class DistributionForm(forms.ModelForm):
         fields = ['accessURL', 'conformsTo', 'describedBy', 'describedByType', 'description', 'downloadURL', 'dformat',
                   'mediaType', 'title', ]
         widgets = {
-            'accessURL': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
-            'conformsTo': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
-            'describedBy': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
-            'describedByType': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
-            'description': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
-            'downloadURL': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
-            'dformat': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
-            'mediaType': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
-            'title': forms.Textarea(attrs={'rows': 1, 'cols': 15}),
+            'accessURL': forms.TextInput(),
+            'conformsTo': forms.TextInput(),
+            'describedBy': forms.TextInput(),
+            'describedByType': forms.TextInput(),
+            'description': forms.TextInput(),
+            'downloadURL': forms.TextInput(),
+            'dformat': forms.TextInput(),
+            'mediaType': forms.TextInput(),
+            'title': forms.TextInput(),
         }
         labels = {
             'dformat': 'Format',
@@ -287,15 +287,15 @@ class DistributionForm(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset(
                 '',
-                Field('title', css_class="form-control-lg"),
-                'description',
-                'downloadURL',
-                'mediaType',
-                'accessURL',
-                'conformsTo',
-                'describedBy',
-                'describedByType',
-                'dformat',
+                Field('title', css_class="form-control-lg", title='Human-readable name of the distribution.'),
+                Field('description', title='Human-readable description of the distribution.'),
+                Field('downloadURL', title='URL providing direct access to a downloadable file of a dataset.'),
+                Field('mediaType', title='The machine-readable file format (IANA Media Type or MIME Type) of the distribution’s downloadURL.'),
+                Field('accessURL', title='URL providing indirect access to a dataset, for example via API or a graphical interface.'),
+                Field('conformsTo', title='URI used to identify a standardized specification the distribution conforms to.'),
+                Field('describedBy', title='URL to the data dictionary for the distribution found at the downloadURL. Note that documentation other than a data dictionary can be referenced using Related Documents as shown in the expanded fields.'),
+                Field('describedByType', title='The machine-readable file format (IANA Media Type or MIME Type) of the distribution’s describedBy URL.'),
+                Field('dformat', title='A human-readable description of the file format of a distribution.'),
             ),
             ButtonHolder(
                 Submit('submit', 'Save', css_class='btn btn-primary btn-sm btn-block')
