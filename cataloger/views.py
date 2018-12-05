@@ -57,8 +57,11 @@ def dashboard(request):
                 elif request.POST['action_type'] == 'publish':
                     for selectedDataset in request.POST.getlist('selected'):
                         dataset = Dataset.objects.get(id=selectedDataset)
-                        dataset.published = True
-                        dataset.save()
+                        if dataset.complete:
+                            dataset.published = True
+                            dataset.save()
+                        else:
+                            messages.warning(request, mark_safe('Dataset with ID: ' + selectedDataset + ' is incomplete - please complete before publishing'))
                 elif request.POST['action_type'] == 'unpublish':
                     for selectedDataset in request.POST.getlist('selected'):
                         dataset = Dataset.objects.get(id=selectedDataset)

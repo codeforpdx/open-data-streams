@@ -3,6 +3,19 @@
 
 {% block css_content %}
     <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <style>
+        .panel-heading .accordion-toggle:after {
+        /* symbol for "open" panels */
+        content: "\25bc";
+        float: left;
+        margin-right:1em;
+        }
+        .panel-heading .accordion-toggle.collapsed:after {
+        /* symbol for "collapsed" panels */
+        content: "\25b6";
+        margin-right:1em;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -13,24 +26,30 @@
             <div class="col-lg-6 text-left pl-0">
                 <input class="span2" id="action_type" name="action_type" type="hidden">
                 {% if messages %}
-                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                    {% for message in messages %}
-                    <div class="alert alert-warning" role="alert">
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="heading{{ forloop.counter }}">
-                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
-                                    {{ message }}
-                                </a>
-                            </div>
-                            <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ forloop.counter }}">
-                                <div class="panel-body">
-                                    {{ message.extra_tags }}
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                        {% for message in messages %}
+                            {% if message.extra_tags %}
+                                <div class="alert alert-warning" role="alert">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading" role="tab" id="heading{{ forloop.counter }}">
+                                            <a class="accordion-toggle collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+                                                {{ message }}
+                                            </a>
+                                        </div>
+                                        <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ forloop.counter }}">
+                                            <div class="panel-body">
+                                                {{ message.extra_tags }}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                            {% else %}
+                                    <div class="alert alert-warning" role="alert">
+                                     {{ message }}
+                                    </div>
+                            {% endif %}
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                </div>
                 {% endif %}
                 <div class="btn-group" id="action-button">
                     <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
