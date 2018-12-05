@@ -3,6 +3,17 @@
 
 {% block css_content %}
     <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <style>
+        .panel-heading .accordion-toggle:after {
+        /* symbol for "open" panels */
+        content: "\25bc";
+        float: right;
+        }
+        .panel-heading .accordion-toggle.collapsed:after {
+        /* symbol for "collapsed" panels */
+        content: "\25C0";
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -18,7 +29,7 @@
                     <div class="alert alert-warning" role="alert">
                         <div class="panel panel-default">
                             <div class="panel-heading" role="tab" id="heading{{ forloop.counter }}">
-                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+                                <a class="accordion-toggle collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
                                     {{ message }}
                                 </a>
                             </div>
