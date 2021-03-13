@@ -1,0 +1,46 @@
+Bureau,id,url,area
+Public Safety Service Area,,,
+Bureau of Emergency Communications,boec,https://www.portland.gov/911,Public Safety Service
+Bureau of Fire & Police Disability & Retirement ,bfpdr,https://www.portland.gov/fpdr,Public Safety Service
+Portland Police Bureau,ppb,https://www.portland.gov/police,Public Safety Service
+Portland Fire & Rescue,pfr,https://www.portland.gov/fire,Public Safety Service
+Portland Bureau of Emergency Management,pbem,https://www.portland.gov/pbem,
+,,,
+"Parks, Recreation, & Culture Service Area",,,"Parks, Recreation, & Culture Service"
+Portland Parks and Recreation,ppr,https://www.portland.gov/parks,
+,,,
+City Support Services Service Area,,,
+Office of the City Attorney,oca,https://www.portland.gov/attorney,City Support Services Service
+Office of Government Relations,ogr,https://www.portland.gov/ogr,City Support Services Service
+Office of Management and Finance,omf,https://www.portland.gov/omf,City Support Services Service
+Human Resources,bhr,https://www.portland.gov/bhr,City Support Services Service
+Revenue and Financial Services,brfs,https://www.portland.gov/omf/brfs,City Support Services Service
+Technology Services,bts,https://www.portland.gov/omf/bts,City Support Services Service
+Office of the Chief Administrative Officer,cao,https://www.portland.gov/omf/cao,City Support Services Service
+City Budget Office,cbo,https://www.portland.gov/cbo,City Support Services Service
+Special Appropriations,bsa,,City Support Services Service
+,,,
+Public Utilities Service Area,,,
+Bureau of Environmental Services,bes,https://www.portland.gov/bes,Public Utilities Service
+Portland Water Bureau,pwb,https://www.portland.gov/water,Public Utilities Service
+,,,
+Community Development Service Area,,,
+Bureau of Development Services,bds,https://www.portland.gov/bds,Community Development Service
+Portland Housing Bureau,phb,https://www.portland.gov/phb,Community Development Service
+Bureau of Planning and Sustainability,bps,https://www.portland.gov/bps,Community Development Service
+Office for Community Technology,oct,https://www.portland.gov/oct,Community Development Service
+Office of Community and Civic Life,occl,https://www.portland.gov/civic,Community Development Service
+Portland Children's Levy,pcl,https://www.portland.gov/childrens-levy,Community Development Service
+Prosper Portland,pp,https://www.portland.gov/prosper-portland,Community Development Service
+Office of Equity & Human Rights,oehr,https://www.portland.gov/oehr,Community Development Service
+,,,
+Transportation and Parking Service Area,,,
+Portland Bureau of Transportation,pbot,https://www.portland.gov/transportation,Transportation and Parking Service
+,,,
+Elected Officials Service Area,,,
+Office of the City Auditor,oca,https://www.portland.gov/auditor,Elected Officials Service
+Office of the Mayor,om,https://www.portland.gov/wheeler,Elected Officials Service
+Commissioner of Public Affairs,cpa,https://www.portland.gov/hardesty,Elected Officials Service
+Commissioner of Public Safety,cps,https://www.portland.gov/rubio,Elected Officials Service
+Commissioner of Public Utilities,cpu,https://www.portland.gov/mapps,Elected Officials Service
+Commissioner of Public Works,cpw,https://www.portland.gov/ryan,Elected Officials Service
