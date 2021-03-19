@@ -1,7 +1,10 @@
-# pdx-open-data-streams
-Data validation and profiling for publishing City of Portland open datasets
+# Open Data STREAMS
 
-This project will kick off at the Democracy Lab March 13th hackathon. Join us! https://democracylab.org/events/sthacktricksday2021
+This project involves an evaluation framework for open datasets published by the City of Portland. The goal is to create a data analysis tool which provides quality assurance for datasets made available between bureaus and to the public. 
+
+## Contributing
+
+If any Issue or Project interests you and our description alone doesn't contain all you'd need to get started, please contact us. We're at CodeforPDX.org and our channel in the Code for PDX Slack is #open-data-streams
 
 ### Introductory information about the open data program in Portland. 
 
