@@ -4,7 +4,7 @@ This project involves an evaluation framework for open datasets published by the
 
 ## Contributing
 
-If any Issue or Project interests you and our description alone doesn't contain all you'd need to get started, please contact us. We're at CodeforPDX.org and our channel in the Code for PDX Slack is #open-data-streams
+If any Issue or Project interests you and our description alone doesn't contain all you'd need to get started, please contact us. We're at https://www.codeforpdx.org/welcome/ and our channel in the Code for PDX Slack is #open-data-streams
 
 ### Introductory information about the open data program in Portland. 
 
