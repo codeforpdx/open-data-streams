@@ -1,0 +1,51 @@
+{
+		"conformsTo": "https:\/\/project-open-data.cio.gov\/v1.1\/schema",
+		"dataset": [
+			""
+		],
+		"@context": "https://project-open-data.cio.gov/v1.1/schema/catalog.jsonld",
+		"@id": "https://project-open-data.cio.gov/v1.1/schema/dataset.json",
+		"@type": "dcat:Catalog",
+		"describedBy": "https://project-open-data.cio.gov/v1.1/schema/catalog.json",
+
+	"dataset": [{
+		"identifier": "ODPilot100101",
+		"accessLevel": "public",
+		"contactPoint": {
+        "hasEmail": "mailto:Kathy.Lyndon@portlandoregon.gov",
+        "@type": "vcard:Contact",
+        "fn": "Lyndon, Kathy"
+      	},
+      	"description": "Number of received permits applications by BDS",
+      	"title": "BDS - Apps received per month",
+		"dcat": "Dataset",		
+		"keyword": ["permits","BDS"],
+		"modified": "2019-04-26T15:55:00Z",
+		"publisher":  {
+        "@type": "org:Organization",
+        "name": "Bureau of Development Services"
+      },
+		"distribution": [
+			{
+			"@type": "dcat:Distribution",
+			"describedBy": "https://project-open-data.cio.gov/v1.1/schema/catalog.json",
+			"describedByType": "application/json",
+			"description": "Fire and Rescue emergency incidents",
+			"format": "JSON",
+			"mediaType": "text/csv",
+			"title": "BDS - Apps received per month"
+			}
+		],
+		"license": "https://creativecommons.org/licenses/by/4.0/",
+		"keyword": ["permits","BDS"],
+		"modified":"2019-04-26T15:55:00Z",
+		"rights": "This dataset is available as is, it does not contain private or sensitive information.",
+		"temporal": "2015-07-01T00:00:00Z/2017-07-01T00:00:00Z",
+		"accrualPeriodicity": "R/P1Y",
+		"describedBy": "https://project-open-data.cio.gov/v1.1/schema/catalog.json",
+		"describedByType": "application/json",
+		"issued": "2020-11-05",
+		"language": ["en-US"],
+		"landingPage": "https://pdx-open-data-open-pdx.hub.arcgis.com"		
+	}]	
+}
