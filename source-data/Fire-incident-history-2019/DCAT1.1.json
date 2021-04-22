@@ -1,0 +1,23 @@
+{
+    "conformsTo": "https://project-open-data.cio.gov/v1.1/schema/",
+    "describedBy": "blah blah blah",
+    "dataset": {
+        "file": "D:\\myProjects\\open-data-streams\\source-data\\Fire-incident-history-2019.csv",
+        "name": "Fire-incident-history-2019",
+        "title": "Fire-incident-history-2019.csv",
+        "homepage": "",
+        "description": "        An english description of the dataset in language a lay person can understand.\r\n        ",
+        "keyword": [
+            "fire incident",
+            "Portland",
+            "resuce"
+        ],
+        "publisher": "City of Portland",
+        "identifier": "",
+        "accessLevel": "restricted-public",
+        "bureau": "Bureau of Fire & Police Disability & Retirement",
+        "license": "",
+        "modified": "04/12/2021",
+        "@type": "dcat:Dataset"
+    }
+}
