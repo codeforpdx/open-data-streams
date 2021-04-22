@@ -1,0 +1,79 @@
+<link rel="stylesheet" media="screen" href="static/bootstrap.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Data Package Capture</title>
+<div style="margin: 100 100 100 100">
+    <form action="" method="post" role="form">
+    <div class="container">
+
+        <label for="file">Dataset File</label> 
+        <input type="text"
+            class="form-control"
+            id="file"
+            name="file"
+            placeholder="dataset file path?">
+
+        <label for="name">Name</label> 
+        <input type="text"
+            class="form-control"
+            id="name"
+            name="name"
+            placeholder="dataset name?">
+
+        <label for="title">Title</label>
+        <input type="text"
+            class="form-control" 
+            id="title" name="title" 
+            placeholder="dataset title?">
+
+        <label for="homepage">Homepage</label>
+        <input type="text"
+            class="form-control" 
+            id="homepage" 
+            name="homepage" 
+            placeholder="What's your homepage?">
+
+        <label for="description">description</label>
+        <textarea
+            class="form-control"
+            rows="5" 
+            id="description" 
+            name="description" 
+            placeholder="An english description of the dataset">
+        An english description of the dataset in language a lay person can understand.
+        </textarea>        
+
+        <label for="keyword">keywords</label>
+        <input type="text" 
+            class="form-control" 
+            id="keyword" 
+            name="keyword" 
+            placeholder="keywords">
+
+        <label for="publisher">publisher</label>
+        <input type="text" class="form-control" id="publisher" name="publisher" placeholder="publisher?">
+
+        <label for="identifier">identifier</label>
+        <input type="text" class="form-control" id="identifier" name="identifier" placeholder="identifier?">
+
+        <label for="accessLevel">accessLevel</label>
+        <select name="accessLevel" id="accessLevel">
+            <option value="public">public</option>
+            <option value="restricted-public">restricted-public</option>
+            <option value="non-public">non-public</option>
+        </select>
+        <label for="bureau">bureau</label>
+        <input type="text" class="form-control" id="bureau" name="bureau" placeholder="bureau?">
+
+        <label for="license">license</label>
+        <input type="text" class="form-control" id="license" name="license" placeholder="license?">
+
+        <label for="modified">modified</label>
+        <input type="text" class="form-control" id="modified" name="modified" placeholder=datetime.today()>
+ 
+
+        <button type="submit" class="btn btn-success">Submit</button>
+    </div>
+
+</form>
+</div>
