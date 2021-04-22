@@ -72,7 +72,7 @@ def processFormData(formData):
     datalakepath = '../../source-data'
     if not os.path.exists(datalakepath):
         os.mkdir(datalakepath)
-    workingPath=datalakepath+formData["name"]
+    workingPath=datalakepath + '/' + formData["name"]
     if not os.path.exists(workingPath):
         os.mkdir(workingPath);
         os.mkdir(workingPath +"/scripts")
