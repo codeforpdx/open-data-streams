@@ -31,3 +31,10 @@ https://docs.google.com/spreadsheets/d/1VADQ1TJR2p7mCInZBdQ2EppEjZrk9DWK8fKwIka8
 (we can start with a selection of these rules)
 
 https://docs.google.com/spreadsheets/d/1KMU1Q4nHR0QTeIVHsIJmnu6g7n0p0YcyRWuZAyvth1Y/edit?usp=sharing
+
+### Other Resources
+Frictionless data tutorial: https://youtu.be/foao4cou5JM?t=2628  
+Data package creator: https://create.frictionlessdata.io/   
+Goodtables.io: http://goodtables.io/dashboard   
+Goodtables validator: http://try.goodtables.io/  
+

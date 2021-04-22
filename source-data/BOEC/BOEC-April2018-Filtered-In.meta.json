@@ -1,0 +1,51 @@
+{
+		"conformsTo": "https:\/\/project-open-data.cio.gov\/v1.1\/schema",
+		"dataset": [
+			""
+		],
+		"@context": "https://project-open-data.cio.gov/v1.1/schema/catalog.jsonld",
+		"@id": "https://project-open-data.cio.gov/v1.1/schema/dataset.json",
+		"@type": "dcat:Catalog",
+		"describedBy": "https://project-open-data.cio.gov/v1.1/schema/catalog.json",
+
+	"dataset": [{
+		"identifier": "ODPilot100102",
+		"accessLevel": "public",
+		"contactPoint": {
+        "hasEmail": "mailto:kidus.yared@portlandoregon.gov",
+        "@type": "vcard:Contact",
+        "fn": "Yared, Kidus"
+      	},
+      	"description": "Received 911 calls received at the emergency call center",
+      	"title": "BOEC - April2018 - Filtered-In 911 calls",
+		"dcat": "Dataset",		
+		"keyword": ["911 calls", "response time"],
+		"modified": "06-06-2018T015:50:00Z",
+		"publisher":  {
+        "@type": "org:Organization",
+        "name": "Bureau of Emergency Communications"
+      },
+		"distribution": [
+			{
+			"@type": "dcat:Distribution",
+			"describedBy": "https://project-open-data.cio.gov/v1.1/schema/catalog.json",
+			"describedByType": "application/json",
+			"description": "Register of filtered-in 911 calls received",
+			"format": "JSON",
+			"mediaType": "text/csv",
+			"title": "BOEC-April2018-Filtered-In"
+			}
+		],
+		"license": "https://creativecommons.org/licenses/by/4.0/",
+		"keyword": ["911", "emergency communications"],
+		"modified":"2020-11-05",
+		"rights": "This dataset is available as is, it does not contain private or sensitive information.",
+		"temporal": "2018-04-01T00:00:00Z/2018-05-01T00:00:00Z",
+		"accrualPeriodicity": "R/P1M",
+		"describedBy": "https://project-open-data.cio.gov/v1.1/schema/catalog.json",
+		"describedByType": "application/json",
+		"issued": "2020-11-05",
+		"language": ["en-US"],
+		"landingPage": "https://pdx-open-data-open-pdx.hub.arcgis.com"		
+	}]	
+}
