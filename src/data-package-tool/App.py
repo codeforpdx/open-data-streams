@@ -77,6 +77,7 @@ def processFormData(formData):
         os.mkdir(workingPath);
         os.mkdir(workingPath +"/scripts")
     os.system('cp ' + formData["file"] + ' ' + workingPath)
+    os.system('cp ' + './README.md' + ' ' + workingPath)
     fp = open(workingPath+"/DCAT1.1.json","w")
     json.dump(dcatMeta,fp,indent=4)
 
